@@ -17,15 +17,16 @@ enum STATUS {
 
 model User {
   id            Int          @id @default(autoincrement())
+  name String
   email         String       @unique
   createdAt     DateTime     @default(now())
-  role_id       Int          @map("role_id")
-  role          Role         @relation(fields: [role_id], references: [id])
+  role_id       Int?         @map("role_id")
+  role          Role?        @relation(fields: [role_id], references: [id])
   department_id Int?         @map("department_id")
   departments   Departments? @relation(fields: [department_id], references: [id])
   password      String
   messages      Message[]
-  tasks          Task[]
+  tasks         Task[]
 }
 
 model Role {
@@ -35,11 +36,13 @@ model Role {
 }
 
 model Departments {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  name      String
-  User      User[]
-  messages  Message[]
+  id              Int          @id @default(autoincrement())
+  createdAt       DateTime     @default(now())
+  name            String
+  User            User[]
+  messages        Message[]
+  organization_id Int
+  organization    Organization @relation(fields: [organization_id], references: [id])
 }
 
 model Message {
@@ -58,5 +61,12 @@ model Task {
   description String
   creator_id  Int
   creator     User     @relation(fields: [creator_id], references: [id])
-  status STATUS @default(IN_PROGRESS)
+  status      STATUS   @default(IN_PROGRESS)
+}
+
+model Organization {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name      String
+  departments Departments[]
 }
