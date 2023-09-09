@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import cors from 'cors';
 import { protect } from './modules/auth';
 import { createNewUser, signin } from './handlers/user';
+import { sendOtp } from './handlers/invitelink';
+import { sendorgInviteLink } from './handlers/invitelink';
 
 const app = express();
 
@@ -20,7 +22,9 @@ app.get('/', (req, res) => {
 
 app.use('/api', protect, router);
 
-app.post('/register', createNewUser);
+app.post('/register', createNewUser, async (req, res) => {
+    await sendOtp(req.body.email, req.body.id)
+})
 app.post('/login', signin);
 
 export default app;

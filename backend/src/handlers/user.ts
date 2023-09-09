@@ -2,7 +2,7 @@ import prisma from "../db";
 import { comparePassword, createJWT, hashPassword } from "../modules/auth";
 
 
-export const createNewUser = async (req, res) => {
+export const createNewUser = async (req, res, next) => {
     /**
      * Check if user already exists
      */
@@ -21,7 +21,7 @@ export const createNewUser = async (req, res) => {
      * if user doesn't exist, go ahead to create a new user
      */
     const hash = await hashPassword(req.body.password);
-    const user = await prisma.user.create({
+    const createUser = await prisma.user.create({
         data: {
             email: req.body.email,
             password: hash,
@@ -29,8 +29,16 @@ export const createNewUser = async (req, res) => {
         }
     })
 
-    const token = createJWT(user);
+    const user = await prisma.user.findUnique({
+        where: {
+            email: req.body.email
+        }
+    });
+    req.user = (user);
+
+    const token = createJWT(createUser);
     res.json({message: "Account Created successfully", token});
+    next()
 }
 
 /**

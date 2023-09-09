@@ -17,7 +17,7 @@ enum STATUS {
 
 model User {
   id            Int          @id @default(autoincrement())
-  name String
+  name          String
   email         String       @unique
   createdAt     DateTime     @default(now())
   role_id       Int?         @map("role_id")
@@ -27,6 +27,7 @@ model User {
   password      String
   messages      Message[]
   tasks         Task[]
+  otp           OTP[]
 }
 
 model Role {
@@ -65,8 +66,17 @@ model Task {
 }
 
 model Organization {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  name      String
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  name        String
   departments Departments[]
+}
+
+model OTP {
+  id        Int      @id @default(autoincrement())
+  code      String
+  user_id   Int?
+  user      User?    @relation(fields: [user_id], references: [id])
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 }

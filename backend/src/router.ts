@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import sibapiv3sdk from 'sib-api-v3-sdk'
+import { sendorgInviteLink } from './handlers/invitelink';
 
 const router = Router();
 
@@ -34,5 +36,24 @@ router.delete('/organisations/:id', () => {})
 /**
  * MESSAGES To be implemented later
  */
+
+/**
+ * Invite links
+ */
+router.post('/:orgName/join', async (req, res) => {
+    const orgName = req.body.orgName
+    const email = req.body.email
+
+    try {
+        sendorgInviteLink(email, orgName);
+        res.status(200);
+        res.send("Invite link sent successfully");
+    } catch (error) {
+        console.log(error);
+        res.status(500);
+        res.send("Error sending Email");
+    }
+    
+})
 
 export default router;
