@@ -25,7 +25,7 @@ export const createNewUser = async (req, res, next) => {
         data: {
             email: req.body.email,
             password: hash,
-            name: req.body.name
+            name: req.body.name,
         }
     })
 
@@ -52,6 +52,7 @@ export const signin = async (req, res) => {
     })
 
     const isValid = await comparePassword(req.body.password, user.password);
+    console.log(`isvalid: ${isValid}`);
 
     if (!isValid) {
         res.status(401);

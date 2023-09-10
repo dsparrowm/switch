@@ -44,8 +44,24 @@ router.post('/:orgName/join', async (req, res) => {
     const orgName = req.body.orgName
     const email = req.body.email
 
+    const receivers = [
+        {
+            email,
+        }
+    ];
+
+    const mailOptions = {
+        sender: {
+            name: "Switch",
+            email: 'support@switch.com',
+        },
+        to: receivers,
+        subject: `Invitation to join ${orgName}`,
+        htmlContent: `<p>This is a test string</P`
+    }
+
     try {
-        sendorgInviteLink(email, orgName);
+        sendorgInviteLink(orgName, mailOptions);
         res.status(200);
         res.send("Invite link sent successfully");
     } catch (error) {

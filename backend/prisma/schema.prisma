@@ -10,73 +10,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum STATUS {
-  IN_PROGRESS
-  COMPLETED
+model Organisation {
+  id          Int          @id @default(autoincrement())
+  name        String
+  departments Department[]
+  createdAt DateTime  @default(now())
 }
 
-model User {
-  id            Int          @id @default(autoincrement())
-  name          String
-  email         String       @unique
-  createdAt     DateTime     @default(now())
-  role_id       Int?         @map("role_id")
-  role          Role?        @relation(fields: [role_id], references: [id])
-  department_id Int?         @map("department_id")
-  departments   Departments? @relation(fields: [department_id], references: [id])
-  password      String
-  messages      Message[]
-  tasks         Task[]
-  otp           OTP[]
+model Department {
+  id             Int          @id @default(autoincrement())
+  name           String
+  organisationId Int
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  tasks          Task[]
+  messages       Message[]
+  createdAt DateTime  @default(now())
+}
+
+model Task {
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  userId       Int?
+  user         User?       @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+}
+
+model OTP {
+  id     Int    @id @default(autoincrement())
+  code   String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  expiresAt DateTime @default(dbgenerated("CURRENT_TIMESTAMP + INTERVAL '1 hour'"))
 }
 
 model Role {
   id    Int    @id @default(autoincrement())
   name  String
-  users User[]
 }
 
-model Departments {
-  id              Int          @id @default(autoincrement())
-  createdAt       DateTime     @default(now())
-  name            String
-  User            User[]
-  messages        Message[]
-  organization_id Int
-  organization    Organization @relation(fields: [organization_id], references: [id])
+model User {
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  password String
+  otps     OTP[]
+  messages Message[]
+  tasks    Task[]
+  createdAt DateTime  @default(now())
 }
 
 model Message {
-  id            Int          @id @default(autoincrement())
-  createdAt     DateTime     @default(now())
-  sender_id     Int
-  sender        User         @relation(fields: [sender_id], references: [id])
-  department_id Int?
-  department    Departments? @relation(fields: [department_id], references: [id])
-}
-
-model Task {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  name        String
-  description String
-  creator_id  Int
-  creator     User     @relation(fields: [creator_id], references: [id])
-  status      STATUS   @default(IN_PROGRESS)
-}
-
-model Organization {
-  id          Int           @id @default(autoincrement())
-  createdAt   DateTime      @default(now())
-  name        String
-  departments Departments[]
-}
-
-model OTP {
-  id        Int      @id @default(autoincrement())
-  code      String
-  user_id   Int?
-  user      User?    @relation(fields: [user_id], references: [id])
-  createdAt DateTime @default(now())
-  expiresAt DateTime
+  id           Int         @id @default(autoincrement())
+  content      String
+  createdAt DateTime  @default(now())
+  userId       Int
+  user         User        @relation(fields: [userId], references: [id])
+  departmentId Int?
+  department   Department? @relation(fields: [departmentId], references: [id])
 }
