@@ -28,8 +28,29 @@ router.delete('/tasks/:id', () => {})
 /**
  * ORGANISATIONS
  */
-router.get('/organisations', (req, res) => {})
-router.get('/organisations/:id', () => {})
+router.get('/organisations', (req, res) => {
+
+})
+router.get('/organisations/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id)
+        const getOrg = await prisma.organisation.findUnique({
+            where: {
+                id: id
+            },
+            include: {departments: true}
+        });
+        if (getOrg === null) {
+            res.status(400)
+            res.json({message: "No organization found", isSuccess: false})
+        }
+        res.status(200);
+        res.json({getOrg, isSuccess: true}) 
+    } catch (error) {
+        res.status(500);
+        res.json({error: "Could not reach server", isSuccess: false})
+    }
+})
 router.post('/organisation/new', async (req, res) => {
     const {userId, name} = req.body;
     try {
