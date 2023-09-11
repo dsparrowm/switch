@@ -1,14 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import Alert from '../components/Alert';
+import { loginRoute } from '../utils/APIRoutes';
+import axios from 'axios';
 
 function Login () {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
+  const [email, setEmail] = useState('');
+  const [emailErrorMsg, setEmailErrorMsg] = useState('');
+  const [inValidEmail, setInValidEmail] = useState(false);
+  const [emailCheck, setEmailCheck] = useState(false);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (handleValidation()) {
+      try {
+        const { data } = await axios.post(loginRoute, { email });
+        if (data) {
+          setEmailCheck(true);
+          localStorage.setItem('signup-email', email);
+          console.log(data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
   const handleChange = (e) => {
-    console.log(e);
+    setEmail(e.target.value);
+  };
+  const handleValidation = () => {
+    if (!isValidEmail(email)) {
+      setInValidEmail(true);
+      if (!email) {
+        setEmailErrorMsg('Required field - Please enter an email.');
+      } else {
+        setEmailErrorMsg('Invalid email address. Please check and try again.');
+      }
+      return false;
+    }
+
+    setInValidEmail(false);
+    setEmailErrorMsg('');
+    return true;
+  };
+  const isValidEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
   };
 
   return (
@@ -25,50 +62,37 @@ function Login () {
         <form
           onSubmit={(e) => handleSubmit(e)}
           className='login-form'
+          noValidate
         >
-          {/* <div className='form-group'>
-            <input
-              type='text'
-              placeholder='Username'
-              name='username'
-              onChange={(e) => handleChange(e)}
-            />
-          </div> */}
+          {emailCheck && (
+            <div className='form-group'>
+              <Alert type='error' msg='Email Check has failed' />
+            </div>
+          )}
           <div className='form-group'>
             <input
               type='email'
               placeholder='name@work-email.com'
               name='email'
+              className={`${inValidEmail ? 'invalid' : email && 'valid'}`}
               onChange={(e) => handleChange(e)}
             />
+            <p className={`form-help ${inValidEmail ? 'valid' : 'hidden'}`}>
+              <span className='form-field-icon'>i</span>
+              {emailErrorMsg}
+            </p>
           </div>
-          {/* <div className='form-group'>
-            <input
-              type='password'
-              placeholder='Password'
-              name='password'
-              onChange={(e) => handleChange(e)}
-            />
-          </div>
-          <div className='form-group'>
-            <input
-              type='password'
-              placeholder='Confirm Password'
-              name='password'
-              onChange={(e) => handleChange(e)}
-            />
-          </div> */}
           <div className='form-group'>
             <button
-              className='submit-btn button-secondry button'
+              className='submit-button button-secondry button'
               type='submit'
             >
               Sign In
             </button>
           </div>
-          <span>
+          <span className='alternate-action'>
             Don't have an account?
-            <Link to='/register'>Create a new account</Link>
+            <Link to='/register'> Create a new account</Link>
           </span>
         </form>
       </main>
@@ -103,6 +127,12 @@ const PageWrapper = styled.div`
     height: 80%;
     text-align: center;
 
+    h1 {
+      font-size: var(--font-size-xxx-large);
+      letter-spacing: -.75px;
+      line-height: 46px;
+    }
+
     form {
       max-width: 400px;
       width: 100%;
@@ -111,6 +141,10 @@ const PageWrapper = styled.div`
       input {
         font-size: var(--font-size-large);
         font-weight: var(--font-weight-bold);
+      }
+
+      .form-help {
+        color: var(--error-color);
       }
 
       .submit-btn {

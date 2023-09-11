@@ -39,13 +39,14 @@
   --dark-gray: #1d1c1d4d;
 
   --text-color: var(--color-black);
-  --valid-color: var(--color-green);
+  --valid-color: var(--color-secondry);
   --error-color: var(--color-red);
   --link-color: var(--light-blue);
   --link-active-color: var(--color-secondry-light);
   --link-active-bg-color: var(--light-grey);
   --border-color: var(--color-grey);
-  --input-border-color: var(--dark-gray);
+  --input-border-color: var(--border-color);
+  
 
 
   --font-family-base: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -56,6 +57,7 @@
   --font-size-large: 1.8rem;
   --font-size-x-large: 2.3rem;
   --font-size-xx-large: 4.8rem;
+  --font-size-xxx-large: 5.8rem;
 
   --font-weight-regular: 400;
   --font-weight-bold: 700;
@@ -66,6 +68,9 @@
 
   --border-redius-small: 8px;
   --border-redius-small-xs: 4px;
+
+  --padding-sm: 1rem;
+  --margin-sm: 1rem;
 
   /** SECTION **/
   --section-padding: 5rem 0;
@@ -100,10 +105,13 @@
   --nav-item-margin: 0 0 0 2rem;
   --nav-item-link-hover: var(--color-white);
 
+  /** INPUT **/
+  --input-padding: 1.2rem;
+
   /** BUTTON **/
   --button-display: inline-block;
   --button-padding: 1.2rem 3rem;
-  --button-border: var(--color-primary) solid 0.2rem;
+  --button-border: var(--color-primary) solid 0.1rem;
   --button-color: var(--color-white);
   --button-text-decoration: none;
   --button-font-size: var(--font-size-large);
@@ -121,6 +129,8 @@
 
 *, *:before, *:after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
   
 html {
@@ -149,12 +159,18 @@ html {
   }
 }
 
+.domi {
+  /* grid-template-columns: ; */
+  overflow-y: auto;
+}
+
 body {
   color: var(--text-color);
   font-family: var(--font-family-base);
   font-size: var(--font-size-medium);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-base);
+  background-color: var(--theme-light-bg);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -190,6 +206,10 @@ a.active {
   border-radius: var(--border-redius-small);
 }
 
+.hidden {
+  display: none;
+}
+
 .button {
   display: var(--button-display);
   padding: var(--button-padding);
@@ -216,6 +236,13 @@ a.active {
 .button-primary:hover,
 .button-secondry:hover {
   opacity: 0.89;
+}
+
+.submit-button {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-weight: var(--font-weight-bold);
 }
 
 /* Basic form
@@ -250,7 +277,7 @@ input[type=password],
 textarea {
   position: relative;
   width: 100%;
-  padding: 1.2rem;
+  padding: var(--input-padding);
   line-height: 1;
   border: .1rem solid var(--input-border-color);
   border-radius: var(--border-redius-small-xs);
@@ -258,12 +285,6 @@ textarea {
   box-shadow: none;
   outline: 0;
   transition: border-color 0.5s ease 0s;
-}
-
-input[type=text],
-input[type=email],
-input[type=password] {
-  padding-right: 3rem;
 }
 
 input[type=text]:focus,
@@ -284,7 +305,7 @@ textarea:focus {
     ============================= */
 
 .form-group {
-  padding: 1rem;
+  padding: var(--padding-sm);
   margin: 0;
   background-color: var(--color-white);
 }
@@ -298,61 +319,38 @@ textarea:focus {
 
 .form-field-icon {
   font-style: normal;
+  margin-right: var(--margin-sm);
 }
 
 /* Form help
     ============================= */
 
 .form-group .form-help {
-  margin: 0;
-  line-height: 1.3;
-  letter-spacing: .019rem;
-  color: var(--color-dark-grey);
-  font-size: var(--font-size-small);
-  max-height: 0;
+  margin-top: var(--margin-sm);
+  padding: 0 var(--padding-sm);
+  text-align: left;
   transition: .3s;
   overflow: hidden;
-}
-
-.form-group:focus-within .form-help {
-  max-height: 20rem;
-  margin: .4rem 0 0;
+  color: var(--color-secondry);
 }
 
 /* Form error handling
     ============================= */
 
-input:not(:placeholder-shown) ~ .form-field-icon::after {
-  height: 100%;
-  right: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 1.3em;
+input.invalid {
+  box-shadow: 0 0 0 1px var(--error-color), 0 0 0 5px rgba(224,30,90,.3);
 }
 
-input:required:invalid:not(:focus):not(:placeholder-shown) ~ .form-field-icon::after {
-  content: '✘';
-  color: var(--error-color);
+input.invalid:focus {
+  border-color: var(--error-color);
 }
 
-input:required:valid ~ .form-field-icon::after {
-  content: '✔';
+input.valid {
+  box-shadow: 0 0 0 1px var(--valid-color), 0 0 0 5px rgba(29,155,209,.3);
+}
+
+.form-help.valid {
   color: var(--valid-color);
-}
-
-input:required:valid ~ .form-help {
-  max-height: 0;
-}
-
-input:required:invalid:not(:focus):not(:placeholder-shown),
-textarea:invalid:not(:focus):not(:placeholder-shown) {
-  border: 0.1rem solid var(--error-color);
-}
-
-input:required:valid:not(:placeholder-shown),
-textarea:valid:not(:placeholder-shown) {
-  border: 0.1rem solid var(--valid-color);
 }
 
 /*** SEARCH FORM ***/
@@ -402,3 +400,10 @@ textarea:valid:not(:placeholder-shown) {
   cursor: text;
   margin: 0 1rem;
 }
+
+/* General styles 
+  ============================= */
+
+  .alternate-action {
+    font-size: var(--font-size-large);
+  }
