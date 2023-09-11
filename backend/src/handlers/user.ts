@@ -67,6 +67,7 @@ export const signin = async (req, res) => {
             res.json({message: "Invalid email or password", issuccess: false})
             return;
         }
+        delete user.password;
     
         const token = createJWT(user)
         res.json({
