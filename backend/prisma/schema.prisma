@@ -11,64 +11,91 @@ datasource db {
 }
 
 model Organisation {
-  id          Int          @id @default(autoincrement())
-  name        String
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
   departments Department[]
-  createdAt DateTime  @default(now())
 }
+
 
 model Department {
-  id             Int          @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   name           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   organisationId Int
   organisation   Organisation @relation(fields: [organisationId], references: [id])
+  users          User[]
   tasks          Task[]
-  messages       Message[]
-  createdAt DateTime  @default(now())
+  messages       Message[] 
 }
 
+
 model Task {
-  id           Int        @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   title        String
   description  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deadline     DateTime?
+  completed    Boolean  @default(false)
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
   departmentId Int
   department   Department @relation(fields: [departmentId], references: [id])
-  userId       Int?
-  user         User?       @relation(fields: [userId], references: [id])
-  createdAt DateTime  @default(now())
 }
 
 model OTP {
-  id     Int    @id @default(autoincrement())
-  code   String
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
-  createdAt DateTime  @default(now())
-  expiresAt DateTime @default(dbgenerated("CURRENT_TIMESTAMP + INTERVAL '1 hour'"))
+  id        Int      @id @default(autoincrement())
+  code      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Role {
-  id    Int    @id @default(autoincrement())
-  name  String
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
 }
+
 
 model User {
-  id       Int       @id @default(autoincrement())
-  name     String
-  email    String    @unique
-  password String
-  otps     OTP[]
-  messages Message[]
-  tasks    Task[]
-  createdAt DateTime  @default(now())
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String   @unique
+  password       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organisationId Int?
+  organisation   Organisation? @relation(fields: [organisationId], references: [id])
+  departmentId   Int?
+  department     Department? @relation(fields: [departmentId], references: [id])
+  roleId         Int?
+  role           Role?    @relation(fields: [roleId], references: [id])
+  tasks          Task[]
+  sentMessages   Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  otps           OTP[]
 }
 
+
+
 model Message {
-  id           Int         @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   content      String
-  createdAt DateTime  @default(now())
-  userId       Int
-  user         User        @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  senderId     Int
+  sender       User     @relation("SentMessages", fields: [senderId], references: [id])
+  recipientId  Int
+  recipient    User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
   departmentId Int?
   department   Department? @relation(fields: [departmentId], references: [id])
 }
