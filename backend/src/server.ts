@@ -26,7 +26,7 @@ app.use('/api', protect, router);
 app.post('/register', createNewUser, async (req, res) => {
     await sendOtp(req.body.email, req.body.id)
 })
-app.post('/login', signin);
+app.post('/login', signin)
 app.post('/verifyotp', async (req, res) => {
     const {user_id, otp} = req.body;
     try {
@@ -38,7 +38,8 @@ app.post('/verifyotp', async (req, res) => {
         res.status(200)
         res.json({message: "Valid Otp"})
     } catch (error) {
-        console.log(error)
+        res.json({message: "oops! server is unreachable"})
+        return
     }
 })
 

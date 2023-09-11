@@ -21,7 +21,7 @@ export const verifyotp = async (id, otp) => {
         const isValid = comparePassword(String(otp), otp_user.code);
         return isValid;
     } catch (error) {
-        console.log(error)
+        throw error("Could not reach database")
         return
     }
 }
