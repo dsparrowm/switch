@@ -1,36 +1,68 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
+import * as React from 'react';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
-function Alert ({ type, msg }) {
+const styles = {
+  maxWidth: '800px',
+  width: '90%',
+  margin: '0 auto',
+  fontSize: 'var(--font-size-large)',
+
+  alert: {
+    fontSize: 'inherit',
+    width: '100%'
+  }
+};
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} {...props} />;
+});
+
+
+function Toast ({ type, msg, isOpen }) {
+  const [open, setOpen] = React.useState(false);
+
+  const position = {
+    vertical: 'top',
+    horizontal: 'center'
+  };
+
+  const { vertical, horizontal } = position;
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setOpen(isOpen);
+    }
+  }, [isOpen]);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   return (
-    <AlertContainer $theme={type}>
-      <p>{msg}</p>
-    </AlertContainer>
+    <>
+    <Snackbar
+      sx={styles}
+      anchorOrigin={{ vertical, horizontal }}
+      open={open}
+      autoHideDuration={6000}
+      onClose={handleClose}
+      key={vertical + horizontal}
+    >
+      <Alert
+        onClose={handleClose}
+        severity={type}
+        sx={styles.alert}
+      >
+        {msg}
+      </Alert>
+    </Snackbar>
+    </>
   );
 }
 
-const AlertContainer = styled.div`
-  padding: 8px 16px;
-  word-break: break-word;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: all 0.5s ease 0s;
-
-  ${(props) => {
-    switch (props.$theme) {
-      case 'error':
-        return css`
-        background-color: rgba(224, 30, 90, .1);
-        border-color: rgba(224, 30, 90, .4);
-        `;
-      default:
-        return css`
-        background-color: var(--color-green);
-        background-color: rgba(8, 128, 91, .1);
-        border-color: rgba(8, 128, 91, .4);
-        `;
-    }
-  }}
-`;
-
-export default Alert;
+export default Toast;

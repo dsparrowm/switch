@@ -36,7 +36,7 @@
   --color-green: #08805b;
   --light-grey: #f4f9ff;
   --light-blue: #4e7294;
-  --dark-gray: #1d1c1d4d;
+  --dark-grey: #1d1c1d4d;
 
   --text-color: var(--color-black);
   --valid-color: var(--color-secondry);
@@ -307,7 +307,7 @@ textarea:focus {
 .form-group {
   padding: var(--padding-sm);
   margin: 0;
-  background-color: var(--color-white);
+  /* background-color: var(--color-white); */
 }
 
 /* Form field

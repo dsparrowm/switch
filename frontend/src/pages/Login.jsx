@@ -1,25 +1,31 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import Alert from '../components/Alert';
+import { Link, useNavigate } from 'react-router-dom';
 import { loginRoute } from '../utils/APIRoutes';
 import axios from 'axios';
+import Toast from '../components/Alert';
 
 function Login () {
-  const [email, setEmail] = useState('');
-  const [emailErrorMsg, setEmailErrorMsg] = useState('');
+  const navigate = useNavigate();
+  const [formDate, setSetFromData] = useState({
+    email: '',
+    password: '',
+  });
+  const [formErrorMsgs, setFormErrorMsgs] = useState('');
   const [inValidEmail, setInValidEmail] = useState(false);
-  const [emailCheck, setEmailCheck] = useState(false);
+  const [inValidPassword, setInValidPassword] = useState(false);
+  const [apiResponse, setApiResponse] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (handleValidation()) {
       try {
-        const { data } = await axios.post(loginRoute, { email });
-        if (data) {
-          setEmailCheck(true);
-          localStorage.setItem('signup-email', email);
-          console.log(data);
+        const { email, password} = formDate;
+        const { data } = await axios.post(loginRoute, { email, password });
+        if (data.isSuccess) {
+          navigate('/');
+        } else {
+          setApiResponse(data.message);
         }
       } catch (error) {
         console.error(error);
@@ -27,22 +33,34 @@ function Login () {
     }
   };
   const handleChange = (e) => {
-    setEmail(e.target.value);
+    setSetFromData({...formDate, [e.target.name]: e.target.value });
   };
   const handleValidation = () => {
+    const { email, password} = formDate;
     if (!isValidEmail(email)) {
       setInValidEmail(true);
       if (!email) {
-        setEmailErrorMsg('Required field - Please enter an email.');
+        setFormErrorMsgs('Required field - Please enter an email.');
       } else {
-        setEmailErrorMsg('Invalid email address. Please check and try again.');
+        setFormErrorMsgs('Invalid email address. Please check and try again.');
       }
       return false;
+    } else if (!password || password.length < 6) {
+      setInValidPassword(true);
+      setInValidEmail(false);
+      if (!password) {
+        setFormErrorMsgs('Required field - Please set Password.');
+      } else {
+        setFormErrorMsgs('Invalid! Password can not be less than 6-characters/numbers.');
+      }
+      return false;
+    } else {
+      setInValidEmail(false);
+      setInValidPassword(false);
+      setFormErrorMsgs('');
+      return true;
     }
 
-    setInValidEmail(false);
-    setEmailErrorMsg('');
-    return true;
   };
   const isValidEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
@@ -55,106 +73,128 @@ function Login () {
           <img src='' alt='Logo' />
         </div>
       </header>
-      <main className='form-container'>
-        <h1>
-          Enter your work email
-        </h1>
-        <form
-          onSubmit={(e) => handleSubmit(e)}
-          className='login-form'
-          noValidate
-        >
-          {emailCheck && (
+      <div className='main-container'>
+        <main>
+          <h1>
+            Enter your work email
+          </h1>
+          <form
+            onSubmit={(e) => handleSubmit(e)}
+            className='login-form'
+            noValidate
+          >
+            {apiResponse && (
+              <Toast
+                type='error'
+                msg={apiResponse}
+                isOpen={apiResponse.length ? true : false}
+              />
+            )}
             <div className='form-group'>
-              <Alert type='error' msg='Email Check has failed' />
+              <input
+                type='email'
+                placeholder='name@work-email.com'
+                name='email'
+                className={`${inValidEmail ? 'invalid' : formDate.email && 'valid'}`}
+                onChange={(e) => handleChange(e)}
+              />
+              <p className={`form-help ${inValidEmail ? 'valid' : 'hidden'}`}>
+                <span className='form-field-icon'>i</span>
+                {formErrorMsgs}
+              </p>
             </div>
-          )}
-          <div className='form-group'>
-            <input
-              type='email'
-              placeholder='name@work-email.com'
-              name='email'
-              className={`${inValidEmail ? 'invalid' : email && 'valid'}`}
-              onChange={(e) => handleChange(e)}
-            />
-            <p className={`form-help ${inValidEmail ? 'valid' : 'hidden'}`}>
-              <span className='form-field-icon'>i</span>
-              {emailErrorMsg}
-            </p>
-          </div>
-          <div className='form-group'>
-            <button
-              className='submit-button button-secondry button'
-              type='submit'
-            >
-              Sign In
-            </button>
-          </div>
-          <span className='alternate-action'>
-            Don't have an account?
-            <Link to='/register'> Create a new account</Link>
-          </span>
-        </form>
-      </main>
-      <footer className='footer'>
-        <span>Contact Us</span>
-      </footer>
+            <div className='form-group'>
+              <input
+                type='password'
+                placeholder='Password'
+                name='password'
+                className={`${inValidPassword ? 'invalid' : formDate.password && 'valid'}`}
+                onChange={(e) => handleChange(e)}
+              />
+              <p className={`form-help ${inValidPassword ? 'valid' : 'hidden'}`}>
+                <span className='form-field-icon'>i</span>
+                {formErrorMsgs}
+              </p>
+            </div>
+            <div className='form-group'>
+              <button
+                className='submit-button button-secondry button'
+                type='submit'
+              >
+                Sign In
+              </button>
+            </div>
+            <span className='alternate-action'>
+              Don't have an account?
+              <Link to='/register'> Create a new account</Link>
+            </span>
+          </form>
+        </main>
+        <footer className='footer'>
+          <span>Contact Us</span>
+        </footer>
+      </div>
     </PageWrapper>
   );
 }
 
 const PageWrapper = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: column;
   position: absolute;
   width: 100%;
   height: 100%;
+  padding: 0 1rem; 
   top: 0;
   left: 0;
 
   header, footer {
-    height: 10%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
+    padding: 2rem 0;
   }
 
-  main {
-    max-width: 800px;
-    width: 100%;
-    height: 80%;
-    text-align: center;
+  footer {
+    margin-top: auto;
+  }
 
-    h1 {
-      font-size: var(--font-size-xxx-large);
-      letter-spacing: -.75px;
-      line-height: 46px;
-    }
+  .main-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--padding-sm);
 
-    form {
-      max-width: 400px;
+    main {
+      max-width: 800px;
       width: 100%;
       margin: 0 auto;
-
-      input {
-        font-size: var(--font-size-large);
-        font-weight: var(--font-weight-bold);
+      text-align: center;
+      background-color: var(--light-grey);
+      padding: 0 0.5rem;
+      padding-bottom: 2rem;
+      border-radius: var(--border-redius-small);
+  
+      h1 {
+        font-size: var(--font-size-xx-large);
+        letter-spacing: -.75px;
+        line-height: 46px;
       }
-
-      .form-help {
-        color: var(--error-color);
-      }
-
-      .submit-btn {
-        display: block;
+  
+      form {
+        max-width: 400px;
         width: 100%;
-        margin-bottom: 1rem;
-        font-weight: var(--font-weight-bold);
+        margin: 0 auto;
+  
+        input {
+          font-size: var(--font-size-large);
+          font-weight: var(--font-weight-bold);
+        }
+  
+        .form-help {
+          color: var(--error-color);
+        }
       }
+  
     }
-
   }
 `;
 

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 // import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-// import { useNavigate } from 'react-router-dom';
-// import { registerRoute } from '../utils/APIRoutes';
+import { useNavigate } from 'react-router-dom';
+import { verifyOtpRoute } from '../utils/APIRoutes';
+import axios from 'axios';
+import AlertHandler from '../components/Alert';
 // import { login } from '../features/user/userSlice';
 import CreateOranisationModal from '../components/modals/CreateOrganisationModal';
 
@@ -10,8 +12,10 @@ import CreateOranisationModal from '../components/modals/CreateOrganisationModal
 function ConfirmEmail () {
   // const user = useSelector((state) => state.user);
   // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-  const [code, setCode] = useState('');
+  const [apiResponse, setApiResponse] = useState('');
+  const navigate = useNavigate();
+  const email = localStorage.getItem('signup-email');
+  const [otp, setOtp] = useState('');
   const [codeObj, setCodeObj] = useState({
     one: '',
     two: '',
@@ -20,29 +24,31 @@ function ConfirmEmail () {
     five: '',
     six: '',
   });
+  
+  const verifyOtp = async () => {
+    try {
+      const { data } = await axios.post(verifyOtpRoute, { otp });
+      if (data.isSuccess) {
+        navigate('/');
+      } else {
+        setApiResponse(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const fullcode = Object.values(codeObj).join('');
     if (fullcode.length > 5) {
-      setCode(fullcode);
+      setOtp(fullcode);
+      verifyOtp();
     }
   }, [codeObj]);
 
   const handleChange = (event) => {
     setCodeObj({...codeObj, [event.target.name]: event.target.value});
   };
-
-  // const ConfirmCode = () => {
-  //   try {
-      
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // const performSignIn = () => {};
-
-  // const performSignUp = () => {};
 
   const changeInputField = (event) => {
     const charCode = event.which;
@@ -92,13 +98,14 @@ function ConfirmEmail () {
         </h1>
         <article className='help-text'>
           <h3>
-            We've sent a 6-character code to <strong>jujudem@gmail.com</strong>. The code expires shortly, so please enter it soon.
+            We've sent a 6-character otp to <strong>{email}</strong>. The otp expires in an hour, so please enter it soon.
           </h3>
         </article>
         <form
           className='check-email-form'
           noValidate
         >
+          {apiResponse && <AlertHandler type='error' msg={apiResponse} />}
           <div className='row d-flex'>
             <div className='form-group col'>
               <input
