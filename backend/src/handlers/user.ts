@@ -14,7 +14,7 @@ export const createNewUser = async (req, res, next) => {
         })
     
         if (userExists) {
-            res.json({message: "User already Exists"});
+            res.json({message: "User already Exists", isSuccess: false});
             return;
         }
     
@@ -38,10 +38,10 @@ export const createNewUser = async (req, res, next) => {
         req.user = (user);
     
         const token = createJWT(createUser);
-        res.json({message: "Account Created successfully", token});
+        res.json({message: "Account Created successfully", token, isSuccess: true});
         next()
     } catch (error) {
-        res.json({message: "oops! could not reach server"})   
+        res.json({message: "oops! could not reach server", isSuccess: false})   
     }
 }
 
@@ -53,20 +53,31 @@ export const signin = async (req, res) => {
         const user = await prisma.user.findUnique({
             where: {
                 email: req.body.email,
+            },
+            include: {
+                organisation: true,
+                department: true,
+                tasks: true,
+                role: true
             }
         })
         const isValid = await comparePassword(req.body.password, user.password);
         if (!isValid) {
             res.status(401);
-            res.json({message: "Invalid email or password"})
+            res.json({message: "Invalid email or password", issuccess: false})
             return;
         }
     
         const token = createJWT(user)
-        res.json({message: "Login successful", token});
+        res.json({
+            message: "Login successful",
+            token,
+            isSuccess: true,
+            user,
+        });
     } catch (error) {
         res.status(500);
-        res.json({message: 'oops! unable to reach database server'})
+        res.json({message: 'oops! unable to reach database server', isSuccess: false})
     }
     
 }

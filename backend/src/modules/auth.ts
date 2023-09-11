@@ -11,7 +11,7 @@ export const protect = (req, res, next) => {
 
     if (!bearer) {
         res.status(401);
-        res.json({message: "Not Authorized"});
+        res.json({message: "Not Authorized", isSuccess: false});
         return;
     }
 
@@ -19,7 +19,7 @@ export const protect = (req, res, next) => {
     console.log(token)
     if (!token) {
         res.status(401);
-        res.json({message: "Not a valid token"});
+        res.json({message: "Not a valid token", isSuccess: false});
         return;
     }
     try {
@@ -31,7 +31,7 @@ export const protect = (req, res, next) => {
     } catch (error) {
         console.log(error);
         res.status(401);
-        res.json({message: "Not Authorized"});
+        res.json({message: "Not Authorized", isSuccess: false});
         return;
     }
 }
