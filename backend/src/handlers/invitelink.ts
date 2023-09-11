@@ -55,7 +55,7 @@ export const sendOtp = async (email, id) => {
       },
       to: receivers,
       subject: `Verify your account`,
-      htmlContent: `<p>This is a test string too</P`,
+      htmlContent: `<p>Verify your email with the code below</p><p style="color:tomato;font-size:25px;letter-spacing:2px;"><b>${generatedOtp}</b></p><p>This code expires in <b>1 hour(s)</b></p>`,
   };
     sendorgInviteLink('Switch', mailOptions);
     const hashed = await hashPassword(String(generatedOtp));
