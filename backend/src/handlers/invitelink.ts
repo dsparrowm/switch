@@ -71,6 +71,7 @@ export const sendOtp = async (email, id) => {
       data: {
         code: hashed,
         userId: otpUser.id,
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000)
       }
     });
   } catch (error) {
