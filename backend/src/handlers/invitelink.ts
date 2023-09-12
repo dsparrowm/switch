@@ -65,13 +65,16 @@ export const sendOtp = async (email, id) => {
         email,
       }
     });
+    const now = new Date();
+    const timezoneOffsetMilliseconds = now.getTimezoneOffset() * 60 * 1000;
     console.log("Code runs to this point")
     // create new otp record
     const createOtp = await prisma.oTP.create({
       data: {
         code: hashed,
         userId: otpUser.id,
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000)
+        createdAt: new Date(now.getTime() + timezoneOffsetMilliseconds),
+        expiresAt: new Date(now.getTime() + timezoneOffsetMilliseconds + 60 * 60 * 1000)
       }
     });
   } catch (error) {

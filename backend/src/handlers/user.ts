@@ -77,7 +77,6 @@ export const signin = async (req, res) => {
             user,
         });
     } catch (error) {
-        res.status(500);
         res.json({message: 'oops! unable to reach database server', isSuccess: false})
     }
     
