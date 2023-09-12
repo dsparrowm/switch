@@ -67,11 +67,13 @@ export const sendOtp = async (email, id) => {
     });
     console.log("Code runs to this point")
     // create new otp record
+    // const createdAt = ;
     const createOtp = await prisma.oTP.create({
       data: {
         code: hashed,
         userId: otpUser.id,
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000)
+        createdAt: new Date(Date.now() + 60 * 60 * 1000),
+        expiresAt: new Date(Date.now())
       }
     });
   } catch (error) {

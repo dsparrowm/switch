@@ -14,7 +14,7 @@ export const verifyotp = async (id, otp) => {
         }
         let {expiresAt} = otp_user;
         let now = new Date();
-        if (now > expiresAt) {
+        if (now < expiresAt) {
             throw error("Code has expired, request a new on")
         }
     
