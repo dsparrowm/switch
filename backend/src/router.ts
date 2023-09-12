@@ -10,7 +10,22 @@ const router = Router();
  */
 router.get('/departments', () => {})
 router.get('/departments/:id', () => {})
-router.post('/departments', () => {})
+router.post('/departments/new', async (req, res) => {
+    const {userId, departmentName} = req.body;
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            },
+            include: {role: true}
+        })
+        if (user === null) {
+            throw new Error("User does not exist")
+        }
+    } catch (err) {
+
+    }
+})
 router.put('/departments/:id', () => {})
 router.delete('/departments/:id', () => {})
 

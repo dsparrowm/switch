@@ -69,6 +69,8 @@
   --border-redius-small: 8px;
   --border-redius-small-xs: 4px;
 
+  --sw-border: 0.1px solid var(--border-color);
+
   --padding-sm: 1rem;
   --margin-sm: 1rem;
 
@@ -318,8 +320,9 @@ textarea:focus {
 }
 
 .form-field-icon {
-  font-style: normal;
+  font-style: var(--font-size-large);
   margin-right: var(--margin-sm);
+  vertical-align: middle;
 }
 
 /* Form help

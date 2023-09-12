@@ -37,8 +37,8 @@ app.post('/verifyotp', async (req, res) => {
         }
         res.status(200)
         res.json({message: "Valid Otp", issuccess: true})
-    } catch (error) {
-        res.json({message: "oops! server is unreachable", issuccess: false})
+    } catch (err) {
+        res.json({message: `${err}`, issuccess: false})
         return
     }
 })

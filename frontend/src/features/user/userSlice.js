@@ -5,7 +5,7 @@ import {
 
 export const initialState = {
   isUserLoggedIn: false,
-  userInfo: {}
+  user: {}
 };
 
 const userSlice = createSlice({
@@ -13,12 +13,13 @@ const userSlice = createSlice({
   initialState: initialState,
   reducers: {
     logout(state) {
+      state.isUserLoggedIn = false;
       state.user = {};
     },
     login(state, action) {
       state.isUserLoggedIn = true;
-      state.userInfo = action.payload;
-    },
+      state.user = action.payload;
+    }
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed

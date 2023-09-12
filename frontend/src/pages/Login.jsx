@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loginRoute } from '../utils/APIRoutes';
 import axios from 'axios';
 import Toast from '../components/Alert';
+import HandleFormInputError from '../components/HandleFormInputError';
 
 function Login () {
   const navigate = useNavigate();
@@ -98,10 +99,10 @@ function Login () {
                 className={`${inValidEmail ? 'invalid' : formDate.email && 'valid'}`}
                 onChange={(e) => handleChange(e)}
               />
-              <p className={`form-help ${inValidEmail ? 'valid' : 'hidden'}`}>
-                <span className='form-field-icon'>i</span>
-                {formErrorMsgs}
-              </p>
+              <HandleFormInputError
+                state={inValidEmail}
+                msg={formErrorMsgs}
+              />
             </div>
             <div className='form-group'>
               <input
@@ -111,10 +112,10 @@ function Login () {
                 className={`${inValidPassword ? 'invalid' : formDate.password && 'valid'}`}
                 onChange={(e) => handleChange(e)}
               />
-              <p className={`form-help ${inValidPassword ? 'valid' : 'hidden'}`}>
-                <span className='form-field-icon'>i</span>
-                {formErrorMsgs}
-              </p>
+              <HandleFormInputError
+                state={inValidPassword}
+                msg={formErrorMsgs}
+              />
             </div>
             <div className='form-group'>
               <button

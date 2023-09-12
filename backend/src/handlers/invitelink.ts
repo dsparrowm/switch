@@ -65,6 +65,8 @@ export const sendOtp = async (email, id) => {
         email,
       }
     });
+    const now = new Date();
+    const timezoneOffsetMilliseconds = now.getTimezoneOffset() * 60 * 1000;
     console.log("Code runs to this point")
     // create new otp record
     // const createdAt = ;
@@ -72,8 +74,8 @@ export const sendOtp = async (email, id) => {
       data: {
         code: hashed,
         userId: otpUser.id,
-        createdAt: new Date(Date.now() + 60 * 60 * 1000),
-        expiresAt: new Date(Date.now())
+        createdAt: new Date(now.getTime() + timezoneOffsetMilliseconds),
+        expiresAt: new Date(now.getTime() + timezoneOffsetMilliseconds + 60 * 60 * 1000)
       }
     });
   } catch (error) {

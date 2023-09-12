@@ -4,6 +4,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useNavigate } from 'react-router-dom';
+// import { useSelector } from 'react-redux';
+import HandleFormInputError from '../HandleFormInputError';
+// import Axios from '../../utils/Axios';
 
 const style = {
   position: 'absolute',
@@ -22,10 +25,6 @@ const style = {
     fontWeight: 'var(--font-weight-bold)',
   },
 
-  formHelp: {
-    color: 'var(--error-color)'
-  },
-
   buttonStyles: {
     marginTop: '1rem',
     padding: 'var(--button-padding)',
@@ -35,13 +34,20 @@ const style = {
 };
 
 export default function CreateOranisationModal({ isOpen }) {
+  // const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  // const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [companyName, setConpanyName] = React.useState('');
   const [companyNameError, setCompanyNameError] = React.useState('');
   const [isInValidCompanyName, setIsInValidCompanyName] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setOpen(isOpen);
+    }
+  }, [isOpen]);
 
   const handleCreate = (event) => {
     event.preventDefault();
@@ -75,7 +81,7 @@ export default function CreateOranisationModal({ isOpen }) {
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
+      {/* <Button onClick={handleOpen}>Open modal</Button> */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -111,12 +117,10 @@ export default function CreateOranisationModal({ isOpen }) {
                   onChange={(e) => handleChange(e)}
                   placeholder='Enter the name of your organization'
                 />
-                <p
-                  style={style.formHelp}
-                  className={`form-help ${isInValidCompanyName ? '' : 'hidden'}`}>
-                  <span className='form-field-icon'>i</span>
-                  {companyNameError}
-                </p>
+                <HandleFormInputError
+                  state={isInValidCompanyName}
+                  msg={companyNameError}
+                />
               </div>
               <div className="form-group">
                 <Button

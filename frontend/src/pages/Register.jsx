@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { registerRoute } from '../utils/APIRoutes';
 import Toast from '../components/Alert';
+import HandleFormInputError from '../components/HandleFormInputError';
 
 function Register () {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ function Register () {
           name: fullName
          });
         if (data.isSuccess) {
-          localStorage.setItem('signup-email', email);
+          localStorage.setItem('temp-signup-info', JSON.stringify({email, password}));
           navigate('/confirmemail');
         } else {
           setApiResponse(data.message);
@@ -138,10 +139,10 @@ function Register () {
                 className={`${inValidEmail ? 'invalid' : formDate.email && 'valid'}`}
                 onChange={(e) => handleChange(e)}
               />
-              <p className={`form-help ${inValidEmail ? 'valid' : 'hidden'}`}>
-                <span className='form-field-icon'>i</span>
-                {formErrorMsgs}
-              </p>
+              <HandleFormInputError
+                state={inValidEmail}
+                msg={formErrorMsgs}
+              />
             </div>
             <div className='form-group'>
               <input
@@ -151,10 +152,10 @@ function Register () {
                 className={`${inValidFirstName ? 'invalid' : formDate.firstname && 'valid'}`}
                 onChange={(e) => handleChange(e)}
               />
-              <p className={`form-help ${inValidFirstName ? 'valid' : 'hidden'}`}>
-                <span className='form-field-icon'>i</span>
-                {formErrorMsgs}
-              </p>
+              <HandleFormInputError
+                state={inValidFirstName}
+                msg={formErrorMsgs}
+              />
             </div>
             <div className='form-group'>
               <input
@@ -164,10 +165,10 @@ function Register () {
                 className={`${inValidLastName ? 'invalid' : formDate.lastname && 'valid'}`}
                 onChange={(e) => handleChange(e)}
               />
-              <p className={`form-help ${inValidLastName ? 'valid' : 'hidden'}`}>
-                <span className='form-field-icon'>i</span>
-                {formErrorMsgs}
-              </p>
+              <HandleFormInputError
+                state={inValidLastName}
+                msg={formErrorMsgs}
+              />
             </div>
             <div className='form-group'>
               <input
@@ -177,10 +178,10 @@ function Register () {
                 className={`${inValidPassword ? 'invalid' : formDate.password && 'valid'}`}
                 onChange={(e) => handleChange(e)}
               />
-              <p className={`form-help ${inValidPassword ? 'valid' : 'hidden'}`}>
-                <span className='form-field-icon'>i</span>
-                {formErrorMsgs}
-              </p>
+              <HandleFormInputError
+                state={inValidPassword}
+                msg={formErrorMsgs}
+              />
             </div>
             <div className='form-group'>
               <input
@@ -190,10 +191,10 @@ function Register () {
                 className={`${inValidConfirmPassword ? 'invalid' : formDate.confirmPassword && 'valid'}`}
                 onChange={(e) => handleChange(e)}
               />
-              <p className={`form-help ${inValidConfirmPassword ? 'valid' : 'hidden'}`}>
-                <span className='form-field-icon'>i</span>
-                {formErrorMsgs}
-              </p>
+                <HandleFormInputError
+                state={inValidConfirmPassword}
+                msg={formErrorMsgs}
+              />
             </div>
             <div className='form-group'>
               <button
