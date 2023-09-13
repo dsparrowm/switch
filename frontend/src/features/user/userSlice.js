@@ -12,11 +12,11 @@ const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
   reducers: {
-    logout(state) {
+    logout (state) {
       state.isUserLoggedIn = false;
       state.user = {};
     },
-    login(state, action) {
+    login (state, action) {
       state.isUserLoggedIn = true;
       state.user = action.payload;
     }
@@ -27,7 +27,7 @@ const userSlice = createSlice({
     //   // Add user to the state array
     //   state.entities.push(action.payload)
     // })
-  },
+  }
 });
 
 // Extract the action creators object and the reducer

@@ -10,7 +10,7 @@ function Login () {
   const navigate = useNavigate();
   const [formDate, setSetFromData] = useState({
     email: '',
-    password: '',
+    password: ''
   });
   const [formErrorMsgs, setFormErrorMsgs] = useState('');
   const [inValidEmail, setInValidEmail] = useState(false);
@@ -21,7 +21,7 @@ function Login () {
     e.preventDefault();
     if (handleValidation()) {
       try {
-        const { email, password} = formDate;
+        const { email, password } = formDate;
         const { data } = await axios.post(loginRoute, { email, password });
         if (data.isSuccess) {
           navigate('/');
@@ -34,10 +34,10 @@ function Login () {
     }
   };
   const handleChange = (e) => {
-    setSetFromData({...formDate, [e.target.name]: e.target.value });
+    setSetFromData({ ...formDate, [e.target.name]: e.target.value });
   };
   const handleValidation = () => {
-    const { email, password} = formDate;
+    const { email, password } = formDate;
     if (!isValidEmail(email)) {
       setInValidEmail(true);
       if (!email) {
@@ -61,8 +61,8 @@ function Login () {
       setFormErrorMsgs('');
       return true;
     }
-
   };
+
   const isValidEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
   };
@@ -88,7 +88,7 @@ function Login () {
               <Toast
                 type='error'
                 msg={apiResponse}
-                isOpen={apiResponse.length ? true : false}
+                isOpen={apiResponse.length}
               />
             )}
             <div className='form-group'>

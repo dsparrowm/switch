@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
 
 const styles = {
   iconStyles: {
-    fontSize: 'large',
+    fontSize: 'large'
   }
 };
 
-function MessageList({ category }) {
+function MessageList ({ category }) {
   const [displayDrawer, setDisplayDrawer] = useState(true);
 
   const toggleDrawer = () => {
@@ -26,32 +26,31 @@ function MessageList({ category }) {
           <span className='form-field-icon'>
             {displayDrawer
               ? <ArrowDropDownOutlinedIcon sx={styles.iconStyles} />
-              : <ArrowRightOutlinedIcon sx={styles.iconStyles} />
-            }
+              : <ArrowRightOutlinedIcon sx={styles.iconStyles} />}
           </span>
           {category === 'group' ? 'Departments' : 'Direct Messages'}
         </button>
         <nav className={`navbar ${displayDrawer ? '' : 'hidden'}`}>
-            <ul className='drawer__menu'>
-              <li className='menu__items'>
-                <button
-                  className='menu__action menu__action--active'
-                >
-                  Channel 1
-                </button>
-              </li>
-              <li className='menu-items'>
-                <button className='menu__action menu__action--active'>Channel 2</button>
-              </li>
-              <li className='menu-items'>
-                <button className='menu__action menu__action--active'>Channel 3</button>
-              </li>
-            </ul>
-          </nav>
+          <ul className='drawer__menu'>
+            <li className='menu__items'>
+              <button
+                className='menu__action menu__action--active'
+              >
+                Channel 1
+              </button>
+            </li>
+            <li className='menu-items'>
+              <button className='menu__action menu__action--active'>Channel 2</button>
+            </li>
+            <li className='menu-items'>
+              <button className='menu__action menu__action--active'>Channel 3</button>
+            </li>
+          </ul>
+        </nav>
       </section>
     </Drawer>
-  )
-};
+  );
+}
 
 const Drawer = styled.div`
 button {
@@ -59,13 +58,16 @@ button {
   outline: none;
   background-color: inherit;
   border-radius: var(--border-redius-small-xs);
-  color: var(--light-blue);
+  // color: var(--light-blue);
+  color: var(--color-secondry);
   display: inline-block;
   text-align: left;
   width: 100%;
 
   &:hover {
-    background-color: var(--light-grey);
+    // background-color: var(--light-grey);
+    background-color: var(--color-primary);
+    // background-color: var(--color-primary-light);
   }
 }
 

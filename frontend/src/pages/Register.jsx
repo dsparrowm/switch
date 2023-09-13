@@ -30,13 +30,13 @@ function Register () {
       const { email, firstname, lastname, password } = formDate;
       const fullName = `${firstname} ${lastname}`;
       try {
-        const { data } = await axios.post(registerRoute, { 
+        const { data } = await axios.post(registerRoute, {
           email,
           password,
           name: fullName
-         });
+        });
         if (data.isSuccess) {
-          localStorage.setItem('temp-signup-info', JSON.stringify({email, password}));
+          localStorage.setItem('temp-signup-info', JSON.stringify({ email, password }));
           navigate('/confirmemail');
         } else {
           setApiResponse(data.message);
@@ -47,7 +47,7 @@ function Register () {
     }
   };
   const handleChange = (e) => {
-    setSetFromData({...formDate, [e.target.name]: e.target.value });
+    setSetFromData({ ...formDate, [e.target.name]: e.target.value });
   };
   const handleValidation = () => {
     const { email, firstname, lastname, password, confirmPassword } = formDate;
@@ -105,9 +105,11 @@ function Register () {
       return true;
     }
   };
+
   const isValidEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
   };
+
   return (
     <PageWrapper>
       <header className='header'>
@@ -128,7 +130,7 @@ function Register () {
             {apiResponse && (
               <Toast
                 type='error'
-                isOpen={apiResponse.length ? true : false}
+                isOpen={apiResponse.length}
                 msg={apiResponse}
               />)}
             <div className='form-group'>
@@ -191,7 +193,7 @@ function Register () {
                 className={`${inValidConfirmPassword ? 'invalid' : formDate.confirmPassword && 'valid'}`}
                 onChange={(e) => handleChange(e)}
               />
-                <HandleFormInputError
+              <HandleFormInputError
                 state={inValidConfirmPassword}
                 msg={formErrorMsgs}
               />

@@ -1,19 +1,19 @@
-import React, {useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 // import { useParams } from 'react-router-dom';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
-function SearchBar() {
+function SearchBar () {
   // const { officeId } = useParams();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   return (
     <Container>
-      <div className="topbar">
-        <div className="topbar__left"></div>
-        <div className="topbar__search__container">
+      <div className='topbar'>
+        <div className='topbar__left'>&nbsp;</div>
+        <div className='topbar__search__container'>
           <button
             onClick={handleOpen}
             className='topbar__search'
@@ -26,14 +26,14 @@ function SearchBar() {
             </span>
           </button>
         </div>
-        <div className="topbar__right">
+        <div className='topbar__right'>
           <div className='topbar__right__avatar'>
-
+          &nbsp;
           </div>
         </div>
       </div>
       {open &&
-        <div className="search-container">
+        <div className='search-container'>
           <div className='search'>
             <button
               onClick={handleClose}
@@ -42,12 +42,10 @@ function SearchBar() {
               <CloseOutlinedIcon sx={{ fontSize: 'large' }} />
             </button>
             <div className='search__content'>
-
               Search Input will be here.
             </div>
           </div>
-        </div>
-      }
+        </div>}
     </Container>
   );
 }
@@ -62,7 +60,7 @@ button {
 .topbar {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
-  background-color: var(--light-grey);
+  // background-color: var(--light-grey);
   color: var(--color-secondry-light);
   padding: 0.7rem 0;
 

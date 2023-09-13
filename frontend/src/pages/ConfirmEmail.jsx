@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 // import { useNavigate } from 'react-router-dom';
-import { verifyOtpRoute } from '../utils/APIRoutes';
+import { verifyOtpRoute, loginRoute } from '../utils/APIRoutes';
 import axios from 'axios';
 import AlertHandler from '../components/Alert';
 import { login } from '../features/user/userSlice';
 import CreateOranisationModal from '../components/modals/CreateOrganisationModal';
-import { loginRoute } from '../utils/APIRoutes';
-
 
 function ConfirmEmail () {
   const dispatch = useDispatch();
@@ -41,8 +39,8 @@ function ConfirmEmail () {
     } catch (error) {
       console.error(error);
     }
-  }; 
-  
+  };
+
   const verifyOtp = async () => {
     try {
       const { data } = await axios.post(verifyOtpRoute, { otp });
@@ -67,7 +65,7 @@ function ConfirmEmail () {
   }, [codeObj]);
 
   const handleChange = (event) => {
-    setCodeObj({...codeObj, [event.target.name]: event.target.value});
+    setCodeObj({ ...codeObj, [event.target.name]: event.target.value });
   };
 
   const changeInputField = (event) => {
@@ -112,7 +110,7 @@ function ConfirmEmail () {
           <img src='' alt='Logo' />
         </div>
       </header>
-      <div className="main-container">
+      <div className='main-container'>
         <main className='main'>
           <h1>
             Check your email

@@ -3,8 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 import LeftSideBar from '../../components/LeftSideBar';
 import SearchBar from '../../components/SearchBar';
+import MessageContainer from '../../components/MessageContainer';
 
-function OfficeSpace() {
+function OfficeSpace () {
   // const { officeId } = useParams();
   // console.log(useParams())
   return (
@@ -14,15 +15,15 @@ function OfficeSpace() {
       </header>
       <Main>
         <LeftSideBar />
-        <section>
-          Department Or Channel messages
-        </section>
+        <MessageContainer />
       </Main>
     </PageWrapper>
-  )
+  );
 }
 
 const PageWrapper = styled.div`
+  background-color: var(--theme-light-bg);
+  color: var(--theme-light-fg);
   display: flex;
   flex-direction: column; 
   position: absolute;

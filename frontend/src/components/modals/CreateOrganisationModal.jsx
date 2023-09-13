@@ -22,7 +22,7 @@ const style = {
   fontSize: 'var(--font-size-medium)',
 
   label: {
-    fontWeight: 'var(--font-weight-bold)',
+    fontWeight: 'var(--font-weight-bold)'
   },
 
   buttonStyles: {
@@ -30,10 +30,10 @@ const style = {
     padding: 'var(--button-padding)',
     fontWeight: 'var(--font-weight-bold)',
     fontSize: 'var(--font-size-medium)'
-  } 
+  }
 };
 
-export default function CreateOranisationModal({ isOpen }) {
+export default function CreateOranisationModal ({ isOpen }) {
   // const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
@@ -53,7 +53,7 @@ export default function CreateOranisationModal({ isOpen }) {
     event.preventDefault();
 
     if (handleValidation()) {
-      
+      console.log('lfksdjlbjk');
     }
   };
 
@@ -63,7 +63,7 @@ export default function CreateOranisationModal({ isOpen }) {
       setCompanyNameError('Required field - Please enter something.');
       return false;
     }
-  
+
     if (companyName.length < 4) {
       setIsInValidCompanyName(true);
       setCompanyNameError('Organisation name can not be less than 4-characters.');
@@ -85,34 +85,35 @@ export default function CreateOranisationModal({ isOpen }) {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        aria-labelledby='modal-modal-title'
+        aria-describedby='modal-modal-description'
       >
         <Box sx={style}>
           <Typography
-            id="modal-modal-title"
-            variant="h2" component="h2"
+            id='modal-modal-title'
+            variant='h2' component='h2'
             sx={{ textAlign: 'center' }}
           >
             Almost done!
           </Typography>
           <Box>
-            <Typography variant="h4" id="modal-modal-description" sx={{ mt: 2 }}>
-              <span className="help-text">
+            <Typography variant='h4' id='modal-modal-description' sx={{ mt: 2 }}>
+              <span className='help-text'>
                 Give your workspace a name.
                 Note, this will be the name people see on the dashboard header.
               </span>
             </Typography>
             <form
-            onSubmit={(e) => handleCreate(e)}
-            className='create-org'>
-              <div className="form-group">
-                <label sx={style.label} htmlFor="organisation">
+              onSubmit={(e) => handleCreate(e)}
+              className='create-org'
+            >
+              <div className='form-group'>
+                <label sx={style.label} htmlFor='organisation'>
                   What is your organisation called?
                 </label>
                 <input
                   id='organisation'
-                  type="text"
+                  type='text'
                   className={`${isInValidCompanyName ? 'invalid' : companyName && 'valid'}`}
                   onChange={(e) => handleChange(e)}
                   placeholder='Enter the name of your organization'
@@ -122,10 +123,10 @@ export default function CreateOranisationModal({ isOpen }) {
                   msg={companyNameError}
                 />
               </div>
-              <div className="form-group">
+              <div className='form-group'>
                 <Button
                   sx={style.buttonStyles}
-                  variant="contained"
+                  variant='contained'
                   className='create-button submit-button button-secondry button'
                   type='submit'
                 >
@@ -133,7 +134,7 @@ export default function CreateOranisationModal({ isOpen }) {
                 </Button>
                 <Button
                   sx={style.buttonStyles}
-                  variant="outlined"
+                  variant='outlined'
                   onClick={() => navigate('/')}
                   className='cancel-button submit-button button-secondry button'
                 >
