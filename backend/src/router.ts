@@ -11,38 +11,24 @@ const router = Router();
 router.get('/departments', () => {})
 router.get('/departments/:id', () => {})
 router.post('/departments/join', async (req, res) => {
-    const {deptId, adminOrDeptHeadId, userEmailToBeAdded, orgId} = req.body;
+    const {userIds, adminOrDeptHeadId, departmentId} = req.body;
     try {
         const manager = await prisma.user.findUnique({
             where: {id: adminOrDeptHeadId}, include: {role: true}
         })
-
-        const teamMember = await prisma.user.findUnique({
-            where: {email: userEmailToBeAdded}
-        })
-        if (teamMember === null) {
-            if (manager.role.name !== "admin") {
-                res.json({message: "The user is not part of this organisation, please contact your admin to add him/her"})
-            }
-            // implement code here to send him an invitation email to join the organisation
-            // To be implemented later
-        }
-        if (teamMember.organisationId !== orgId) {
-            if (manager.role.name !== "admin") {
-                res.json({message: "The user is not part of this organisation, please contact your admin to add him/her"})
-            }
-            // Implement code here to send him an invitation email to join the organisation
-            // To be implemented later
-        }
-        const addedUserToDept = await prisma.user.update({
+        const addUsersToDept = await prisma.department.update({
             where: {
-                email: userEmailToBeAdded
+                id: departmentId
             },
             data: {
-                departmentId: deptId
-            }
+                users: {
+                    create: userIds.map((id) => ({
+                        userId: id
+                    })),
+                },
+            },
         })
-        res.status(200).json({message: `User added successfully to department`})
+        res.status(200).json({message: `User(s) added successfully to department`})
 
     } catch (err) {
         res.json({error: err.message})
@@ -51,7 +37,6 @@ router.post('/departments/join', async (req, res) => {
 router.post('/departments/new', async (req, res) => {
     try {
         const {userId, departmentName, orgId} = req.body;
-        console.log("code execution starts here")
         const user = await prisma.user.findUnique({
             where: {
                 id: userId
@@ -72,6 +57,24 @@ router.post('/departments/new', async (req, res) => {
 
             }
         })
+        const admins = await prisma.user.findMany({
+            where: {
+                role: {
+                    name: {
+                        equals: "admin"
+                    }
+                }
+            },
+            include: {role: true}
+        })
+        for (let admin of admins) {
+            await prisma.userDepartment.create({
+                data: {
+                    userId: admin.id,
+                    departmentId: newDepartment.id
+                }
+            })
+        }
         res.status(200);
         res.json({message: "Department created successfully"})
     } catch (err) {
@@ -167,6 +170,19 @@ router.post('/organisation/new', async (req, res) => {
                 organisationId: createOrg.id,
             }
         })
+        // Add the Admin to all departments in his organisation
+        // First get all the departments in the organisation
+        const departments = await prisma.department.findMany({
+            where: {organisationId: createOrg.id}
+        })
+        for (let department of departments) {
+            await prisma.userDepartment.create({
+                data: {
+                    userId,
+                    departmentId: department.id
+                }
+            })
+        }
         res.status(200);
         res.json({message: 'Organization created successfully!'})
     } catch (err) {

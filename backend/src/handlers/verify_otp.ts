@@ -1,7 +1,5 @@
-import { error } from "console";
 import prisma from "../db";
 import { comparePassword } from "../modules/auth";
-import { resolve } from "path";
 
 export const verifyotp = async (id, otp) => {
     try {
