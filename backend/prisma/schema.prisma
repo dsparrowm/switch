@@ -27,7 +27,7 @@ model Department {
   updatedAt      DateTime @updatedAt
   organisationId Int
   organisation   Organisation @relation(fields: [organisationId], references: [id])
-  users          User[]
+  users          UserDepartment[]
   tasks          Task[]
   messages       Message[] 
 }
@@ -75,14 +75,13 @@ model User {
   updatedAt      DateTime @updatedAt
   organisationId Int?
   organisation   Organisation? @relation(fields: [organisationId], references: [id])
-  departmentId   Int?
-  department     Department? @relation(fields: [departmentId], references: [id])
   roleId         Int?
   role           Role?    @relation(fields: [roleId], references: [id])
   tasks          Task[]
   sentMessages   Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   otps           OTP[]
+  departments    UserDepartment[]
 }
 
 
@@ -98,4 +97,16 @@ model Message {
   recipient    User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
   departmentId Int?
   department   Department? @relation(fields: [departmentId], references: [id])
+}
+
+model UserDepartment {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id])
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, departmentId])
 }

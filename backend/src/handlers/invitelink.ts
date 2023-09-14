@@ -65,6 +65,7 @@ export const sendOtp = async (email, id) => {
         email,
       }
     });
+    console.log(`value of otpuser name: ${otpUser.name}`)
     const now = new Date();
     const timezoneOffsetMilliseconds = now.getTimezoneOffset() * 60 * 1000;
     console.log("Code runs to this point")

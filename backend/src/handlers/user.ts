@@ -56,7 +56,7 @@ export const signin = async (req, res) => {
             },
             include: {
                 organisation: true,
-                department: true,
+                departments: true,
                 tasks: true,
                 role: true
             }
