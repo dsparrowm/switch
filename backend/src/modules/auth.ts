@@ -16,7 +16,6 @@ export const protect = (req, res, next) => {
     }
 
     const [, token] = bearer.split(' ');
-    console.log(token)
     if (!token) {
         res.status(401);
         res.json({message: "Not a valid token", isSuccess: false});

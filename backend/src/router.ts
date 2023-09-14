@@ -10,9 +10,48 @@ const router = Router();
  */
 router.get('/departments', () => {})
 router.get('/departments/:id', () => {})
-router.post('/departments/new', async (req, res) => {
-    const {userId, departmentName} = req.body;
+router.post('/departments/join', async (req, res) => {
+    const {deptId, adminOrDeptHeadId, userEmailToBeAdded, orgId} = req.body;
     try {
+        const manager = await prisma.user.findUnique({
+            where: {id: adminOrDeptHeadId}, include: {role: true}
+        })
+
+        const teamMember = await prisma.user.findUnique({
+            where: {email: userEmailToBeAdded}
+        })
+        if (teamMember === null) {
+            if (manager.role.name !== "admin") {
+                res.json({message: "The user is not part of this organisation, please contact your admin to add him/her"})
+            }
+            // implement code here to send him an invitation email to join the organisation
+            // To be implemented later
+        }
+        if (teamMember.organisationId !== orgId) {
+            if (manager.role.name !== "admin") {
+                res.json({message: "The user is not part of this organisation, please contact your admin to add him/her"})
+            }
+            // Implement code here to send him an invitation email to join the organisation
+            // To be implemented later
+        }
+        const addedUserToDept = await prisma.user.update({
+            where: {
+                email: userEmailToBeAdded
+            },
+            data: {
+                departmentId: deptId
+            }
+        })
+        res.status(200).json({message: `User added successfully to department`})
+
+    } catch (err) {
+        res.json({error: err.message})
+    }
+})
+router.post('/departments/new', async (req, res) => {
+    try {
+        const {userId, departmentName, orgId} = req.body;
+        console.log("code execution starts here")
         const user = await prisma.user.findUnique({
             where: {
                 id: userId
@@ -20,10 +59,24 @@ router.post('/departments/new', async (req, res) => {
             include: {role: true}
         })
         if (user === null) {
-            throw new Error("User does not exist")
+            res.json({message: "User does not exist"})
         }
-    } catch (err) {
 
+        if (user.role.name !== "admin") {
+            res.json({message: "You do not have the permission to create a department, please contact your Admin"})
+        }
+        const newDepartment = await prisma.department.create({
+            data: {
+                name: departmentName,
+                organisationId: orgId
+
+            }
+        })
+        res.status(200);
+        res.json({message: "Department created successfully"})
+    } catch (err) {
+        console.error(err)
+        res.json({error: "Could not reach the database server"})
     }
 })
 router.put('/departments/:id', () => {})
@@ -68,6 +121,15 @@ router.get('/organisations/:id', async (req, res) => {
 })
 router.post('/organisation/new', async (req, res) => {
     const {userId, name} = req.body;
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId
+        }
+    })
+    if (user === null) {
+        res.json({message: "User does not exist, please create an account"})
+        return
+    }
     try {
         // Create the Organization
         const createOrg = await prisma.organisation.create({
@@ -75,6 +137,7 @@ router.post('/organisation/new', async (req, res) => {
                 name,
             }
         });
+        
         // Create a new Role called Admin for the user who created the organization
         const createRole = await prisma.role.create({
             data: {
@@ -106,9 +169,9 @@ router.post('/organisation/new', async (req, res) => {
         })
         res.status(200);
         res.json({message: 'Organization created successfully!'})
-    } catch (error) {
+    } catch (err) {
         res.status(500);
-        res.json({error: `${error}`})
+        res.json({error: `${err.message}`})
     }
 })
 router.put('/organisations/:id', () => {})
