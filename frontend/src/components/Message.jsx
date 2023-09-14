@@ -42,8 +42,8 @@ function Message () {
         </div>
         <div className='post__body'>
           <h5 className='post__body__sender'>
-            <span>Kent Podds</span>
-            <span>07:25</span>
+            <span className='post__body__sender__name'>Kent Podds</span>
+            <span className='post__body__time'>07:25</span>
           </h5>
           <article className='post__body__text'>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa maiores voluptatibus repudiandae officiis nostrum voluptate fugiat explicabo quisquam possimus atque?
@@ -55,10 +55,24 @@ function Message () {
   );
 }
 
-const Container = styled.div`
+const Container = styled.div` 
   .post {
     display: flex;
     gap: 1rem;
+
+    &__body {
+
+      &__sender {
+        font-size: var(--font-size-large);
+      }
+
+      &__time {
+        display: inline-block;
+        margin-left: 1rem;
+        font-size: var(--font-size-small);
+      }
+
+    }
   }
 `;
 

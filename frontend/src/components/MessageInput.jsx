@@ -153,6 +153,7 @@ const Container = styled.div`
       box-shadow: 0 5px 10px var(--color-grey);
       position: absolute;
       top: -468px;
+      z-index: 5;
     }
   }
 `;

@@ -42,7 +42,7 @@ const Main = styled.main`
   flex-grow: 1;
   display: grid;
   grid-template-columns: 220px auto;
-  height: 100%;
+  // height: 100%;
   overflow-y: hidden;
 `;
 

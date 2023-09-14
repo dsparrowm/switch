@@ -22,7 +22,7 @@ function ConfirmEmail () {
     three: '',
     four: '',
     five: '',
-    six: '',
+    six: ''
   });
 
   const performLogin = async () => {
@@ -47,7 +47,7 @@ function ConfirmEmail () {
       if (data.isSuccess) {
         setApiResponse(`${data.message} Hang on while we try to log you in...`);
         performLogin();
-        setApiResponse(data.message);
+        // setApiResponse(data.message);
       } else {
         setApiResponse(data.message);
       }

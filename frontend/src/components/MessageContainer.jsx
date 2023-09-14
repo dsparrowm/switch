@@ -8,60 +8,79 @@ import Chip from '@mui/material/Chip';
 function MessageContainer () {
   return (
     <Container>
-      <div className='message'>
-        <section className='message__header'>
-          <h3>
-            Active Chart
-          </h3>
-        </section>
-        <section className='message__body'>
-          <Message />
-          <Divider
-            textAlign='left'
-            sx={{ margin: '2rem 0' }}
-          >
-            <Chip
-              sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}
-              label='Wednesday, & September'
-              variant='outlined'
-            />
-          </Divider>
-          <Message />
-        </section>
-        <section className='message__footer'>
-          <MessageInput />
-        </section>
-      </div>
+      <section className='header'>
+        <h3>
+          Active Chart
+        </h3>
+      </section>
+      <section className='body'>
+        <Message />
+        <Divider
+          textAlign='left'
+          sx={{ margin: '2rem 0' }}
+        >
+          <Chip
+            sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}
+            label='Wednesday, & September'
+            variant='outlined'
+          />
+        </Divider>
+        <Message />
+        <Message />
+        <Message />
+        <Message />
+        <Message />
+        <Message />
+        <Message />
+        <Message />
+        <Message />
+      </section>
+      <section className='footer'>
+        <MessageInput />
+      </section>
     </Container>
   );
 }
 
 const Container = styled.section`
-.message {
-  // border-: var(--sw-border);
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
+  display: flex;
+  flex-direction: column;
 
-  &__header {
-    border-bottom: var(--sw-border);
-    padding: 1rem 2rem;
+  .body {
+    flex-grow: 1;
+    overflow-y: auto;
+    height: calc(100vh - 259.47px);
+    padding: 2rem;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      background-color: var(--color-white);
+
+      &-track {
+
+      }
+
+      &-thumb {
+        background-color: var(--theme-light-fg);
+        border-radius: 3px;
+      }
+    }
   }
 
-  &__footer {
+  .header {
+    background-color: var(--light-grey);
+    border-bottom: var(--sw-border);
+  }
+  
+  .footer {
+    background-color: var(--light-grey);
     border-top: var(--sw-border);
   }
 
-  &__header, &__footer {
-    background-color: var(--light-grey);
+  .header, .footer {
+    padding: 1rem;
   }
-
-  &__body {
-    padding: 2rem 1rem;
-    overflow-y: auto;
-  } 
-}
+ 
 `;
 
 export default MessageContainer;
