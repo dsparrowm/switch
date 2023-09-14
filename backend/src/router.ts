@@ -136,7 +136,7 @@ router.post('/organisations/:id/invitation', async (req, res) => {
             data: { invitationId: newInvitation.id },
         });
 
-        res.status(200).json({ message: 'Invitation link created successfully!', code });
+        res.status(200).json({ message: 'Invitation link created successfully!', code, organisationName: organisation.name, isSuccess: true });
     } catch (err) {
         res.status(400).json({message: "An error occurred while creating the invitation link"})
     }
