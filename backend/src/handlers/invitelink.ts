@@ -1,10 +1,7 @@
-import { error } from 'console';
-import nodemailer from 'nodemailer'
 import sibapiv3sdk from 'sib-api-v3-sdk'
 import prisma from '../db';
 import generateOtp from '../modules/generateOtp';
 import { hashPassword } from '../modules/auth';
-import { sendEmail } from './email';
 
 const defaultClient = sibapiv3sdk.ApiClient.instance;
 const apiKey = defaultClient.authentications['api-key'];
@@ -16,7 +13,7 @@ apiKey.apiKey = process.env.EMAIL_API_KEY;
  * @param orgName Name of the organisation
  */
 export const sendorgInviteLink = async (orgName, mailOptions) => {
-    const inviteLink = `http://localhost:3000/api/${orgName}/join?InviteCode=1234`;
+    const inviteLink = `http://localhost:3000/api/oranisation/${orgName}/join?InviteCode=1234`;
 
     const apiInstance = new sibapiv3sdk.TransactionalEmailsApi()
     try {
@@ -82,3 +79,4 @@ export const sendOtp = async (email, id) => {
     console.log(error);
   }
 }
+

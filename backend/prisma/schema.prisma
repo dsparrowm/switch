@@ -11,14 +11,16 @@ datasource db {
 }
 
 model Organisation {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  users     User[]
-  departments Department[]
+  id            Int      @id @default(autoincrement())
+  name          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  departments   Department[]
+  users         UserOrganisation[]
+  userRoles     UserRole[]
+  invitationId  Int?     
+  invitation    Invitation?
 }
-
 
 model Department {
   id             Int      @id @default(autoincrement())
@@ -31,7 +33,6 @@ model Department {
   tasks          Task[]
   messages       Message[] 
 }
-
 
 model Task {
   id           Int      @id @default(autoincrement())
@@ -62,9 +63,8 @@ model Role {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  users     User[]
+  users     UserRole[]
 }
-
 
 model User {
   id             Int      @id @default(autoincrement())
@@ -73,40 +73,75 @@ model User {
   password       String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  organisationId Int?
-  organisation   Organisation? @relation(fields: [organisationId], references: [id])
-  roleId         Int?
-  role           Role?    @relation(fields: [roleId], references: [id])
   tasks          Task[]
   sentMessages   Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
-  otps           OTP[]
-  departments    UserDepartment[]
+  
+ // Relations 
+ organisations UserOrganisation[]
+ departments   UserDepartment[]
+ otps          OTP[]
+ roles         UserRole[]
 }
 
-
-
 model Message {
-  id           Int      @id @default(autoincrement())
-  content      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  senderId     Int
-  sender       User     @relation("SentMessages", fields: [senderId], references: [id])
-  recipientId  Int
-  recipient    User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
-  departmentId Int?
-  department   Department? @relation(fields: [departmentId], references: [id])
+ id           Int      @id @default(autoincrement())
+ content      String
+ createdAt    DateTime @default(now())
+ updatedAt    DateTime @updatedAt
+ senderId     Int
+ sender       User     @relation("SentMessages", fields: [senderId], references: [id])
+ recipientId  Int
+ recipient    User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
+ departmentId Int?
+ department   Department? @relation(fields: [departmentId], references: [id])
 }
 
 model UserDepartment {
-  id           Int       @id @default(autoincrement())
-  userId       Int
-  user         User      @relation(fields: [userId], references: [id])
-  departmentId Int
-  department   Department @relation(fields: [departmentId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+ id           Int       @id @default(autoincrement())
+ userId       Int
+ user         User      @relation(fields: [userId], references: [id])
+ departmentId Int
+ department   Department@relation(fields: [departmentId], references: [id])
+ createdAt    DateTime@default(now())
+ updatedAt    DateTime@updatedAt
 
-  @@unique([userId, departmentId])
+ @@unique([userId, departmentId])
 }
+
+model UserOrganisation {
+ id             Int      @id@default(autoincrement())
+ userId         Int
+ user           User    @relation(fields: [userId], references: [id])
+ organisationId Int
+ organisation   Organisation@relation(fields: [organisationId], references: [id])
+ createdAt      DateTime@default(now())
+ updatedAt      DateTime@updatedAt
+
+ @@unique([userId, organisationId])
+}
+
+model UserRole {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+  roleId         Int 
+  role           Role     @relation(fields: [roleId], references: [id])
+  organisationId Int
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, roleId, organisationId])
+}
+
+model Invitation {
+  id             Int      @id @default(autoincrement())
+  code           String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organisationId Int      @unique
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+}
+
+

@@ -14,7 +14,7 @@ router.post('/departments/join', async (req, res) => {
     const {userIds, adminOrDeptHeadId, departmentId} = req.body;
     try {
         const manager = await prisma.user.findUnique({
-            where: {id: adminOrDeptHeadId}, include: {role: true}
+            where: {id: adminOrDeptHeadId}, include: {roles: true}
         })
         const addUsersToDept = await prisma.department.update({
             where: {
@@ -41,15 +41,16 @@ router.post('/departments/new', async (req, res) => {
             where: {
                 id: userId
             },
-            include: {role: true}
+            include: {
+                roles: {include: {role: true}}
+            }
         })
         if (user === null) {
             res.json({message: "User does not exist"})
         }
-
-        if (user.role.name !== "admin") {
-            res.json({message: "You do not have the permission to create a department, please contact your Admin"})
-        }
+        if (!user.roles.some(userRole => userRole.role.name === "admin" && userRole.organisationId === orgId)) {
+            return res.json({message: "You do not have the permission to create a department, please contact your Admin"});
+          }
         const newDepartment = await prisma.department.create({
             data: {
                 name: departmentName,
@@ -57,7 +58,7 @@ router.post('/departments/new', async (req, res) => {
 
             }
         })
-        const admins = await prisma.user.findMany({
+        const admins = await prisma.userRole.findMany({
             where: {
                 role: {
                     name: {
@@ -99,8 +100,46 @@ router.delete('/tasks/:id', () => {})
 /**
  * ORGANISATIONS
  */
-router.get('/organisations', (req, res) => {
+router.get('/organisations', (req, res) => {})
+router.post('/organisations/:id/invitation', async (req, res) => {
+    const organisationId = parseInt(req.params.id);
+    try {
+        //Check if organisation exists
+        const organisation = await prisma.organisation.findUnique({
+            where: {id: organisationId}
+        })
+        if (organisation === null) {
+            return res.status(400).json({message: "organisation not found"})
+        }
+        // Delete old invitation if it exists
+        const oldInvitation = await prisma.invitation.findUnique({
+            where: {organisationId}
+        })
+        if (oldInvitation) {
+            await prisma.invitation.delete({ where: { id: oldInvitation.id } });
+        }
 
+        // Generate new unique code for invitation
+        const code = Math.random().toString(36).substring(2, 15);
+
+        // Create new invitation
+        const newInvitation = await prisma.invitation.create({
+            data: {
+                code,
+                organisationId,
+            },
+        });
+
+        // Update organisation with new invitationId
+        await prisma.organisation.update({
+            where: { id: organisationId },
+            data: { invitationId: newInvitation.id },
+        });
+
+        res.status(200).json({ message: 'Invitation link created successfully!', code });
+    } catch (err) {
+        res.status(400).json({message: "An error occurred while creating the invitation link"})
+    }
 })
 router.get('/organisations/:id', async (req, res) => {
     try {
@@ -148,15 +187,13 @@ router.post('/organisation/new', async (req, res) => {
             }
         })
         // Update the user by changing his role to admin
-        const updateUser = await prisma.user.update({
-            where: {
-                id: userId,
-            },
+        const updateUser = await prisma.userRole.create({
             data: {
+                userId,
                 roleId: createRole.id,
                 organisationId: createOrg.id
             }
-        });
+        })
         // Create 2 new departments for the organization
         const generalDepartment = await prisma.department.create({
             data: {
@@ -183,6 +220,13 @@ router.post('/organisation/new', async (req, res) => {
                 }
             })
         }
+        // Add user to the organisation
+        await prisma.userOrganisation.create({
+            data: {
+                userId,
+                organisationId: createOrg.id
+            }
+        })
         res.status(200);
         res.json({message: 'Organization created successfully!'})
     } catch (err) {
