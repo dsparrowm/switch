@@ -55,12 +55,17 @@ export const signin = async (req, res) => {
                 email: req.body.email,
             },
             include: {
-                organisation: true,
+                organisations: true,
                 departments: true,
                 tasks: true,
-                role: true
+                roles: true
             }
         })
+        if (user === null) {
+            res.status(400)
+            res.json({message: "No user found", isSuccess: false})
+            return
+        }
         const isValid = await comparePassword(req.body.password, user.password);
         if (!isValid) {
             res.status(401);
