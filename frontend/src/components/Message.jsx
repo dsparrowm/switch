@@ -32,25 +32,28 @@ function stringAvatar (name) {
   };
 }
 
-function Message () {
+function Message ({ message }) {
   return (
     <Container>
-      <div className='post'>
-        <div className='post__sender'>
-          <Avatar {...stringAvatar('Kent Podds')} />
-          {/* <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" /> */}
+      {message && (
+        <div className='post'>
+          <div className='post__sender'>
+            <Avatar {...stringAvatar(message.name)} />
+            {/* <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" /> */}
+          </div>
+          <div className='post__body'>
+            <h5 className='post__body__sender'>
+              <span className='post__body__sender__name'>
+                {message.name}
+              </span>
+              <span className='post__body__time'>07:25</span>
+            </h5>
+            <article className='post__body__text'>
+              {message.description}
+            </article>
+          </div>
         </div>
-        <div className='post__body'>
-          <h5 className='post__body__sender'>
-            <span className='post__body__sender__name'>Kent Podds</span>
-            <span className='post__body__time'>07:25</span>
-          </h5>
-          <article className='post__body__text'>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa maiores voluptatibus repudiandae officiis nostrum voluptate fugiat explicabo quisquam possimus atque?
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores eos dolores, qui harum accusantium nihil illo quis error maxime doloribus est deserunt dicta quae, reiciendis nemo et aut magni dolorum iusto dolore ex aliquam consequatur hic. Harum vitae, dolorum tempora molestias blanditiis, velit dicta consectetur laborum nisi doloribus commodi adipisci.
-          </article>
-        </div>
-      </div>
+      )}
     </Container>
   );
 }

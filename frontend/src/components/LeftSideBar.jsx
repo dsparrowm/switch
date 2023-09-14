@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import MessageList from './MessageList';
+import { useSelector } from 'react-redux';
 
 function LeftSideBar () {
+  const messages = useSelector((state) => state.messages.messages);
   return (
     <Container>
       <section className='organisation-name'>
@@ -10,7 +12,10 @@ function LeftSideBar () {
           Alx-Students
         </h3>
       </section>
-      <MessageList category='group' />
+      <MessageList
+        category='group'
+        messages={messages}
+      />
       <MessageList />
     </Container>
   );

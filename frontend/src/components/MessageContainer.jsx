@@ -4,8 +4,11 @@ import MessageInput from './MessageInput';
 import Message from './Message';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
+import { useSelector } from 'react-redux';
 
 function MessageContainer () {
+  const selectedMsg = useSelector((state) => state.messages.selectedMessage);
+
   return (
     <Container>
       <section className='header'>
@@ -14,7 +17,7 @@ function MessageContainer () {
         </h3>
       </section>
       <section className='body'>
-        <Message />
+        <Message message={selectedMsg} />
         <Divider
           textAlign='left'
           sx={{ margin: '2rem 0' }}
@@ -25,14 +28,6 @@ function MessageContainer () {
             variant='outlined'
           />
         </Divider>
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
         <Message />
       </section>
       <section className='footer'>
