@@ -4,13 +4,13 @@ import {
 } from '@reduxjs/toolkit';
 
 const initialState = {
-  selectedMessage: {
+  activeConversations: {
     id: 1,
     name: "Annoucement Channel",
     description: "Responsible for driving sales and revenue.",
     members: ["User1", "User2", "User3"],
   },
-  messages: [
+  departments: [
     {
       id: 1,
       name: "Annoucement Channel",
@@ -41,19 +41,19 @@ const initialState = {
       description: "Manages financial operations and budgeting.",
       members: ["User13", "User14", "User15"],
     }
-  ]
+  ],
+  private: []
 }
 
-const messagesSlice = createSlice({
-  name: 'messages',
+const conversationSlice = createSlice({
+  name: 'conversations',
   initialState: initialState,
   reducers: {
-    addNewMessage (state, action) {
-      state.messages.push(action.payload);
+    addNewDepartmentConversation (state, action) {
+      state.departments.push(action.payload);
     },
-    setSelectedMessage (state, action) {
-      const selected = state.messages.find(({ id }) => id === action.payload);
-      state.selectedMessage = selected;
+    setActiveConversation (state, action) {
+      state.activeConversations = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -66,11 +66,11 @@ const messagesSlice = createSlice({
 });
 
 // Extract the action creators object and the reducer
-const { actions, reducer } = messagesSlice;
+const { actions, reducer } = conversationSlice;
 // Extract and export each action creator by name
 export const {
-  addNewMessage,
-  setSelectedMessage
+  addNewConversation,
+  setActiveConversation
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer;
