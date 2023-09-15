@@ -42,7 +42,7 @@ const initialState = {
       members: ["User13", "User14", "User15"],
     }
   ],
-  private: []
+  privates: []
 }
 
 const conversationSlice = createSlice({

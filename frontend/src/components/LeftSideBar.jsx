@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import MessageList from './MessageList';
+import Conversations from './Conversations';
 import { useSelector } from 'react-redux';
 
 function LeftSideBar () {
-  const messages = useSelector((state) => state.messages.messages);
+  const departments = useSelector((state) => state.conversations.departments);
+  const privates = useSelector((state) => state.conversations.privates);
   return (
     <Container>
       <section className='organisation-name'>
@@ -12,11 +13,12 @@ function LeftSideBar () {
           Alx-Students
         </h3>
       </section>
-      <MessageList
+      <Conversations
         category='group'
-        messages={messages}
+        conversations={departments}
       />
-      <MessageList />
+      {privates.length > 0 &&
+        <Conversations conversations={privates} />}
     </Container>
   );
 }

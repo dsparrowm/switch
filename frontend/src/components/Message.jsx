@@ -38,19 +38,20 @@ function Message ({ message }) {
       {message && (
         <div className='post'>
           <div className='post__sender'>
-            <Avatar {...stringAvatar(message.name)} />
+            <Avatar {...stringAvatar(message.sender)} />
             {/* <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" /> */}
           </div>
           <div className='post__body'>
             <h5 className='post__body__sender'>
               <span className='post__body__sender__name'>
-                {message.name}
+                {message.sender}
               </span>
               <span className='post__body__time'>07:25</span>
             </h5>
-            <article className='post__body__text'>
-              {message.description}
-            </article>
+            <article
+              dangerouslySetInnerHTML={{__html: message.content}}
+              className='post__body__text'
+            />
           </div>
         </div>
       )}
@@ -62,6 +63,11 @@ const Container = styled.div`
   .post {
     display: flex;
     gap: 1rem;
+    padding: 2rem;
+
+    &:hover {
+      background-color: var(--light-grey);
+    }
 
     &__body {
 

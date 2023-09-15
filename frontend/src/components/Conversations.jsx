@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
-import { setSelectedMessage } from '../features/messages/messages';
+import { setActiveConversation } from '../features/conversations/conversationSlice';
 
 const styles = {
   iconStyles: {
@@ -11,17 +11,17 @@ const styles = {
   }
 };
 
-function MessageList ({ category, messages }) {
+function Conversations ({ category, conversations }) {
   const dispatch = useDispatch();
-  const selectedMsg = useSelector((state) => state.messages.selectedMessage);
+  const activeConversation = useSelector((state) => state.conversations.activeConversations);
   const [displayDrawer, setDisplayDrawer] = useState(true);
 
   const toggleDrawer = () => {
     setDisplayDrawer(!displayDrawer);
   };
 
-  const changeActiveMessage = (message) => {
-    dispatch(setSelectedMessage(message.id));
+  const changeActiveMessage = (conversation) => {
+    dispatch(setActiveConversation(conversation));
   };
 
   return (
@@ -42,29 +42,23 @@ function MessageList ({ category, messages }) {
         </button>
         <nav className={`navbar ${displayDrawer ? '' : 'hidden'}`}>
           <ul className='drawer__menu'>
-            {messages && (
-              messages.map((message, i) => {
+            {conversations && (
+              conversations.map((conversation, i) => {
                 return (
                   <li
                     key={i}
                     className='menu__items'
                   >
                     <button
-                      onClick={() => changeActiveMessage(message)}
-                      className={`menu__action${message.id === selectedMsg.id ? '--active' : ''}`}
+                      onClick={() => changeActiveMessage(conversation)}
+                      className={`menu__action${conversation.id === activeConversation.id ? '--active' : ''}`}
                     >
-                      {message.name}
+                      {conversation.name}
                     </button>
                   </li>
                 );
               })
             )}
-            {/* <li className='menu-items'>
-              <button className='menu__action menu__action--active'>Channel 2</button>
-            </li>
-            <li className='menu-items'>
-              <button className='menu__action menu__action--active'>Channel 3</button>
-            </li> */}
           </ul>
         </nav>
       </section>
@@ -117,4 +111,4 @@ button {
 
 `;
 
-export default MessageList;
+export default Conversations;

@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
-import EmojiPicker from 'emoji-picker-react';
-import ReactQuill from 'react-quill';
+// import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
+// import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from "react-quill";
+import quillEmoji from "quill-emoji";
 import 'react-quill/dist/quill.snow.css';
+import "quill-emoji/dist/quill-emoji.css";
+import { useDispatch } from 'react-redux';
+import { addNewMessage } from '../features/conversations/messageSlice';
 
 const styles = {
   iconStyles: {
@@ -18,62 +22,74 @@ const styles = {
   }
 };
 
-function MessageInput () {
-  const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
-  const [selectedEmoji, setSelectedEmoji] = useState(null);
+Quill.register(
+  {
+    "formats/emoji": quillEmoji.EmojiBlot,
+    "modules/emoji-toolbar": quillEmoji.ToolbarEmoji,
+    "modules/emoji-textarea": quillEmoji.TextAreaEmoji,
+    "modules/emoji-shortname": quillEmoji.ShortNameEmoji
+  },
+  true
+);
+
+const modules = {
+  toolbar: [
+    [{ 'header': [1, 2, false] }],
+    ['bold', 'italic', 'underline','strike'],
+    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+    ['link', 'image', 'emoji'],
+    ['clean']
+  ],
+  "emoji-toolbar": true,
+  "emoji-textarea": false,
+  "emoji-shortname": true
+}
+
+
+const formats = ["header", "bold", "italic", "underline", "strike", "list", "indent", "align", "clean", "emoji"];
+
+function TextEditor () {
+  const dispatch = useDispatch();
+  // const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
+  // const [selectedEmoji, setSelectedEmoji] = useState(null);
   const [msg, setMsg] = useState('');
   const editorRef = useRef(null);
   // const [value, setValue] = useState('');
 
-  const handleEmojiClick = (emoji, event) => {
-    if (!emoji.clickCount) {
-      emoji.clickCount = 0;
-      setSelectedEmoji(emoji);
-      return;
-    }
-    emoji.clickCount += 1;
-    setSelectedEmoji(emoji);
-  };
+  // const handleEmojiClick = (emoji, event) => {
+  //   // if (!emoji.clickCount) {
+  //   //   emoji.clickCount = 0;
+  //   //   setSelectedEmoji(emoji);
+  //   //   return;
+  //   // }
+  //   // emoji.clickCount += 1;
+  //   // setSelectedEmoji(emoji);
+  //   console.log(emoji)
+  // };
 
   useEffect(() => {
     editorRef.current.focus();
   }, []);
 
-  useEffect(() => {
-    if (selectedEmoji) {
-      let message = msg;
-      message += selectedEmoji.emoji;
-      setMsg(message);
-    }
-  }, [selectedEmoji]);
-
   const handleChange = (e) => {
     setMsg(e);
-    // console.log(e);
-    if (displayEmojiPicker) {
-      setDisplayEmojiPicker(false);
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (msg) {
+      const message = {
+        sender: 'Demo sender',
+        conversationID: 1,
+        content: msg
+      };
+      dispatch(addNewMessage(message));
       setMsg('');
     }
   };
 
   return (
     <Container>
-      <div className='emoji-picker'>
-        <span className='emoji-picker__icon'>
-          <button
-            onClick={() => setDisplayEmojiPicker(!displayEmojiPicker)}
-          >
-            <EmojiEmotionsOutlinedIcon sx={styles.iconStyles} />
-          </button>
-        </span>
-        {displayEmojiPicker && <EmojiPicker onEmojiClick={handleEmojiClick} />}
-      </div>
       <form
         onSubmit={handleSubmit}
         className='message-form'
@@ -84,6 +100,8 @@ function MessageInput () {
           onChange={handleChange}
           style={styles.editorStyles}
           ref={editorRef}
+          modules={modules}
+          formats={formats}
           placeholder='Type a message'
         />
         <button
@@ -105,18 +123,15 @@ const Container = styled.div`
     cursor: pointer;
     padding: 1rem;
   }
+
   ::placeholder {
     font-style: normal;
     font-size: var(--font-size-medium);
     font-weight: var(--font-weight-regular);
   }
 
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  grid-gap: 2rem;
   padding: 0 2rem;
-  padding-bottom: 4rem;
+  margin-bottom: 4rem;
 
   .message-form {
     flex-direction: row;
@@ -127,10 +142,35 @@ const Container = styled.div`
     background-color: var(--color-white);
   }
 
+  .ql-snow {
+    position: relative;
+  }
+
   .ql-editor {
     line-height: 1.46668;
     font-size: var(--font-size-medium);
 
+    &::-webkit-scrollbar {
+      width: 5px;
+      background-color: var(--color-white);
+
+      &-track {
+
+      }
+
+      &-thumb {
+        background-color: var(--theme-light-fg);
+        border-radius: 3px;
+      }
+    }  
+  }
+
+  #emoji-palette {
+    // box-shadow: 0 5px 10px var(--color-grey);
+    top: -300.8px !important;
+  }
+
+  #tab-panel {
     &::-webkit-scrollbar {
       width: 5px;
       background-color: var(--color-white);
@@ -158,4 +198,4 @@ const Container = styled.div`
   }
 `;
 
-export default MessageInput;
+export default TextEditor;

@@ -1,37 +1,53 @@
 import React from 'react';
 import styled from 'styled-components';
-import MessageInput from './MessageInput';
 import Message from './Message';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
 import { useSelector } from 'react-redux';
+import TextEditor from './SWTextEditor';
 
 function MessageContainer () {
-  const selectedMsg = useSelector((state) => state.messages.selectedMessage);
+  const activeConversations = useSelector((state) => state.conversations.activeConversations);
+  const messages = useSelector((state) => state.messages);
+  // const [messages, setMessages] = useState('');
+
+  // useEffect(() => {
+  //   if (activeConversations && messages) {
+  //     const filteredMessages = messages.filter(({id} === ))
+  //   }
+  // }, [messages]);
 
   return (
     <Container>
       <section className='header'>
         <h3>
-          Active Chart
+          {activeConversations.name}
         </h3>
       </section>
       <section className='body'>
-        <Message message={selectedMsg} />
-        <Divider
-          textAlign='left'
-          sx={{ margin: '2rem 0' }}
-        >
-          <Chip
-            sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}
-            label='Wednesday, & September'
-            variant='outlined'
-          />
-        </Divider>
+        {messages && (
+          <>
+            <Divider
+              textAlign='left'
+              sx={{ margin: '2rem 0' }}
+            >
+              <Chip
+                sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}
+                label='Wednesday, & September'
+                variant='outlined'
+              />
+            </Divider>
+            {messages.map((message, i) => {
+              return <Message
+                key={i}
+                message={message}
+              />
+            })}
+          </>)}
         <Message />
       </section>
       <section className='footer'>
-        <MessageInput />
+        <TextEditor />
       </section>
     </Container>
   );
@@ -45,7 +61,7 @@ const Container = styled.section`
     flex-grow: 1;
     overflow-y: auto;
     height: calc(100vh - 259.47px);
-    padding: 2rem;
+    padding: 2rem 0;
 
     &::-webkit-scrollbar {
       width: 5px;
