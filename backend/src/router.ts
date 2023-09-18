@@ -77,10 +77,10 @@ router.post('/departments/new', async (req, res) => {
             })
         }
         res.status(200);
-        res.json({message: "Department created successfully"})
+        res.json({message: "Department created successfully", isSuccess: true})
     } catch (err) {
         console.error(err)
-        res.json({error: "Could not reach the database server"})
+        res.json({error: "Could not reach the database server", isSuccess: false})
     }
 })
 router.put('/departments/:id', () => {})
@@ -244,10 +244,10 @@ router.post('/organisation/new', async (req, res) => {
             }
         })
         res.status(200);
-        res.json({message: 'Organization created successfully!'})
+        res.json({message: 'Organization created successfully!', isSuccess: true})
     } catch (err) {
         res.status(500);
-        res.json({error: `${err.message}`})
+        res.json({error: `${err.message}`, isSuccess: true})
     }
 })
 router.put('/organisations/:id', () => {})

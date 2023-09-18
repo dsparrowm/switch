@@ -32,13 +32,13 @@ app.post('/verifyotp', async (req, res) => {
     try {
         const validOtp = await verifyotp(user_id, otp)
         if (!validOtp) {
-            res.json({message: "Invalid Otp", issuccess: false})
+            res.json({message: "Invalid Otp", isSuccess: false})
             return
         }
         res.status(200)
-        res.json({message: "Valid Otp", issuccess: true})
+        res.json({message: "Valid Otp", isSuccess: true})
     } catch (err) {
-        res.json({message: `${err}`, issuccess: false})
+        res.json({message: `${err}`, isSuccess: false})
         return
     }
 })
