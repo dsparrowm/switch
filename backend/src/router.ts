@@ -93,14 +93,27 @@ router.get('/tasks', (req, res) => {
     res.json({message: "Welcome"})
 })
 router.get('/tasks/:id', () => {})
-router.post('/tasks', () => {})
+router.post('/tasks/create', async (req, res) => {
+    const {assignedToUserId, taskTitle, description, deadline, deptId} = req.body;
+    try {
+       const createTask = await prisma.task.create({
+        data: {
+            title: taskTitle,
+            description,
+            departmentId: deptId,
+            userId: assignedToUserId,
+        }
+       }) 
+    } catch (err) {
+        res.status(400).json({message: err.message})
+    }
+})
 router.put('/tasks/:id', () => {})
 router.delete('/tasks/:id', () => {})
 
 /**
  * ORGANISATIONS
  */
-router.get('/organisations', (req, res) => {})
 router.post('/organisations/:id/invitation', async (req, res) => {
     const organisationId = parseInt(req.params.id);
     try {
@@ -148,14 +161,17 @@ router.get('/organisations/:id', async (req, res) => {
             where: {
                 id: id
             },
-            include: {departments: true}
+            include: {
+                departments: true,
+                users: true
+            }
         });
         if (getOrg === null) {
             res.status(400)
             res.json({message: "No organization found", isSuccess: false})
         }
         res.status(200);
-        res.json({getOrg, isSuccess: true}) 
+        res.json({getOrg, isSuccess: true, NoOfUsers: getOrg.users.length}) 
     } catch (error) {
         res.status(500);
         res.json({error: "Could not reach server", isSuccess: false})
@@ -242,7 +258,7 @@ router.delete('/organisations/:id', () => {})
  */
 
 /**
- * Invite links
+ * Invitation links
  */
 router.post('/:orgName/join', async (req, res) => {
     const orgName = req.body.orgName
