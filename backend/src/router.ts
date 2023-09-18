@@ -257,6 +257,73 @@ router.delete('/organisations/:id', () => {})
 /**
  * MESSAGES To be implemented later
  */
+router.get('/messages/private', async (req, res) => {
+    const receiverId = parseInt(req.query.receiverId);
+    const senderId = parseInt(req.query.senderId);
+    try {
+        const messages = await prisma.message.findMany({
+        where: {
+            OR: [
+            {
+                AND: [
+                { senderId: Number(senderId) },
+                { recipientId: Number(receiverId) }
+                ]
+            },
+            {
+                AND: [
+                { senderId: Number(receiverId) },
+                { recipientId: Number(senderId) }
+                ]
+            }
+            ]
+        },
+        include: {sender: true},
+        orderBy: {
+            createdAt: 'asc'
+        }
+    });
+    const sanitizeMessages = messages.map(message => {
+        delete message.sender.password;
+        return message
+    })
+    res.status(200).json({messages: sanitizeMessages})
+    } catch (err) {
+        res.status(404).json({message: err.message})
+    }
+    
+})
+
+router.get('/messages/group', async (req, res) => {
+    const departmentId = parseInt(req.query.departmentId);
+    try {
+        const messages = await prisma.message.findMany({
+            where: {
+                departmentId: departmentId
+            },
+            orderBy: {createdAt: 'asc'}
+        });
+        res.status(200).json({messages})
+    } catch (err) {
+        res.status(404).json({message: err.message})
+    } 
+})
+
+router.post('/messages/new', async (req, res) => {
+    const {senderId, recipientId, content} = req.body;
+    try {
+        const message = await prisma.message.create({
+            data: {
+                senderId,
+                recipientId,
+                content,
+            }
+        })
+        res.status(200).json({message})
+    } catch (err) {
+        res.status(404).json({message: err.message})
+    }
+})
 
 /**
  * Invitation links
