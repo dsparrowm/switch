@@ -262,26 +262,27 @@ router.get('/messages/private', async (req, res) => {
     const senderId = parseInt(req.query.senderId);
     try {
         const messages = await prisma.message.findMany({
-            where: {
-              OR: [
-                {
-                  AND: [
-                    { senderId },
-                    { recipientId: receiverId}
-                  ]
-                },
-                {
-                  AND: [
-                    { senderId },
-                    { recipientId: receiverId}
-                  ]
-                }
-              ]
-            },
-            orderBy: {
-              createdAt: 'asc'
-            }
-          });
+  where: {
+    OR: [
+      {
+        AND: [
+          { senderId: Number(senderId) },
+          { recipientId: Number(receiverId) }
+        ]
+      },
+      {
+        AND: [
+          { senderId: Number(receiverId) },
+          { recipientId: Number(senderId) }
+        ]
+      }
+    ]
+  },
+  orderBy: {
+    createdAt: 'asc'
+  }
+});
+
           res.status(200).json({messages})
     } catch (err) {
         res.status(404).json({message: err.message})
@@ -305,7 +306,7 @@ router.get('/messages/group', async (req, res) => {
 })
 
 router.post('/messages/new', async (req, res) => {
-    const {senderId, recipientId, content} = req.query;
+    const {senderId, recipientId, content} = req.body;
     try {
         const message = await prisma.message.create({
             data: {
