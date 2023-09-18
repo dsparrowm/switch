@@ -289,13 +289,15 @@ router.get('/messages/private', async (req, res) => {
 })
 
 router.get('/messages/group', async (req, res) => {
-    const {departmentId, senderId} = req.body;
+    const {departmentId} = req.body;
     try {
         const messages = await prisma.message.findMany({
             where: {
-                departmentId,
-            }
-        })
+                departmentId: departmentId
+            },
+            orderBy: {
+                createdAt: 'asc'}
+        });
         res.status(200).json({messages})
     } catch (err) {
         res.status(404).json({message: err.message})
