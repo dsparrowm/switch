@@ -7,11 +7,13 @@ export const createNewUser = async (req, res, next) => {
      * Check if user already exists
      */
     try {
+        console.log('Got here', req.body.email)
         const userExists = await prisma.user.findUnique({
             where: {
                 email: req.body.email,
             }
         })
+        console.log(userExists, 'jkgui');
     
         if (userExists) {
             res.json({message: "User already Exists", isSuccess: false});
@@ -41,6 +43,7 @@ export const createNewUser = async (req, res, next) => {
         res.json({message: "Account Created successfully", token, isSuccess: true});
         next()
     } catch (error) {
+        console.log(error)
         res.json({message: "oops! could not reach server", isSuccess: false})   
     }
 }
