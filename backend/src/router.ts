@@ -156,7 +156,7 @@ router.post('/organisations/:id/invitation', async (req, res) => {
 })
 router.get('/organisations', async (req, res) => {
     try {
-        const id = req.body.id
+        const id = parseInt(req.query.id)
         const getOrg = await prisma.organisation.findUnique({
             where: {
                 id: id
