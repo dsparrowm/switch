@@ -38,7 +38,7 @@ export const createNewUser = async (req, res, next) => {
         req.user = (user);
     
         const token = createJWT(createUser);
-        res.json({message: "Account Created successfully", token, isSuccess: true});
+        res.json({message: "Account Created successfully", token, user, isSuccess: true});
         next()
     } catch (error) {
         res.json({message: "oops! could not reach server", isSuccess: false})   
