@@ -262,28 +262,32 @@ router.get('/messages/private', async (req, res) => {
     const senderId = parseInt(req.query.senderId);
     try {
         const messages = await prisma.message.findMany({
-  where: {
-    OR: [
-      {
-        AND: [
-          { senderId: Number(senderId) },
-          { recipientId: Number(receiverId) }
-        ]
-      },
-      {
-        AND: [
-          { senderId: Number(receiverId) },
-          { recipientId: Number(senderId) }
-        ]
-      }
-    ]
-  },
-  orderBy: {
-    createdAt: 'asc'
-  }
-});
-
-          res.status(200).json({messages})
+        where: {
+            OR: [
+            {
+                AND: [
+                { senderId: Number(senderId) },
+                { recipientId: Number(receiverId) }
+                ]
+            },
+            {
+                AND: [
+                { senderId: Number(receiverId) },
+                { recipientId: Number(senderId) }
+                ]
+            }
+            ]
+        },
+        include: {sender: true},
+        orderBy: {
+            createdAt: 'asc'
+        }
+    });
+    const sanitizeMessages = messages.map(message => {
+        delete message.sender.password;
+        return message
+    })
+    res.status(200).json({messages: sanitizeMessages})
     } catch (err) {
         res.status(404).json({message: err.message})
     }
