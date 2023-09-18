@@ -154,9 +154,9 @@ router.post('/organisations/:id/invitation', async (req, res) => {
         res.status(400).json({message: "An error occurred while creating the invitation link"})
     }
 })
-router.get('/organisations/:id', async (req, res) => {
+router.get('/organisations', async (req, res) => {
     try {
-        const id = parseInt(req.params.id)
+        const id = req.body.id
         const getOrg = await prisma.organisation.findUnique({
             where: {
                 id: id
