@@ -257,6 +257,50 @@ router.delete('/organisations/:id', () => {})
 /**
  * MESSAGES To be implemented later
  */
+router.get('/messages/private', async (req, res) => {
+    const {senderId, receiverId} = req.body;
+    try {
+        const messages = await prisma.message.findMany({
+            where: {
+              OR: [
+                {
+                  AND: [
+                    { senderId },
+                    { recipientId: receiverId}
+                  ]
+                },
+                {
+                  AND: [
+                    { senderId },
+                    { recipientId: receiverId}
+                  ]
+                }
+              ]
+            },
+            orderBy: {
+              createdAt: 'asc'
+            }
+          });
+          res.status(200).json({messages})
+    } catch (err) {
+        res.status(404).json({message: err.message})
+    }
+    
+})
+
+router.get('/messages/group', async (req, res) => {
+    const {departmentId, senderId} = req.body;
+    try {
+        const messages = await prisma.message.findMany({
+            where: {
+                departmentId,
+            }
+        })
+        res.status(200).json({messages})
+    } catch (err) {
+        res.status(404).json({message: err.message})
+    } 
+})
 
 /**
  * Invitation links
