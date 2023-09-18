@@ -243,11 +243,12 @@ router.post('/organisation/new', async (req, res) => {
                 organisationId: createOrg.id
             }
         })
+        const org = createOrg
         res.status(200);
-        res.json({message: 'Organization created successfully!', isSuccess: true})
+        res.json({message: 'Organization created successfully!', isSuccess: true, org})
     } catch (err) {
         res.status(500);
-        res.json({error: `${err.message}`, isSuccess: true})
+        res.json({error: `${err.message}`, isSuccess: true,})
     }
 })
 router.put('/organisations/:id', () => {})
