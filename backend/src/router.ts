@@ -8,8 +8,29 @@ const router = Router();
 /**
  * DEPARTMENTS
  */
-router.get('/departments', () => {})
-router.get('/departments/:id', () => {})
+router.get('/departments', async (req, res) => {
+    try {
+        const departmentId = parseInt(req.query.departmentId);
+        const department = await prisma.department.findUnique({
+            where: {id: departmentId},
+            include: {
+                tasks: {orderBy: {createdAt: 'asc'}},
+                messages: {
+                    orderBy: {
+                        createdAt: 'asc'
+                    }
+                }
+            }
+        })
+        if (department === null) {
+            res.status(400).json({message: "No department found", isSuccess: false})
+            return
+        }
+        res.status(200).json({department, isSuccess: true})
+    } catch (err) {
+       res.status(404).json({message: err.message, isSuccess: false})
+    }
+})
 router.post('/departments/join', async (req, res) => {
     const {userIds, adminOrDeptHeadId, departmentId} = req.body;
     try {
