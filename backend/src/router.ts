@@ -329,6 +329,22 @@ router.get('/messages/group', async (req, res) => {
         res.status(404).json({message: err.message})
     } 
 })
+router.post('/messages/group', async (req, res) => {
+    const {senderId, content, departmentId} = req.body;
+    try {
+        const messageSent = await prisma.message.create({
+            data: {
+                senderId,
+                content,
+                departmentId,
+                recipientId: departmentId
+            }
+        })
+        res.status(200).json({message: "message sent successfully", isSuccess: true, messageSent})
+    } catch (err) {
+        res.status(400).json({message: err.message, isSuccess: false})
+    }
+})
 
 router.post('/messages/new', async (req, res) => {
     const {senderId, recipientId, content} = req.body;
