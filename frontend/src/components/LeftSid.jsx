@@ -3,14 +3,16 @@ import styled from 'styled-components';
 import Conversations from './Conversations';
 import { useSelector } from 'react-redux';
 
-function LeftSideBar () {
+function LeftSide () {
   const departments = useSelector((state) => state.conversations.departments);
   const privates = useSelector((state) => state.conversations.privates);
+  const organization = useSelector((state) => state.organization);
+
   return (
     <Container>
       <section className='organisation-name'>
         <h3>
-          Alx-Students
+          {organization && organization.name}
         </h3>
       </section>
       <Conversations
@@ -36,4 +38,4 @@ const Container = styled.aside`
 
 `;
 
-export default LeftSideBar;
+export default LeftSide;

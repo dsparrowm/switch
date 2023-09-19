@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { registerRoute } from '../utils/APIRoutes';
+import { login } from '../features/auth/authSlice';
 import Toast from '../components/Alert';
 import HandleFormInputError from '../components/HandleFormInputError';
 
 function Register () {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formDate, setSetFromData] = useState({
     firstname: '',
@@ -36,7 +39,8 @@ function Register () {
           name: fullName
         });
         if (data.isSuccess) {
-          localStorage.setItem('temp-signup-info', JSON.stringify({ email, password }));
+          localStorage.setItem('access_token', data.token);
+          dispatch(login(data));
           navigate('/confirmemail');
         } else {
           setApiResponse(data.message);

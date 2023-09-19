@@ -56,6 +56,7 @@ function MessageContainer () {
 const Container = styled.section`
   display: flex;
   flex-direction: column;
+  border-right: var(--sw-border);
 
   .body {
     flex-grow: 1;

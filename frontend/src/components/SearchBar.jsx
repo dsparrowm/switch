@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-// import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../features/auth/authSlice';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import Avatar from '@mui/material/Avatar';
 
 function SearchBar () {
-  // const { officeId } = useParams();
+  const { officeId } = useParams();
+  const user = useSelector(selectCurrentUser);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -28,7 +32,14 @@ function SearchBar () {
         </div>
         <div className='topbar__right'>
           <div className='topbar__right__avatar'>
-          &nbsp;
+            <Link to={`/office/${officeId}/user/${user.id}`}>
+              <Avatar
+                variant='square'
+                src="/static/images/avatar/1.jpg"
+                sx={{ width: 24, height: 24 }}
+                // alt={user.name}
+              /> 
+            </Link>
           </div>
         </div>
       </div>
@@ -75,6 +86,13 @@ button {
     &__icon {
       vertical-align: middle;
     }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 1.5rem;
   }
 }
 

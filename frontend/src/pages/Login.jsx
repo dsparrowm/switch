@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginRoute } from '../utils/APIRoutes';
 import axios from 'axios';
 import Toast from '../components/Alert';
+import { login } from '../features/auth/authSlice';
 import HandleFormInputError from '../components/HandleFormInputError';
 
 function Login () {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formDate, setSetFromData] = useState({
     email: '',
@@ -24,6 +27,8 @@ function Login () {
         const { email, password } = formDate;
         const { data } = await axios.post(loginRoute, { email, password });
         if (data.isSuccess) {
+          localStorage.setItem('access_token', data.token);
+          dispatch(login(data));
           navigate('/');
         } else {
           setApiResponse(data.message);

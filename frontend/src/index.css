@@ -224,6 +224,10 @@ a.active {
   transition-property: opacity, background-color;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
 .button-primary {
   color: var(--color-white);
   background-color: var(--color-primary);

@@ -1,49 +1,73 @@
-import React from 'react';
-// import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
-import LeftSideBar from '../../components/LeftSideBar';
-import SearchBar from '../../components/SearchBar';
+// import LeftSideBar from '../../components/LeftSideBar';
+// import SearchBar from '../../components/SearchBar';
 import MessageContainer from '../../components/MessageContainer';
+import Axios from '../../utils/Axios';
+import { getOrganisationByIdRoute } from '../../utils/APIRoutes';
+import { useDispatch } from 'react-redux';
+import {
+  setActiveConversation,
+  setDepartmentConversation
+} from '../../features/conversations/conversationSlice';
+import { setOrganisation } from '../../features/organization/organizationSlice';
 
 function OfficeSpace () {
-  // const { officeId } = useParams();
-  // console.log(useParams())
+  let ignore = false;
+  const params = useParams();
+  const dispatch = useDispatch();
+
+  const getOrganization = async () => {
+    console.log(params);
+    try {
+      const { data } = await Axios.get(getOrganisationByIdRoute, { 
+        params: { id: params.officeId }
+      });
+      
+      if (data.isSuccess) {
+        const { departments } = data.getOrg;
+        console.log(data);
+        dispatch(setOrganisation(data.getOrg));
+        dispatch(setDepartmentConversation(departments));
+        dispatch(setActiveConversation(departments[0]));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!ignore) {
+      getOrganization();
+    }
+
+    return () => {
+      ignore = true;
+    }
+  }, []);
+
   return (
     <PageWrapper>
-      <header>
-        <SearchBar />
-      </header>
-      <Main>
-        <LeftSideBar />
-        <MessageContainer />
-      </Main>
+        <div className={`row ${params.pageId ? 'col-2' : ''}`}>
+          <MessageContainer />
+          {<Outlet />}
+        </div>
     </PageWrapper>
   );
 }
 
 const PageWrapper = styled.div`
-  background-color: var(--theme-light-bg);
-  color: var(--theme-light-fg);
-  display: flex;
-  flex-direction: column; 
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-
-  header {
-    // overflow-y: auto;
-    border-bottom: var(--sw-border);
-  }
-`;
-
-const Main = styled.main`
-  flex-grow: 1;
+ .row {
   display: grid;
-  grid-template-columns: 220px auto;
-  // height: 100%;
-  overflow-y: hidden;
+  grid-template-columns: 1fr;
+ }
+
+ .col-2 {
+  grid-template-columns: auto 220px;
+ }
+
 `;
+
 
 export default OfficeSpace;

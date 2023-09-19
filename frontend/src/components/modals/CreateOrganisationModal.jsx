@@ -4,9 +4,10 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useNavigate } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import HandleFormInputError from '../HandleFormInputError';
-// import Axios from '../../utils/Axios';
+import { createNewOrganisationRoute } from '../../utils/APIRoutes';
+import Axios from '../../utils/Axios';
 
 const style = {
   position: 'absolute',
@@ -34,9 +35,9 @@ const style = {
 };
 
 export default function CreateOranisationModal ({ isOpen }) {
-  // const auth = useSelector((state) => state.auth);
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   // const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [companyName, setConpanyName] = React.useState('');
@@ -49,11 +50,22 @@ export default function CreateOranisationModal ({ isOpen }) {
     }
   }, [isOpen]);
 
-  const handleCreate = (event) => {
+  const handleCreate = async (event) => {
     event.preventDefault();
 
     if (handleValidation()) {
-      console.log('lfksdjlbjk');
+      try {
+        const { data } = await Axios.post(createNewOrganisationRoute, {
+          userId: user.id,
+          name: companyName
+        });
+
+        if (data.isSuccess) {
+          navigate('/office/' + data.org.id);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

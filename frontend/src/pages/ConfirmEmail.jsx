@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 // import { useNavigate } from 'react-router-dom';
-import { verifyOtpRoute, loginRoute } from '../utils/APIRoutes';
+import { verifyOtpRoute } from '../utils/APIRoutes';
+import { selectCurrentUser } from '../features/auth/authSlice';
 import axios from 'axios';
 import AlertHandler from '../components/Alert';
-import { login } from '../features/user/userSlice';
 import CreateOranisationModal from '../components/modals/CreateOrganisationModal';
 
 function ConfirmEmail () {
-  const dispatch = useDispatch();
   // const navigate = useNavigate();
   const [apiResponse, setApiResponse] = useState('');
-  const signUpData = localStorage.getItem('temp-signup-info');
-  const { email, password } = JSON.parse(signUpData);
+  const user = useSelector(selectCurrentUser);
   const [otp, setOtp] = useState('');
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [codeObj, setCodeObj] = useState({
@@ -25,29 +23,15 @@ function ConfirmEmail () {
     six: ''
   });
 
-  const performLogin = async () => {
-    try {
-      const { data } = await axios.post(loginRoute, { email, password });
-      if (data.isSuccess) {
-        setOpenCreateModal(true);
-        dispatch(login(data));
-        localStorage.removeItem('temp-signup-info');
-        localStorage.setItem('access_token', data.token);
-      } else {
-        setApiResponse(data.message);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const verifyOtp = async () => {
     try {
-      const { data } = await axios.post(verifyOtpRoute, { otp });
+      const { data } = await axios.post(verifyOtpRoute, {
+        user_id: user.id,
+        otp
+      });
       if (data.isSuccess) {
-        setApiResponse(`${data.message} Hang on while we try to log you in...`);
-        performLogin();
-        // setApiResponse(data.message);
+        setApiResponse(data.message);
+        setOpenCreateModal(true);
       } else {
         setApiResponse(data.message);
       }
@@ -117,7 +101,7 @@ function ConfirmEmail () {
           </h1>
           <article className='help-text'>
             <h3>
-              We've sent a 6-character otp to <strong>{email}</strong>. The otp expires in an hour, so please enter it soon.
+              We've sent a 6-character otp to <strong>{user.email}</strong>. The otp expires in an hour, so please enter it soon.
             </h3>
           </article>
           <form

@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import ConfirmEmail from './pages/ConfirmEmail';
 import NoMatch from './pages/NoMatch';
 import OfficeSpace from './pages/office/OfficeSpace';
+import UserDetails from './pages/office/UserDetails';
+import Layout from './pages/Layout';
 
 function App () {
   return (
@@ -15,9 +17,11 @@ function App () {
         <Route path='/login' element={<Login />} />
         <Route path='/confirmemail' element={<ConfirmEmail />} />
         <Route path='/' element={<Home />} />
-        <Route path='/office/:officeId' element={<OfficeSpace />} />
-
-
+        <Route path='/office/' element={<Layout />}>
+          <Route path=':officeId' element={<OfficeSpace />}>
+            <Route path='user/:pageId' element={<UserDetails />} />
+          </Route>
+        </Route>
         <Route path='*' element={<NoMatch />} />
       </Routes>
     </BrowserRouter>
