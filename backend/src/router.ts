@@ -80,7 +80,7 @@ router.post('/departments/new', async (req, res) => {
         res.json({message: "Department created successfully", isSuccess: true})
     } catch (err) {
         console.error(err)
-        res.json({message: err.message, isSuccess: false})
+        res.json({message: "There was an issue with the database connection", isSuccess: false})
     }
 })
 router.put('/departments/:id', () => {})
