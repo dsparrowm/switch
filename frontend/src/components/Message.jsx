@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Avatar from '@mui/material/Avatar';
+import { getLocalTime } from '../utils/handlers';
 
 function stringToColor (string) {
   let hash = 0;
@@ -38,15 +39,17 @@ function Message ({ message }) {
       {message && (
         <div className='post'>
           <div className='post__sender'>
-            <Avatar {...stringAvatar(message.sender)} />
+            <Avatar {...stringAvatar(message.sender.name)} />
             {/* <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" /> */}
           </div>
           <div className='post__body'>
             <h5 className='post__body__sender'>
               <span className='post__body__sender__name'>
-                {message.sender}
+                {message.sender.name}
               </span>
-              <span className='post__body__time'>07:25</span>
+              <span className='post__body__time'>
+                {getLocalTime(message.createdAt).format('H:mm')}
+              </span>
             </h5>
             <article
               dangerouslySetInnerHTML={{__html: message.content}}

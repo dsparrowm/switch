@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import styled from 'styled-components';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+
 import {
   setActiveConversation,
-  addNewConversation
+  setDepartmentConversation,
 } from '../features/conversations/conversationSlice';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import { setOrganisation } from '../features/organization/organizationSlice';
+
 import CustomModal from './modals/CustomModal';
 import HandleFormInputError from '../components/HandleFormInputError';
-import { createNewDepartmentRoute } from "../utils/APIRoutes";
-import Axios from '../utils/Axios';
 import Toast from '../components/Alert';
+
+import { createNewDepartmentRoute, getOrganisationByIdRoute } from "../utils/APIRoutes";
+import Axios from '../utils/Axios';
 
 const styles = {
   iconStyles: {
@@ -45,24 +50,36 @@ function Conversations ({ category, conversations }) {
     setOpenCreateModal(!openCreateModal);
   };
 
-  const handleSubmit = (e) => {
+  const getOrganization = async () => {
+    try {
+      const { data } = await Axios.get(getOrganisationByIdRoute, { 
+        params: { id: organization.id }
+      });
+      
+      if (data.isSuccess) {
+        const { departments } = data.getOrg;
+        dispatch(setOrganisation(data.getOrg));
+        dispatch(setDepartmentConversation(departments));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setApiResponse('');
     if (handleValidation()) {
       const { name } = formDate;
       const formatedName = name.toLocaleLowerCase().replaceAll(' ', '-');
       try {
-        console.log(user, formatedName, organization.id, 'sa;doioeiw');
-        const { data } = Axios.post(createNewDepartmentRoute, {
+        const { data } = await Axios.post(createNewDepartmentRoute, {
           userId: user.id,
           departmentName: formatedName,
           orgId: organization.id
         })
         if (data.isSuccess) {
-          dispatch(addNewConversation({
-            id: 100,
-            name: formatedName,
-          }))
+          getOrganization();
         } else {
           setApiResponse(data.message);
         }
@@ -93,7 +110,8 @@ function Conversations ({ category, conversations }) {
   };
 
   const changeActiveMessage = (conversation) => {
-    dispatch(setActiveConversation(conversation));
+    const convoType = category === 'group' ? category: 'private';
+    dispatch(setActiveConversation({...conversation, type: convoType}));
   };
 
   return (

@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+import { sendDirectMessagesRoute, sendGroupMessagesRoute } from '../utils/APIRoutes';
 // import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 // import ReactQuill from 'react-quill';
 import ReactQuill, { Quill } from "react-quill";
 import quillEmoji from "quill-emoji";
 import 'react-quill/dist/quill.snow.css';
 import "quill-emoji/dist/quill-emoji.css";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentUser } from '../features/auth/authSlice';
 import { addNewMessage } from '../features/conversations/messageSlice';
+import Axios from '../utils/Axios';
 
 const styles = {
   iconStyles: {
@@ -50,6 +53,8 @@ const formats = ["header", "bold", "italic", "underline", "strike", "list", "ind
 
 function TextEditor () {
   const dispatch = useDispatch();
+  const user = useSelector(selectCurrentUser);
+  const activeConversation = useSelector((state) => state.conversations.activeConversations);
   // const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
   // const [selectedEmoji, setSelectedEmoji] = useState(null);
   const [msg, setMsg] = useState('');
@@ -75,16 +80,29 @@ function TextEditor () {
     setMsg(e);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (msg) {
-      const message = {
-        sender: 'Demo sender',
-        conversationID: 1,
-        content: msg
-      };
-      dispatch(addNewMessage(message));
-      setMsg('');
+    try {
+      if (msg) {
+        const message = {
+          senderId: user.id,
+          departmentId: activeConversation.id,
+          content: msg
+        };
+
+        const apiRouts = activeConversation.type === 'group'
+          ? sendGroupMessagesRoute
+          : sendDirectMessagesRoute
+
+        const { data } = await Axios.post(apiRouts, message);
+        
+        if (data.isSuccess) {
+          setMsg('');
+          dispatch(addNewMessage(data.messages));
+        }
+      }
+    } catch (error) {
+      console.error(error)
     }
   };
 
@@ -130,8 +148,12 @@ const Container = styled.div`
     font-weight: var(--font-weight-regular);
   }
 
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
   padding: 0 2rem;
-  margin-bottom: 4rem;
+  margin-bottom: 5rem;
 
   .message-form {
     flex-direction: row;

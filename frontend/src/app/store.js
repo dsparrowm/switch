@@ -3,6 +3,8 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 
+// import { apiSlice } from '../features/api/apiSlice';
+
 import authReducer from '../features/auth/authSlice';
 import conversationsReducer from '../features/conversations/conversationSlice';
 import messagesReducer from '../features/conversations/messageSlice';
@@ -27,7 +29,11 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
   reducer: persistedReducer,
   devTools: process.env.NODE_ENV !== 'production',
-  middleware: [thunk]
+  middleware: [thunk],
+  // [apiSlice.reducerPath]: apiSlice.reducer,
+  // middleware: getDefaultMiddleware =>
+  //   getDefaultMiddleware().concat(apiSlice.middleware),
+    // [thunk]
 });
 
 export const persistor = persistStore(store);

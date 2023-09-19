@@ -1,19 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Message from './Message';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import TextEditor from './SWTextEditor';
+import { setMessages, selectMessages } from '../features/conversations/messageSlice';
+import Axios from '../utils/Axios';
+import { getDirectMessagesRoute, getGroupMessagesRoute } from '../utils/APIRoutes';
 
 function MessageContainer () {
-  const activeConversations = useSelector((state) => state.conversations.activeConversations);
-  const messages = useSelector((state) => state.messages);
-  // const [messages, setMessages] = useState('');
+  const dispatch = useDispatch();
+  const activeConversation = useSelector((state) => state.conversations.activeConversations);
+  const messages = useSelector(selectMessages);
+  // const [filteredMessages, setFilteredMessages] = useState([]);
+
+  const fetchMessages = async () => {
+    try {
+      const apiRouts = activeConversation.type === 'group'
+      ? getGroupMessagesRoute
+      : getDirectMessagesRoute
+      const { data } = await Axios.get(apiRouts, {params: {departmentId: activeConversation.id}});
+
+      if (data.isSuccess) {
+        console.log(data);
+        dispatch(setMessages(data.messages));
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  };
+
+  useEffect(() => {
+    if (activeConversation.type) {
+      fetchMessages();
+    }
+  }, [activeConversation]);
 
   // useEffect(() => {
-  //   if (activeConversations && messages) {
-  //     const filteredMessages = messages.filter(({id} === ))
+  //   if (messages.length) {
+  //     // const filteredMsg = messages.filter({ id } => );
   //   }
   // }, [messages]);
 
@@ -21,7 +47,7 @@ function MessageContainer () {
     <Container>
       <section className='header'>
         <h3>
-          {activeConversations.name}
+          {activeConversation && activeConversation.name}
         </h3>
       </section>
       <section className='body'>
@@ -63,6 +89,7 @@ const Container = styled.section`
     overflow-y: auto;
     height: calc(100vh - 259.47px);
     padding: 2rem 0;
+    margin-bottom: 10rem;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -83,14 +110,15 @@ const Container = styled.section`
     background-color: var(--light-grey);
     border-bottom: var(--sw-border);
   }
-  
-  .footer {
-    background-color: var(--light-grey);
-    border-top: var(--sw-border);
-  }
 
   .header, .footer {
     padding: 1rem;
+  }
+  
+  .footer {
+    background: none;
+    position: relative;
+    // border-top: var(--sw-border);
   }
  
 `;

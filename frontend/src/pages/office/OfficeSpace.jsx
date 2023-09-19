@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import { useParams, Outlet } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
 import styled from 'styled-components';
-// import LeftSideBar from '../../components/LeftSideBar';
-// import SearchBar from '../../components/SearchBar';
 import MessageContainer from '../../components/MessageContainer';
+
 import Axios from '../../utils/Axios';
 import { getOrganisationByIdRoute } from '../../utils/APIRoutes';
-import { useDispatch } from 'react-redux';
+
 import {
   setActiveConversation,
   setDepartmentConversation
 } from '../../features/conversations/conversationSlice';
+
 import { setOrganisation } from '../../features/organization/organizationSlice';
 
 function OfficeSpace () {
@@ -19,7 +21,6 @@ function OfficeSpace () {
   const dispatch = useDispatch();
 
   const getOrganization = async () => {
-    console.log(params);
     try {
       const { data } = await Axios.get(getOrganisationByIdRoute, { 
         params: { id: params.officeId }
@@ -27,10 +28,9 @@ function OfficeSpace () {
       
       if (data.isSuccess) {
         const { departments } = data.getOrg;
-        console.log(data);
         dispatch(setOrganisation(data.getOrg));
         dispatch(setDepartmentConversation(departments));
-        dispatch(setActiveConversation(departments[0]));
+        dispatch(setActiveConversation({...departments[0], type: 'group'}));
       }
     } catch (error) {
       console.error(error);
