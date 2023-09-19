@@ -337,11 +337,18 @@ router.post('/messages/group', async (req, res) => {
                 senderId,
                 content,
                 departmentId,
-                recipientId: departmentId
             }
         })
-        res.status(200).json({message: "message sent successfully", isSuccess: true, messageSent})
+        const messages = await prisma.message.findUnique({
+            where: {
+                id: messageSent.id
+            },
+            include: {sender: true}
+        })
+        delete messages.sender.password;
+        res.status(200).json({message: "message sent successfully", isSuccess: true, messages})
     } catch (err) {
+        console.log(err)
         res.status(400).json({message: err.message, isSuccess: false})
     }
 })
