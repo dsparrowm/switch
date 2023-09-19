@@ -322,11 +322,12 @@ router.get('/messages/group', async (req, res) => {
             where: {
                 departmentId: departmentId
             },
+            include: {sender: true},
             orderBy: {createdAt: 'asc'}
         });
-        res.status(200).json({messages})
+        res.status(200).json({messages, isSuccess: true})
     } catch (err) {
-        res.status(404).json({message: err.message})
+        res.status(404).json({message: err.message, isSuccess: false})
     } 
 })
 router.post('/messages/group', async (req, res) => {
