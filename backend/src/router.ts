@@ -28,7 +28,7 @@ router.post('/departments/join', async (req, res) => {
                 },
             },
         })
-        res.status(200).json({message: `User(s) added successfully to department`})
+        res.status(200).json({message: `User(s) added successfully to department`, isSuccess: true})
 
     } catch (err) {
         res.json({error: err.message})
@@ -46,10 +46,10 @@ router.post('/departments/new', async (req, res) => {
             }
         })
         if (user === null) {
-            res.json({message: "User does not exist"})
+            res.json({message: "User does not exist", isSucccess: false});
         }
         if (!user.roles.some(userRole => userRole.role.name === "admin" && userRole.organisationId === orgId)) {
-            return res.json({message: "You do not have the permission to create a department, please contact your Admin"});
+            return res.json({message: "You do not have the permission to create a department, please contact your Admin", isSuccess: false});
           }
         const newDepartment = await prisma.department.create({
             data: {
@@ -80,7 +80,7 @@ router.post('/departments/new', async (req, res) => {
         res.json({message: "Department created successfully", isSuccess: true})
     } catch (err) {
         console.error(err)
-        res.json({error: "Could not reach the database server", isSuccess: false})
+        res.json({message: err.message, isSuccess: false})
     }
 })
 router.put('/departments/:id', () => {})
