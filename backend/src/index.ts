@@ -26,8 +26,11 @@ io.on('connection', (socket) => {
                         departmentId: data.departmentId
                     }
                 })
-
-                io.to(data.departmentId).emit('groupMessage', savedMessage)
+                const messages = await prisma.message.findUnique({
+                    where: {id: savedMessage.id},
+                    include: {sender: true}
+                })
+                io.to(data.departmentId).emit('groupMessage', messages)
 
             } catch (err) {
                 console.log(err);
