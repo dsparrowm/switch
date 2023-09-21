@@ -135,7 +135,7 @@ router.delete('/tasks/:id', () => {})
 /**
  * ORGANISATIONS
  */
-router.post('/organisations/:id/invitation', async (req, res) => {
+router.post('/organisations/invitation/create', async (req, res) => {
     const organisationId = parseInt(req.params.id);
     try {
         //Check if organisation exists
@@ -272,7 +272,27 @@ router.post('/organisation/new', async (req, res) => {
         res.json({error: `${err.message}`, isSuccess: true,})
     }
 })
-router.put('/organisations/:id', () => {})
+router.put('/organisations/update', async (req, res) => {
+    const {name, invitationUrl, orgId} = req.body
+    try {
+       if (name) {
+        await prisma.organisation.update({
+            where: {id: orgId},
+            data: {name}
+        })
+       }
+       if (invitationUrl) {
+        await prisma.invitation.update({
+            where: {organisationId: orgId},
+            data: {code: invitationUrl}
+        })
+       }
+       res.status(200).json({message: "successful", isSuccess: true})
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({message: err.message, isSuccess: false})
+    }
+})
 router.delete('/organisations/:id', () => {})
 
 /**
@@ -370,39 +390,5 @@ router.post('/messages/new', async (req, res) => {
     }
 })
 
-/**
- * Invitation links
- */
-router.post('/:orgName/join', async (req, res) => {
-    const orgName = req.body.orgName
-    const email = req.body.email
-
-    const receivers = [
-        {
-            email,
-        }
-    ];
-
-    const mailOptions = {
-        sender: {
-            name: "Switch",
-            email: 'support@switch.com',
-        },
-        to: receivers,
-        subject: `Invitation to join ${orgName}`,
-        htmlContent: `<p>This is a test string</P`
-    }
-
-    try {
-        sendorgInviteLink(orgName, mailOptions);
-        res.status(200);
-        res.send("Invite link sent successfully");
-    } catch (error) {
-        console.log(error);
-        res.status(500);
-        res.send("Error sending Email");
-    }
-    
-})
 
 export default router;
