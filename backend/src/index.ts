@@ -14,7 +14,7 @@ io.on('connection', (socket) => {
     console.log('a user connected');
 
     socket.on('join-department', (departmentId) => {
-        socket.join(departmentId);  
+        socket.join(departmentId);
     })
 
         socket.on('groupMessage', async (data) => {
