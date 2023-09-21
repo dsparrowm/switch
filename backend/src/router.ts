@@ -184,7 +184,8 @@ router.get('/organisations', async (req, res) => {
             },
             include: {
                 departments: true,
-                users: true
+                users: true,
+                invitation: true
             }
         });
         if (getOrg === null) {
