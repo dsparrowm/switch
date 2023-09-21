@@ -285,7 +285,7 @@ router.put('/organisations/update', async (req, res) => {
        if (invitationUrl) {
         await prisma.invitation.update({
             where: {organisationId: orgId},
-            data: {code: invitationUrl}
+            data: {url: invitationUrl}
         })
        }
        res.status(200).json({message: "successful", isSuccess: true})
