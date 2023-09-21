@@ -138,6 +138,7 @@ model UserRole {
 model Invitation {
   id             Int      @id @default(autoincrement())
   code           String   @unique
+  url            String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   organisationId Int      @unique
