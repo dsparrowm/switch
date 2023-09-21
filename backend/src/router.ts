@@ -136,7 +136,7 @@ router.delete('/tasks/:id', () => {})
  * ORGANISATIONS
  */
 router.post('/organisations/invitation/create', async (req, res) => {
-    const organisationId = parseInt(req.params.id);
+    const { organisationId }= req.body;
     try {
         //Check if organisation exists
         const organisation = await prisma.organisation.findUnique({
@@ -184,7 +184,8 @@ router.get('/organisations', async (req, res) => {
             },
             include: {
                 departments: true,
-                users: true
+                users: true,
+                invitation: true
             }
         });
         if (getOrg === null) {
