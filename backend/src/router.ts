@@ -136,7 +136,7 @@ router.delete('/tasks/:id', () => {})
  * ORGANISATIONS
  */
 router.post('/organisations/invitation/create', async (req, res) => {
-    const { organisationId }= req.body;
+    const { organisationId, userId }= req.body;
     try {
         //Check if organisation exists
         const organisation = await prisma.organisation.findUnique({
@@ -161,6 +161,7 @@ router.post('/organisations/invitation/create', async (req, res) => {
             data: {
                 code,
                 organisationId,
+                userId,
             },
         });
 
@@ -275,6 +276,7 @@ router.post('/organisation/new', async (req, res) => {
 })
 router.put('/organisations/update', async (req, res) => {
     const {name, invitationUrl, orgId} = req.body
+    console.log(`Received orgId: ${orgId}, name: ${name}, invitationUrl: ${invitationUrl}`);
     try {
        if (name) {
         await prisma.organisation.update({
@@ -282,6 +284,7 @@ router.put('/organisations/update', async (req, res) => {
             data: {name}
         })
        }
+       
        if (invitationUrl) {
         await prisma.invitation.update({
             where: {organisationId: orgId},
@@ -291,6 +294,20 @@ router.put('/organisations/update', async (req, res) => {
        res.status(200).json({message: "successful", isSuccess: true})
     } catch (err) {
         console.log(err)
+        res.status(400).json({message: err.message, isSuccess: false})
+    }
+})
+router.post('/organisations/users/add', async (req, res) => {
+    const {userId, orgId} = req.body
+    try {
+        await prisma.userOrganisation.create({
+            data: {
+                userId,
+                organisationId: orgId
+            }
+        })
+        res.status(200).json({message: "User added successfully", isSuccess: true})
+    } catch (err) {
         res.status(400).json({message: err.message, isSuccess: false})
     }
 })
