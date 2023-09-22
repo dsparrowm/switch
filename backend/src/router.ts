@@ -300,17 +300,31 @@ router.put('/organisations/update', async (req, res) => {
 router.post('/organisations/users/add', async (req, res) => {
     const {userId, orgId} = req.body
     try {
-        await prisma.userOrganisation.create({
-            data: {
-                userId,
-                organisationId: orgId
+        const existingEntry = await prisma.userOrganisation.findUnique({
+            where: {
+                userId_organisationId: {
+                    userId: userId,
+                    organisationId: orgId
+                }
             }
-        })
-        res.status(200).json({message: "User added successfully", isSuccess: true})
+        });
+
+        if (!existingEntry) {
+            await prisma.userOrganisation.create({
+                data: {
+                    userId,
+                    organisationId: orgId
+                }
+            })
+            res.status(200).json({message: "User added successfully", isSuccess: true})
+        } else {
+            res.status(400).json({message: "User already exists in the organisation", isSuccess: false})
+        }
     } catch (err) {
-        res.status(400).json({message: err.message, isSuccess: false})
+        res.status(500).json({message: err.message, isSuccess: false})
     }
 })
+
 router.delete('/organisations/:id', () => {})
 
 /**
