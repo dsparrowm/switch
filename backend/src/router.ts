@@ -176,28 +176,28 @@ router.post('/organisations/invitation/create', async (req, res) => {
         res.status(400).json({message: "An error occurred while creating the invitation link"})
     }
 })
-router.get('/organisations', async (req, res) => {
+router.get('/organisations/users', async (req, res) => {
     try {
         const id = parseInt(req.query.id)
-        const getOrg = await prisma.organisation.findUnique({
+        const users = await prisma.userOrganisation.findMany({
             where: {
-                id: id
+                organisationId: id
             },
             include: {
-                departments: true,
-                users: true,
-                invitation: true
+                user: true,
+                organisation: true
             }
         });
-        if (getOrg === null) {
+        if (users === null) {
             res.status(400)
             res.json({message: "No organization found", isSuccess: false})
+            return
         }
         res.status(200);
-        res.json({getOrg, isSuccess: true, NoOfUsers: getOrg.users.length}) 
-    } catch (error) {
+        res.json({users, isSuccess: true, NoOfUsers: users.length}) 
+    } catch (err) {
         res.status(500);
-        res.json({error: "Could not reach server", isSuccess: false})
+        res.json({error: err.message, isSuccess: false})
     }
 })
 router.post('/organisation/new', async (req, res) => {
@@ -421,6 +421,62 @@ router.post('/messages/new', async (req, res) => {
         res.status(404).json({message: err.message})
     }
 })
+
+router.get('/users/chats', async (req, res) => {
+  const { userId } = req.query;
+
+  try {
+    // Get all users that the given user has sent messages to or received messages from
+    const messages = await prisma.message.findMany({
+      where: {
+        OR: [
+          { senderId: parseInt(userId) },
+          { recipientId: parseInt(userId) },
+        ],
+      },
+      select: {
+        senderId: true,
+        recipientId: true,
+      },
+    });
+
+    const chatPartners = Array.from(new Set(messages.flatMap(({ senderId, recipientId }) => [
+        senderId === parseInt(userId) ? recipientId : senderId,
+      ].filter(Boolean))));
+      
+
+    // Get the last message sent or received between the given user and each chat partner
+    const lastMessagesPromises = chatPartners.map(async partnerId => {
+      return await prisma.message.findFirst({
+        where: {
+          OR: [
+            { AND: [{ senderId: parseInt(userId) }, { recipientId: partnerId }] },
+            { AND: [{ senderId: partnerId }, { recipientId: parseInt(userId) }] },
+          ],
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        include: {
+          sender: true,
+          recipient: true,
+        },
+      });
+    });
+
+    let lastMessages = await Promise.all(lastMessagesPromises);
+    // Sort conversations by the timestamp of the last message
+    lastMessages = lastMessages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+
+    res.json(lastMessages);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
 
 
 export default router;
