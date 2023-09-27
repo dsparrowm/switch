@@ -81,8 +81,8 @@ export const signin = async (req, res) => {
             isSuccess: true,
             user,
         });
-    } catch (error) {
-        res.json({message: 'oops! unable to reach database server', isSuccess: false})
+    } catch (err) {
+        res.json({message: err.message, isSuccess: false})
     }
     
 }

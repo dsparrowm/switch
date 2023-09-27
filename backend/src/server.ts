@@ -23,6 +23,9 @@ app.use('/api', protect, router);
 app.post('/register', createNewUser, async (req, res) => {
     await sendOtp(req.body.email, req.body.id)
 })
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
 app.post('/login', signin)
 app.post('/verifyotp', async (req, res) => {
     const {user_id, otp} = req.body;
