@@ -31,4 +31,5 @@ export const { login, logout } = actions;
 export default reducer;
 
 export const selectCurrentUser = (state) => state.auth.user;
+export const selectCurrentAuth = (state) => state.auth.isUserLoggedIn;
 export const selectCurrentUserToken = (state) => state.auth.token;

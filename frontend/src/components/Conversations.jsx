@@ -5,25 +5,36 @@ import styled from 'styled-components';
 import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import Avatar from '@mui/material/Avatar';
+import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
 
 import {
   setActiveConversation,
-  setDepartmentConversation,
+  setDepartmentConversation
 } from '../features/conversations/conversationSlice';
-import { setOrganisation } from '../features/organization/organizationSlice';
+import { setOrganization } from '../features/organization/organizationSlice';
+import { setOrgStaffs } from '../features/organization/staffSlice';
 
 import CustomModal from './modals/CustomModal';
 import HandleFormInputError from '../components/HandleFormInputError';
 import Toast from '../components/Alert';
 
-import { createNewDepartmentRoute, getOrganisationByIdRoute } from "../utils/APIRoutes";
+import {
+  createNewDepartmentRoute,
+  getOrganizationByIdRoute,
+  getUsersByOrganizationIdRoute
+} from '../utils/APIRoutes';
+import getRequests from '../utils/APIRequest/getRequest';
 import Axios from '../utils/Axios';
+import { stringAvatarSmall } from '../utils/helpers';
 
 const styles = {
   iconStyles: {
     fontSize: 'large'
   }
 };
+
+const ICON_SMALL = 24;
 
 function Conversations ({ category, conversations }) {
   const dispatch = useDispatch();
@@ -33,7 +44,7 @@ function Conversations ({ category, conversations }) {
   const [displayDrawer, setDisplayDrawer] = useState(true);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [formErrorMsgs, setFormErrorMsgs] = useState('');
-  const [inValidField, setInValidField,] = useState(false);
+  const [inValidField, setInValidField] = useState(false);
   const [formDate, setSetFromData] = useState({
     name: '',
     type: 'Public'
@@ -44,21 +55,42 @@ function Conversations ({ category, conversations }) {
     setSetFromData({ ...formDate, [e.target.name]: e.target.value });
   };
 
-  const handleOpenModal = () => setOpenCreateModal(true);
-
-  const handleCloseModal = () => {
-    setOpenCreateModal(!openCreateModal);
+  const handleOpenModal = () => {
+    if (category === 'group') {
+      setOpenCreateModal(true);
+    } else {
+      const setDMsObj = {
+        type: 'DMs',
+        name: 'Direct Messages'
+      };
+      dispatch(setActiveConversation(setDMsObj));
+      // Get all users in current organization
+      getRequests(getUsersByOrganizationIdRoute, {
+        id: 3 // organization.id
+      })
+        .then(res => {
+          const { data } = res;
+          if (data.isSuccess) {
+            dispatch(setOrgStaffs(data.users));
+          }
+        })
+        .catch(err => console.error(err));
+    }
   };
+
+  // const handleCloseModal = () => {
+  //   setOpenCreateModal(!openCreateModal);
+  // };
 
   const getOrganization = async () => {
     try {
-      const { data } = await Axios.get(getOrganisationByIdRoute, { 
+      const { data } = await Axios.get(getOrganizationByIdRoute, {
         params: { id: organization.id }
       });
-      
+
       if (data.isSuccess) {
         const { departments } = data.getOrg;
-        dispatch(setOrganisation(data.getOrg));
+        dispatch(setOrganization(data.getOrg));
         dispatch(setDepartmentConversation(departments));
       }
     } catch (error) {
@@ -71,13 +103,16 @@ function Conversations ({ category, conversations }) {
     setApiResponse('');
     if (handleValidation()) {
       const { name } = formDate;
-      const formatedName = name.toLocaleLowerCase().replaceAll(' ', '-');
+      const formatedName = name
+        .toLocaleLowerCase()
+        .replaceAll(' ', '-');
+
       try {
         const { data } = await Axios.post(createNewDepartmentRoute, {
           userId: user.id,
           departmentName: formatedName,
           orgId: organization.id
-        })
+        });
         if (data.isSuccess) {
           getOrganization();
         } else {
@@ -103,15 +138,15 @@ function Conversations ({ category, conversations }) {
     setInValidField(false);
     setFormErrorMsgs('');
     return true;
-  }
+  };
 
   const toggleDrawer = () => {
     setDisplayDrawer(!displayDrawer);
   };
 
   const changeActiveMessage = (conversation) => {
-    const convoType = category === 'group' ? category: 'private';
-    dispatch(setActiveConversation({...conversation, type: convoType}));
+    const convoType = category === 'group' ? category : 'private';
+    dispatch(setActiveConversation({ ...conversation, type: convoType }));
   };
 
   return (
@@ -141,9 +176,19 @@ function Conversations ({ category, conversations }) {
                   >
                     <button
                       onClick={() => changeActiveMessage(conversation)}
-                      className={`menu__action${conversation.id === activeConversation.id ? '--active' : ''}`}
+                      className={`menu__action menu__action${conversation.id === activeConversation.id ? '--active' : ''}`}
                     >
-                      {conversation.name}
+                      <span>
+                        {category === 'group'
+                          ? (<TagOutlinedIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />)
+                          : (
+                              conversation?.img
+                                ? <Avatar sx={{ width: ICON_SMALL, height: ICON_SMALL }} src={conversation.img} />
+                                : <Avatar {...stringAvatarSmall(conversation.name, ICON_SMALL)} />)}
+                      </span>
+                      <span>
+                        {conversation.name}
+                      </span>
                     </button>
                   </li>
                 );
@@ -157,19 +202,19 @@ function Conversations ({ category, conversations }) {
           onClick={handleOpenModal}
           className='add-conversation__btn'
         >
-        <span className='add-conversation__btn__icon'>
-          <AddOutlinedIcon />
-        </span>
+          <span className='add-conversation__btn__icon'>
+            <AddOutlinedIcon />
+          </span>
           Add
           {category === 'group'
-            ? ' Departments'
+            ? ' Department'
             : ' DM'}
         </button>
 
         <CustomModal
-          isOpen={openCreateModal}
-          onCloseModal={handleCloseModal}
-          title={`Create ${category === 'group' ? 'Department': 'DM'}`}
+          openModal={openCreateModal}
+          onCloseModal={() => setOpenCreateModal(false)}
+          title='Create A New Department'
         >
           {apiResponse && (
             <Toast
@@ -177,57 +222,32 @@ function Conversations ({ category, conversations }) {
               isOpen={apiResponse.length}
               msg={apiResponse}
             />)}
-          <form
-            onSubmit={handleSubmit}>
-              {category === 'group'
-              ?  (
-              <>
-                <div className='form-group'>
-                  <input
-                    type='text'
-                    placeholder='Type name'
-                    name='name'
-                    className={`${inValidField ? 'invalid' : formDate.name && 'valid'}`}
-                    onChange={(e) => handleChange(e)}
-                  />
-                  <HandleFormInputError
-                    state={inValidField}
-                    msg={formErrorMsgs}
-                  />
-                </div>
-                {/* <div className='form-group'>
-                  <h4>Visibility</h4>
-                  <p>
-                    <input
-                      type='radio'
-                      name='type'
-                      value='Public'
-                      checked
-                      onChange={(e) => handleChange(e)}
-                    /> Public - For all to see
-                  </p>
-                  <p>
-                    <input
-                      type='radio'
-                      name='type'
-                      value='Private'
-                      onChange={(e) => handleChange(e)}
-                    /> Private - For specific people
-                  </p>
-                </div> */}
-              </>)
-              : ''
-              }
+          <form onSubmit={handleSubmit}>
+            <div className='form-group'>
+              <label htmlFor='departmentName'>Enter Department Name:</label>
+              <input
+                type='text'
+                placeholder='Type name'
+                name='name'
+                id='departmentName'
+                className={`${inValidField ? 'invalid' : formDate.name && 'valid'}`}
+                onChange={(e) => handleChange(e)}
+              />
+              <HandleFormInputError
+                state={inValidField}
+                msg={formErrorMsgs}
+              />
+            </div>
             <div className='form-group'>
               <button
-                className='submit-button button-secondry button'
+                className='submit-button button-primary button'
                 type='submit'
               >
                 Submit
               </button>
             </div>
           </form>
-      </CustomModal>
+        </CustomModal>
       </section>
     </Drawer>
   );
@@ -239,16 +259,15 @@ button {
   outline: none;
   background-color: inherit;
   border-radius: var(--border-redius-small-xs);
-  // color: var(--light-blue);
-  color: var(--color-secondry);
+  color: var(--color-white);
   display: inline-block;
   text-align: left;
   width: 100%;
+  font-weight: var(--font-weight-bold);
 
   &:hover {
-    background-color: var(--color-primary);
-    // background-color: var(--light-grey);
-    // background-color: var(--color-primary-light);
+    background-color: var(--color-white);
+    color: var(--color-primary);
   }
 }
 
@@ -266,25 +285,41 @@ button {
 .menu {
   padding: 0 5px;
   &__action {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     padding: 0.5rem var(--padding-sm);
 
     &--active {
-      padding: 0.5rem var(--padding-sm);
-      background-color: var(--color-primary);
-      color: var(--color-secondry-light);
+      background-color: var(--color-white);
+      color: var(--color-primary);
     }
   }
 }
 
 .add-conversation {
-  .add-conversation__btn {
+  &__btn {
+    display: flex;
+    align-items: center;
     padding: var(--padding-sm);
-    color: var(--color-secondry);
+    color: var(--theme-light-bg);
     background-color: inherit;
 
-    .add-conversation__btn__icon {
+    &__icon {
+      background-color: var(--color-white);
+      border-radius: var(--border-redius-small-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
       margin-right: 1rem;
-      background-color: var(--light-grey);
+      padding: 0.3rem;
+      
+    }
+    
+    &:hover .add-conversation__btn__icon {
+      background-color: var(--color-primary);
+      color: var(--color-white);
     }
   }
 }

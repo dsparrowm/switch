@@ -22,10 +22,12 @@
   --theme-dark-fg: #ffffff;
   --theme-light-bg: #ffffff;
   --theme-light-fg: #232836;
-  --color-primary: #f9c900;
+  --color-primary: #161545;
   --color-primary-light: #fff2b5;
   --color-primary-dark: #ea9f00;
-  --color-secondry: #0171d3;
+  /* --color-secondry: #0171d3; */
+  /* --color-secondry: #00bbc4; */
+  --color-secondry: #00f4cd;
   --color-secondry-light: #0b82e3;
   --color-black:  #232836;
   --color-white: #ffffff;
@@ -39,6 +41,7 @@
   --dark-grey: #1d1c1d4d;
 
   --text-color: var(--color-black);
+  --dull-text-color: #1d1c1db3;
   --valid-color: var(--color-secondry);
   --error-color: var(--color-red);
   --link-color: var(--light-blue);
@@ -161,10 +164,6 @@ html {
   }
 }
 
-.domi {
-  /* grid-template-columns: ; */
-  overflow-y: auto;
-}
 
 body {
   color: var(--text-color);
@@ -297,7 +296,7 @@ input[type=text]:focus,
 input[type=email]:focus,
 input[type=password]:focus,
 textarea:focus {
-  border: .1rem solid var(--color-secondry);
+  border: .1rem solid var(--color-primary);
   outline: 0;
 }
 

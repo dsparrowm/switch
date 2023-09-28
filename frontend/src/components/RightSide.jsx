@@ -55,7 +55,6 @@ const Container = styled.div`
   flex-grow: 1;
   overflow-y: auto;
   height: calc(100vh - 91.17px);
-  padding: 2rem 1rem;
 
   &::-webkit-scrollbar {
     width: 5px;

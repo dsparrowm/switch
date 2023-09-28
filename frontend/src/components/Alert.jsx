@@ -14,10 +14,9 @@ const styles = {
   }
 };
 
-const Alert = React.forwardRef(function Alert(props, ref) {
+const Alert = React.forwardRef(function Alert (props, ref) {
   return <MuiAlert elevation={6} ref={ref} {...props} />;
 });
-
 
 function Toast ({ type, msg, isOpen }) {
   const [open, setOpen] = React.useState(false);
@@ -45,22 +44,22 @@ function Toast ({ type, msg, isOpen }) {
 
   return (
     <>
-    <Snackbar
-      sx={styles}
-      anchorOrigin={{ vertical, horizontal }}
-      open={open}
-      autoHideDuration={6000}
-      onClose={handleClose}
-      key={vertical + horizontal}
-    >
-      <Alert
+      <Snackbar
+        sx={styles}
+        anchorOrigin={{ vertical, horizontal }}
+        open={open}
+        autoHideDuration={6000}
         onClose={handleClose}
-        severity={type}
-        sx={styles.alert}
+        key={vertical + horizontal}
       >
-        {msg}
-      </Alert>
-    </Snackbar>
+        <Alert
+          onClose={handleClose}
+          severity={type}
+          sx={styles.alert}
+        >
+          {msg}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

@@ -1,43 +1,56 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import Avatar from '@mui/material/Avatar';
-import { getLocalTime } from '../utils/handlers';
 
-function stringToColor (string) {
-  let hash = 0;
-  let i;
+import {
+  getLocalTime,
+  stringAvatar,
+} from '../utils/helpers';
 
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
+// function stringToColor (string) {
+//   let hash = 0;
+//   let i;
 
-  let color = '#';
+//   /* eslint-disable no-bitwise */
+//   for (i = 0; i < string.length; i += 1) {
+//     hash = string.charCodeAt(i) + ((hash << 5) - hash);
+//   }
 
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-  /* eslint-enable no-bitwise */
+//   let color = '#';
 
-  return color;
-}
+//   for (i = 0; i < 3; i += 1) {
+//     const value = (hash >> (i * 8)) & 0xff;
+//     color += `00${value.toString(16)}`.slice(-2);
+//   }
+//   /* eslint-enable no-bitwise */
 
-function stringAvatar (name) {
-  return {
-    sx: {
-      bgcolor: stringToColor(name)
-    },
-    variant: 'square',
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
-  };
-}
+//   return color;
+// }
+
+// function stringAvatar (name) {
+//   return {
+//     sx: {
+//       bgcolor: stringToColor(name)
+//     },
+//     variant: 'square',
+//     children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
+//   };
+// }
 
 function Message ({ message }) {
+
+  const scrollRef = useRef();
+
+  useEffect(() => {
+    if (message) {
+      scrollRef.current.scrollIntoView({ behaviour: 'smooth' });
+    }
+  }, [message]);
+
   return (
     <Container>
       {message && (
-        <div className='post'>
+        <div ref={scrollRef} className='post'>
           <div className='post__sender'>
             <Avatar {...stringAvatar(message.sender.name)} />
             {/* <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" /> */}
@@ -48,7 +61,7 @@ function Message ({ message }) {
                 {message.sender.name}
               </span>
               <span className='post__body__time'>
-                {getLocalTime(message.createdAt).format('H:mm')}
+                {getLocalTime(message.createdAt).format('hh:mm')}
               </span>
             </h5>
             <article
@@ -62,7 +75,7 @@ function Message ({ message }) {
   );
 }
 
-const Container = styled.div` 
+const Container = styled.div`
   .post {
     display: flex;
     gap: 1rem;

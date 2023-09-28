@@ -9,7 +9,7 @@ import authReducer from '../features/auth/authSlice';
 import conversationsReducer from '../features/conversations/conversationSlice';
 import messagesReducer from '../features/conversations/messageSlice';
 import organizationReducer from '../features/organization/organizationSlice';
-
+import staffsReducers from '../features/organization/staffSlice';
 
 const persistConfig = {
   key: 'root',
@@ -21,7 +21,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   conversations: conversationsReducer,
   messages: messagesReducer,
-  organization: organizationReducer
+  organization: organizationReducer,
+  staffs: staffsReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -29,11 +30,11 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
   reducer: persistedReducer,
   devTools: process.env.NODE_ENV !== 'production',
-  middleware: [thunk],
+  middleware: [thunk]
   // [apiSlice.reducerPath]: apiSlice.reducer,
   // middleware: getDefaultMiddleware =>
   //   getDefaultMiddleware().concat(apiSlice.middleware),
-    // [thunk]
+  // [thunk]
 });
 
 export const persistor = persistStore(store);

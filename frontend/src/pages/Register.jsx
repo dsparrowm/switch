@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import logo1 from '../static/images/logos/swiich-logo1.jpg';
 import { registerRoute } from '../utils/APIRoutes';
 import { login } from '../features/auth/authSlice';
 import Toast from '../components/Alert';
@@ -118,7 +119,12 @@ function Register () {
     <PageWrapper>
       <header className='header'>
         <div className='brand'>
-          <img src='' alt='Logo' />
+        <img
+          width={100}
+          height={100}
+          src={logo1}
+          alt='Logo'
+        />
         </div>
       </header>
       <div className='main-container'>

@@ -17,7 +17,8 @@ const style = {
   fontSize: 'var(--font-size-medium)',
 
   modalHeader: {
-    position: 'relative'
+    position: 'relative',
+    marginBottom: '1.5rem'
   },
 
   modalHeaderBtn: {
@@ -31,28 +32,19 @@ const style = {
   }
 };
 
-function CustomModal ({ children, isOpen, title, onCloseModal }) {
-  const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => setOpen(true);
+function CustomModal ({ children, openModal, title, onCloseModal }) {
   const handleClose = () => {
-    setOpen(false);
     onCloseModal();
   };
-
-  React.useEffect(() => {
-    if (isOpen) {
-      setOpen(isOpen);
-    }
-  }, [isOpen]);
 
   return (
     <div>
       <Modal
         className='modal'
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        open={openModal}
+        onClose={onCloseModal}
+        aria-labelledby='modal-modal-title'
+        aria-describedby='modal-modal-description'
       >
         <Box sx={style}>
           <div
@@ -69,7 +61,7 @@ function CustomModal ({ children, isOpen, title, onCloseModal }) {
               <ClearOutlinedIcon sx={{ fontSize: 'large' }} />
             </button>
           </div>
-          <div className="modal__body">
+          <div className='modal__body'>
             {children}
           </div>
         </Box>

@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { loginRoute } from '../utils/APIRoutes';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { loginRoute, addUserToOrganizationRoute } from '../utils/APIRoutes';
+import logo1 from '../static/images/logos/swiich-logo1.jpg';
+import logo2 from '../static/images/logos/swiich-logo2.jpg';
 import axios from 'axios';
 import Toast from '../components/Alert';
-import { login } from '../features/auth/authSlice';
+import {
+  login,
+  selectCurrentUser
+} from '../features/auth/authSlice';
 import HandleFormInputError from '../components/HandleFormInputError';
+import Axios from '../utils/Axios';
 
 function Login () {
+  const user = useSelector(selectCurrentUser);
+  const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formDate, setSetFromData] = useState({
@@ -20,6 +28,25 @@ function Login () {
   const [inValidPassword, setInValidPassword] = useState(false);
   const [apiResponse, setApiResponse] = useState('');
 
+  const redirectPath = location.state?.path || '/';
+
+  const handleJoinNow = async () => {
+    const inviteCode = localStorage.getItem('inviteCode');
+    // Add user to organization then redirect.
+    try {
+      const { data } = await Axios.post(addUserToOrganizationRoute, {
+        userId: user.id,
+        orgId: parseInt(JSON.parse(inviteCode))
+      });
+      if (data.isSuccess) {
+        localStorage.removeItem('inviteCode');
+        navigate(redirectPath);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (handleValidation()) {
@@ -29,7 +56,10 @@ function Login () {
         if (data.isSuccess) {
           localStorage.setItem('access_token', data.token);
           dispatch(login(data));
-          navigate('/');
+          if (redirectPath.includes('office')) {
+            handleJoinNow();
+          }
+          navigate(redirectPath, { replace: true });
         } else {
           setApiResponse(data.message);
         }
@@ -76,7 +106,12 @@ function Login () {
     <PageWrapper>
       <header className='header'>
         <div className='brand'>
-          <img src='' alt='Logo' />
+          <img
+            width={100}
+            height={100}
+            src={logo1}
+            alt='Logo'
+          />
         </div>
       </header>
       <div className='main-container'>

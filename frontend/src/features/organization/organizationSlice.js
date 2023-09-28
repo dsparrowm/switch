@@ -6,7 +6,7 @@ const organizationSlice = createSlice({
   name: 'organization',
   initialState: initialState,
   reducers: {
-    setOrganisation (state, action) {
+    setOrganization (state, action) {
       // state.org = action.payload;
       Object.assign(state, action.payload);
     }
@@ -16,7 +16,9 @@ const organizationSlice = createSlice({
 const { actions, reducer } = organizationSlice;
 // Extract and export each action creator by name
 export const {
-  setOrganisation,
+  setOrganization
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer;
+
+export const selectOrganization = (state) => state.organization;

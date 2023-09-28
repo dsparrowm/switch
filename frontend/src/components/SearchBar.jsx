@@ -72,12 +72,12 @@ button {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   // background-color: var(--light-grey);
-  color: var(--color-secondry-light);
+  color: var(--color-white);
   padding: 0.7rem 0;
 
   &__search {
     padding: 0.3rem;
-    border: 1px solid var(--color-secondry-light);
+    border: 1px solid var(--color-white);
     color: inherit;
     display: inline-block;
     border-radius: var(--border-redius-small-xs);

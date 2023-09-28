@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-import { sendDirectMessagesRoute, sendGroupMessagesRoute } from '../utils/APIRoutes';
-// import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
-// import ReactQuill from 'react-quill';
+
 import ReactQuill, { Quill } from "react-quill";
 import quillEmoji from "quill-emoji";
 import 'react-quill/dist/quill.snow.css';
 import "quill-emoji/dist/quill-emoji.css";
-import { useDispatch, useSelector } from 'react-redux';
+
 import { selectCurrentUser } from '../features/auth/authSlice';
 import { addNewMessage } from '../features/conversations/messageSlice';
-import Axios from '../utils/Axios';
+import { socket } from '../utils/socket';
 
 const styles = {
   iconStyles: {
@@ -55,32 +55,36 @@ function TextEditor () {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
   const activeConversation = useSelector((state) => state.conversations.activeConversations);
-  // const [displayEmojiPicker, setDisplayEmojiPicker] = useState(false);
-  // const [selectedEmoji, setSelectedEmoji] = useState(null);
   const [msg, setMsg] = useState('');
   const editorRef = useRef(null);
-  // const [value, setValue] = useState('');
-
-  // const handleEmojiClick = (emoji, event) => {
-  //   // if (!emoji.clickCount) {
-  //   //   emoji.clickCount = 0;
-  //   //   setSelectedEmoji(emoji);
-  //   //   return;
-  //   // }
-  //   // emoji.clickCount += 1;
-  //   // setSelectedEmoji(emoji);
-  //   console.log(emoji)
-  // };
 
   useEffect(() => {
     editorRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+
+    function onGroupMessageSent (data) {
+      console.log(data, 'data receive');
+      if (data) {
+        dispatch(addNewMessage(data));
+        setMsg('');
+      }
+    }
+
+    socket.on('groupMessage', onGroupMessageSent);
+
+    return () => {
+      socket.off('groupMessage', onGroupMessageSent);
+    };
+    // eslint-disable-next-line
   }, []);
 
   const handleChange = (e) => {
     setMsg(e);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     try {
       if (msg) {
@@ -90,15 +94,12 @@ function TextEditor () {
           content: msg
         };
 
-        const apiRouts = activeConversation.type === 'group'
-          ? sendGroupMessagesRoute
-          : sendDirectMessagesRoute
-
-        const { data } = await Axios.post(apiRouts, message);
-        
-        if (data.isSuccess) {
-          setMsg('');
-          dispatch(addNewMessage(data.messages));
+        if (activeConversation.type === 'group') {
+          // message['departmentId'] = activeConversation.id;
+          socket.emit('groupMessage', message);
+        } else {
+          // message['receiverId'] = activeConversation.id;
+          socket.emit('privateMessage', message);
         }
       }
     } catch (error) {
@@ -153,7 +154,7 @@ const Container = styled.div`
   bottom: 0;
   width: 100%;
   padding: 0 2rem;
-  margin-bottom: 5rem;
+  margin-bottom: 1rem;
 
   .message-form {
     flex-direction: row;

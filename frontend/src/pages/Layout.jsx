@@ -1,24 +1,24 @@
-import React from 'react'
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import LeftSide from '../components/LeftSid';
 import SearchBar from '../components/SearchBar';
 import styled from 'styled-components';
 
-function Layout() {
+function Layout () {
   return (
     <Container>
       <header>
         <SearchBar />
       </header>
       <Main>
-          <LeftSide />
-          <Outlet />
+        <LeftSide />
+        <Outlet />
         {/* <div className={`d-grid ${params.nestedId ? 'col-3' : 'col-2'}`}>
           <MessageContainer />
         </div> */}
       </Main>
     </Container>
-  )
+  );
 }
 
 const Container = styled.div`
@@ -35,6 +35,7 @@ const Container = styled.div`
   header {
     // overflow-y: auto;
     border-bottom: var(--sw-border);
+    background-color: var(--color-primary);
   }
 `;
 

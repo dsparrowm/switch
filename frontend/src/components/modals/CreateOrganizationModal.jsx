@@ -6,7 +6,7 @@ import Modal from '@mui/material/Modal';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import HandleFormInputError from '../HandleFormInputError';
-import { createNewOrganisationRoute } from '../../utils/APIRoutes';
+import { createNewOrganizationRoute } from '../../utils/APIRoutes';
 import Axios from '../../utils/Axios';
 
 const style = {
@@ -34,28 +34,20 @@ const style = {
   }
 };
 
-export default function CreateOranisationModal ({ isOpen }) {
+export default function CreateOranisationModal ({ onOpen, onClose }) {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(true);
-  // const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+
   const [companyName, setConpanyName] = React.useState('');
   const [companyNameError, setCompanyNameError] = React.useState('');
   const [isInValidCompanyName, setIsInValidCompanyName] = React.useState(false);
-
-  React.useEffect(() => {
-    if (isOpen) {
-      setOpen(isOpen);
-    }
-  }, [isOpen]);
 
   const handleCreate = async (event) => {
     event.preventDefault();
 
     if (handleValidation()) {
       try {
-        const { data } = await Axios.post(createNewOrganisationRoute, {
+        const { data } = await Axios.post(createNewOrganizationRoute, {
           userId: user.id,
           name: companyName
         });
@@ -78,7 +70,7 @@ export default function CreateOranisationModal ({ isOpen }) {
 
     if (companyName.length < 4) {
       setIsInValidCompanyName(true);
-      setCompanyNameError('Organisation name can not be less than 4-characters.');
+      setCompanyNameError('Organization name can not be less than 4-characters.');
       return false;
     }
 
@@ -95,8 +87,8 @@ export default function CreateOranisationModal ({ isOpen }) {
     <div>
       {/* <Button onClick={handleOpen}>Open modal</Button> */}
       <Modal
-        open={open}
-        onClose={handleClose}
+        open={onOpen}
+        onClose={onClose}
         aria-labelledby='modal-modal-title'
         aria-describedby='modal-modal-description'
       >
@@ -120,11 +112,11 @@ export default function CreateOranisationModal ({ isOpen }) {
               className='create-org'
             >
               <div className='form-group'>
-                <label sx={style.label} htmlFor='organisation'>
-                  What is your organisation called?
+                <label sx={style.label} htmlFor='organization'>
+                  What is your organization called?
                 </label>
                 <input
-                  id='organisation'
+                  id='organization'
                   type='text'
                   className={`${isInValidCompanyName ? 'invalid' : companyName && 'valid'}`}
                   onChange={(e) => handleChange(e)}

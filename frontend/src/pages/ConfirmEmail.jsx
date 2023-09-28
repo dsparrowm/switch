@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-// import { useNavigate } from 'react-router-dom';
-import { verifyOtpRoute } from '../utils/APIRoutes';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { verifyOtpRoute, addUserToOrganizationRoute } from '../utils/APIRoutes';
 import { selectCurrentUser } from '../features/auth/authSlice';
 import axios from 'axios';
 import AlertHandler from '../components/Alert';
-import CreateOranisationModal from '../components/modals/CreateOrganisationModal';
+import CreateOranisationModal from '../components/modals/CreateOrganizationModal';
+import Axios from '../utils/Axios';
 
 function ConfirmEmail () {
-  // const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [apiResponse, setApiResponse] = useState('');
   const user = useSelector(selectCurrentUser);
   const [otp, setOtp] = useState('');
@@ -23,6 +25,25 @@ function ConfirmEmail () {
     six: ''
   });
 
+  const redirectPath = location.state?.path || '/';
+
+  const handleJoinNow = async () => {
+    const inviteCode = localStorage.getItem('inviteCode');
+    // Add user to organization then redirect.
+    try {
+      const { data } = await Axios.post(addUserToOrganizationRoute, {
+        userId: user.id,
+        orgId: parseInt(JSON.parse(inviteCode))
+      });
+      if (data.isSuccess) {
+        localStorage.removeItem('inviteCode');
+        navigate(redirectPath);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const verifyOtp = async () => {
     try {
       const { data } = await axios.post(verifyOtpRoute, {
@@ -31,7 +52,12 @@ function ConfirmEmail () {
       });
       if (data.isSuccess) {
         setApiResponse(data.message);
-        setOpenCreateModal(true);
+        if (redirectPath.includes('office')) {
+          handleJoinNow();
+          navigate(redirectPath, { replace: true });
+        } else {
+          setOpenCreateModal(true);
+        }
       } else {
         setApiResponse(data.message);
       }
@@ -46,6 +72,7 @@ function ConfirmEmail () {
       setOtp(fullcode);
       verifyOtp();
     }
+    // eslint-disable-next-line
   }, [codeObj]);
 
   const handleChange = (event) => {
@@ -171,7 +198,10 @@ function ConfirmEmail () {
           <span>Contact Us</span>
         </footer>
       </div>
-      <CreateOranisationModal isOpen={openCreateModal} />
+      <CreateOranisationModal
+        onOpen={openCreateModal}
+        onClose={() => setOpenCreateModal(false)}
+      />
     </PageWrapper>
   );
 }
