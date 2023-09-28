@@ -332,6 +332,31 @@ router.post('/organisations/users/add', async (req, res) => {
                     organisationId: orgId
                 }
             })
+            const departments = await prisma.department.findMany({
+                where: {
+                    OR: [
+                        {
+                            AND: [
+                                {organisationId: orgId},
+                                {name: "General"}
+                            ]
+                        },
+                        {
+                            AND: [
+                                {organisationId: orgId, name: "Announcements"},
+                            ]
+                        }
+                    ]
+                }  
+            })
+            for (let department of departments) {
+                await prisma.userDepartment.create({
+                    data: {
+                        userId,
+                        departmentId: department.id
+                    }
+                })
+            }
             res.status(200).json({message: "User added successfully", isSuccess: true})
         } else {
             res.status(400).json({message: "User already exists in the organisation", isSuccess: false})
@@ -483,9 +508,12 @@ router.get('/users/chats', async (req, res) => {
     let lastMessages = await Promise.all(lastMessagesPromises);
     // Sort conversations by the timestamp of the last message
     lastMessages = lastMessages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-
-    res.json(lastMessages);
+    const newMessages = lastMessages.map(message => {
+      delete message.sender.password;
+      delete message.recipient.password;
+      return message
+    })
+    res.json(newMessages);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

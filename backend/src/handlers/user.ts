@@ -50,7 +50,7 @@ export const createNewUser = async (req, res, next) => {
  */
 export const signin = async (req, res) => {
     try {
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
             where: {
                 email: req.body.email,
             },
@@ -72,8 +72,18 @@ export const signin = async (req, res) => {
             res.json({message: "Invalid email or password", issuccess: false})
             return;
         }
+        const roles = await prisma.role.findMany({
+            where: {
+                users: {
+                    some: {
+                        userId: user.id
+                    }
+                }
+            }
+        })
         delete user.password;
-    
+        delete user.roles;
+        user['role'] = roles
         const token = createJWT(user)
         res.json({
             message: "Login successful",
