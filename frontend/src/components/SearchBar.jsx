@@ -8,7 +8,7 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import Avatar from '@mui/material/Avatar';
 
 function SearchBar () {
-  const { officeId } = useParams();
+  const { officeId, conversationId } = useParams();
   const user = useSelector(selectCurrentUser);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -32,13 +32,13 @@ function SearchBar () {
         </div>
         <div className='topbar__right'>
           <div className='topbar__right__avatar'>
-            <Link to={`/office/${officeId}/user/${user.id}`}>
+            <Link to={`/office/${officeId}/${conversationId}/user/${user.id}`}>
               <Avatar
                 variant='square'
-                src="/static/images/avatar/1.jpg"
+                src='/static/images/avatar/1.jpg'
                 sx={{ width: 24, height: 24 }}
                 // alt={user.name}
-              /> 
+              />
             </Link>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
@@ -7,13 +8,19 @@ import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Avatar from '@mui/material/Avatar';
 import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
+import Button from '@mui/material/Button';
+import { Stack } from '@mui/material';
 
 import {
-  setActiveConversation,
+  // setActiveConversation,
   setDepartmentConversation
 } from '../features/conversations/conversationSlice';
 import { setOrganization } from '../features/organization/organizationSlice';
 import { setOrgStaffs } from '../features/organization/staffSlice';
+import {
+  setActiveTab,
+  selectActiveTab
+} from '../features/ui/uiSlice';
 
 import CustomModal from './modals/CustomModal';
 import HandleFormInputError from '../components/HandleFormInputError';
@@ -28,17 +35,13 @@ import getRequests from '../utils/APIRequest/getRequest';
 import Axios from '../utils/Axios';
 import { stringAvatarSmall } from '../utils/helpers';
 
-const styles = {
-  iconStyles: {
-    fontSize: 'large'
-  }
-};
-
 const ICON_SMALL = 24;
 
 function Conversations ({ category, conversations }) {
+  const { officeId } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const activeConversation = useSelector((state) => state.conversations.activeConversations);
+  const activeConversation = useSelector(selectActiveTab);
   const user = useSelector((state) => state.auth.user);
   const organization = useSelector((state) => state.organization);
   const [displayDrawer, setDisplayDrawer] = useState(true);
@@ -63,7 +66,7 @@ function Conversations ({ category, conversations }) {
         type: 'DMs',
         name: 'Direct Messages'
       };
-      dispatch(setActiveConversation(setDMsObj));
+      dispatch(setActiveTab(setDMsObj));
       // Get all users in current organization
       getRequests(getUsersByOrganizationIdRoute, {
         id: 3 // organization.id
@@ -146,71 +149,95 @@ function Conversations ({ category, conversations }) {
 
   const changeActiveMessage = (conversation) => {
     const convoType = category === 'group' ? category : 'private';
-    dispatch(setActiveConversation({ ...conversation, type: convoType }));
+    dispatch(setActiveTab({ ...conversation, type: convoType }));
+    navigate(`/office/${officeId}/${conversation.id}`);
   };
 
   return (
     <Drawer>
       <section className='drawer'>
-        <button
+        <Button
           className='drawer__toggle-btn'
           onClick={toggleDrawer}
         >
-          <span className='form-field-icon'>
+          <Stack
+            direction='row'
+            alignItems='center'
+            spacing={1}
+          >
             {displayDrawer
-              ? <ArrowDropDownOutlinedIcon sx={styles.iconStyles} />
-              : <ArrowRightOutlinedIcon sx={styles.iconStyles} />}
-          </span>
-          {category === 'group'
-            ? 'Departments'
-            : 'Direct Messages'}
-        </button>
-        <nav className={`navbar ${displayDrawer ? '' : 'hidden'}`}>
-          <ul className='drawer__menu'>
-            {conversations && (
-              conversations.map((conversation, i) => {
-                return (
-                  <li
-                    key={i}
-                    className='menu__items'
-                  >
-                    <button
-                      onClick={() => changeActiveMessage(conversation)}
-                      className={`menu__action menu__action${conversation.id === activeConversation.id ? '--active' : ''}`}
+              ? (
+                <ArrowDropDownOutlinedIcon
+                  className='drawer__toggle-btn__icon'
+                  sx={{ width: ICON_SMALL, height: ICON_SMALL }}
+                />)
+              : (
+                <ArrowRightOutlinedIcon
+                  className='drawer__toggle-btn__icon'
+                  sx={{ width: ICON_SMALL, height: ICON_SMALL }}
+                />)}
+            <span>
+              {category === 'group'
+                ? 'Departments'
+                : 'Direct Messages'}
+            </span>
+          </Stack>
+        </Button>
+        <div className={`navbar ${displayDrawer ? '' : 'hidden'}`}>
+          <nav>
+            <ul className='drawer__menu'>
+              {conversations && (
+                conversations.map((conversation, i) => {
+                  return (
+                    <li
+                      key={i}
+                      className='menu__items'
                     >
-                      <span>
-                        {category === 'group'
-                          ? (<TagOutlinedIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />)
-                          : (
-                              conversation?.img
-                                ? <Avatar sx={{ width: ICON_SMALL, height: ICON_SMALL }} src={conversation.img} />
-                                : <Avatar {...stringAvatarSmall(conversation.name, ICON_SMALL)} />)}
-                      </span>
-                      <span>
-                        {conversation.name}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })
-            )}
-          </ul>
-        </nav>
+                      <Button
+                        onClick={() => changeActiveMessage(conversation)}
+                        className={`menu__action menu__action${conversation.id === activeConversation.id ? '--active' : ''}`}
+                      >
+                        <Stack
+                          direction='row'
+                          alignItems='center'
+                          spacing={1}
+                        >
+                          <span>
+                            {category === 'group'
+                              ? (<TagOutlinedIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />)
+                              : (
+                                  conversation?.img
+                                    ? <Avatar sx={{ width: ICON_SMALL, height: ICON_SMALL }} src={conversation.img} />
+                                    : <Avatar {...stringAvatarSmall(conversation.name, ICON_SMALL)} />)}
+                          </span>
+                          <span>
+                            {conversation.name}
+                          </span>
+                        </Stack>
+                      </Button>
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          </nav>
+          <div>
+            <button
+              onClick={handleOpenModal}
+              className='add-conversation__btn'
+            >
+              <span className='add-conversation__btn__icon'>
+                <AddOutlinedIcon />
+              </span>
+              Add
+              {category === 'group'
+                ? ' Department'
+                : ' DM'}
+            </button>
+          </div>
+        </div>
       </section>
       <section className='add-conversation'>
-        <button
-          onClick={handleOpenModal}
-          className='add-conversation__btn'
-        >
-          <span className='add-conversation__btn__icon'>
-            <AddOutlinedIcon />
-          </span>
-          Add
-          {category === 'group'
-            ? ' Department'
-            : ' DM'}
-        </button>
-
         <CustomModal
           openModal={openCreateModal}
           onCloseModal={() => setOpenCreateModal(false)}
@@ -273,7 +300,16 @@ button {
 
 .drawer {
   &__toggle-btn {
-    padding: var(--padding-sm);
+    font-size: 90%;
+    text-transform: none;
+    text-align: left;
+    width: 100%;
+
+    &:hover .drawer__toggle-btn__icon {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      border-radius: var(--border-redius-small-xs);
+    }
   }
 
 }
@@ -283,12 +319,13 @@ button {
 }
 
 .menu {
-  padding: 0 5px;
+  &__items {
+    padding: 0 var(--padding-sm);
+  }
+
   &__action {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.5rem var(--padding-sm);
+    font-size: 90%;
+    text-transform: none;
 
     &--active {
       background-color: var(--color-white);

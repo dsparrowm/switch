@@ -21,8 +21,10 @@ function App () {
         <Route path='/confirmemail' element={<ConfirmEmail />} />
         <Route path='/' element={<Home />} />
         <Route path='/office/' element={<RequireAuth><Layout /></RequireAuth>}>
-          <Route path=':officeId' element={<OfficeSpace />}>
-            <Route path='user/:pageId' element={<UserDetails />} />
+          <Route path=':officeId/'>
+            <Route path=':conversationId' element={<OfficeSpace />}>
+              <Route path='user/:pageId' element={<UserDetails />} />
+            </Route>
           </Route>
           <Route path=':officeId/tasks' element={<Tasks />} />
         </Route>

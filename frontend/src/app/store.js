@@ -10,6 +10,7 @@ import conversationsReducer from '../features/conversations/conversationSlice';
 import messagesReducer from '../features/conversations/messageSlice';
 import organizationReducer from '../features/organization/organizationSlice';
 import staffsReducers from '../features/organization/staffSlice';
+import uiReducers from '../features/ui/uiSlice';
 
 const persistConfig = {
   key: 'root',
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   conversations: conversationsReducer,
   messages: messagesReducer,
   organization: organizationReducer,
-  staffs: staffsReducers
+  staffs: staffsReducers,
+  ui: uiReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

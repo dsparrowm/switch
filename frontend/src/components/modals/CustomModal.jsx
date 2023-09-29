@@ -9,7 +9,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '90vw',
-  maxWidth: '500px',
+  maxWidth: 500,
   bgcolor: 'var(--theme-light-bg)',
   boxShadow: 24,
   outline: 0,
@@ -32,7 +32,8 @@ const style = {
   }
 };
 
-function CustomModal ({ children, openModal, title, onCloseModal }) {
+function CustomModal ({ children, size, openModal, title, onCloseModal }) {
+  style.maxWidth = size || 500;
   const handleClose = () => {
     onCloseModal();
   };

@@ -16,9 +16,9 @@ import CustomModal from './modals/CustomModal';
 import AddToDepartment from './modals/AddToDepartment';
 import { setMessages, selectMessages } from '../features/conversations/messageSlice';
 import {
-  selectActiveConversation,
-  addNewPrivateConversation,
-  setActiveConversation,
+  // selectActiveConversation,
+  // addNewPrivateConversation,
+  // setActiveConversation,
   selectPrivateConversation
 } from '../features/conversations/conversationSlice';
 import { selectCurrentUser } from '../features/auth/authSlice';
@@ -35,6 +35,10 @@ import {
   stringAvatar
 } from '../utils/helpers';
 import { socket } from '../utils/socket';
+import {
+  selectActiveTab,
+  // setActiveTab
+} from '../features/ui/uiSlice';
 
 const theme = createTheme({
   typography: {
@@ -49,7 +53,7 @@ function MessageContainer () {
   const [searchInputValue, setSearchInputValue] = useState('');
   const staffList = useSelector(selectOrganizationStaffs);
   const user = useSelector(selectCurrentUser);
-  const activeConversation = useSelector(selectActiveConversation);
+  const activeConversation = useSelector(selectActiveTab);
   const privateConversation = useSelector(selectPrivateConversation);
   const messages = useSelector(selectMessages);
   const [groupedMessages, setGroupedMessages] = useState(null);
@@ -63,38 +67,49 @@ function MessageContainer () {
     if (activeConversation.type === 'group') {
       apiRouts = getGroupMessagesRoute;
       param = { departmentId: activeConversation.id };
-    } else {
+    } else if (activeConversation.type === 'private') {
       apiRouts = getPrivateMessagesRoute;
       param = { userId: user.id };
     }
-    //  API Request
-    getRequests(apiRouts, param)
-      .then(res => {
-        if (res?.data) {
-          const { data } = res;
-          if (data?.isSuccess) {
-            dispatch(setMessages(data.messages));
+
+    if (apiRouts) {
+      //  API Request
+      getRequests(apiRouts, param)
+        .then(res => {
+          if (res?.data) {
+            const { data } = res;
+            if (data?.isSuccess) {
+              dispatch(setMessages(data.messages));
+            }
           }
-        }
-      })
-      .catch(err => console.error(err));
+        })
+        .catch(err => console.error(err));
+    }
   };
 
   const changeOption = (newValue) => {
     console.log(newValue);
-    // dispatch(setActiveConversation(newValue));
+    // dispatch(setActiveTab(newValue));
     // dispatch(addNewPrivateConversation({ ...newValue, type: 'private' }));
   };
 
   useEffect(() => {
-    fetchMessages();
-    if (activeConversation.type === 'group') {
-      socket.emit('join-department', activeConversation.id);
-    } else {
-      setDMList(groupByDate(privateConversation, 'createdAt'));
-      // dispatch(setMessages([]));
-      // socket.emit('join-private', activeConversation.id);
+    let cleaner = false;
+
+    if (!cleaner) {
+      fetchMessages();
+      if (activeConversation.type === 'group') {
+        socket.emit('join-department', activeConversation.id);
+      } else {
+        setDMList(groupByDate(privateConversation, 'createdAt'));
+        // dispatch(setMessages([]));
+        // socket.emit('join-private', activeConversation.id);
+      }
     }
+
+    return () => {
+      cleaner = true;
+    };
     // eslint-disable-next-line
   }, [activeConversation]);
 

@@ -7,7 +7,7 @@ const initialState = {
   activeConversations: {},
   departments: [],
   privates: []
-}
+};
 
 const conversationSlice = createSlice({
   name: 'conversations',
@@ -28,7 +28,7 @@ const conversationSlice = createSlice({
     setPrivateConversation (state, action) {
       state.privates = action.payload;
     }
-  },
+  }
 });
 
 // Extract the action creators object and the reducer

@@ -23,8 +23,8 @@
   --theme-light-bg: #ffffff;
   --theme-light-fg: #232836;
   --color-primary: #161545;
-  --color-primary-light: #fff2b5;
-  --color-primary-dark: #ea9f00;
+  --color-primary-light: #292859;
+  --color-primary-dark: #1b1b32;
   /* --color-secondry: #0171d3; */
   /* --color-secondry: #00bbc4; */
   --color-secondry: #00f4cd;
@@ -64,6 +64,7 @@
 
   --font-weight-regular: 400;
   --font-weight-bold: 700;
+  --font-weight-x-bold: 900;
 
   --line-height-small: 1.2;
   --line-height-base: 1.5;

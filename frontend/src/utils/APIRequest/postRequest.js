@@ -5,9 +5,5 @@ import Axios from '../Axios';
  */
 
 export default async function postRequests (apiRoute, data) {
-  try {
-    return await Axios.post(apiRoute, data);
-  } catch (error) {
-    console.log(error);
-  }
+  return await Axios.post(apiRoute, data);
 }

@@ -115,91 +115,92 @@ function LeftSide () {
           </Button>
         </h3>
       </section>
-      <QuickActionMenu />
-      <section>
-        <Conversations
-          category='group'
-          conversations={departments}
-        />
+      <section className='body'>
+        <QuickActionMenu />
+        <section>
+          <Conversations
+            category='group'
+            conversations={departments}
+          />
 
-        <Conversations conversations={privates} />
-      </section>
-      <section>
-        <CustomModal
-          title={`About ${organization && organization.name}`}
-          openModal={openModal}
-          onCloseModal={() => setOpenModal(false)}
-        >
-          <div className='about-org'>
-            <section className='about-org__description'>
+          <Conversations conversations={privates} />
+        </section>
+        <section>
+          <CustomModal
+            title={`About ${organization && organization.name}`}
+            openModal={openModal}
+            onCloseModal={() => setOpenModal(false)}
+          >
+            <div className='about-org'>
+              <section className='about-org__description'>
 
-            </section>
-            <section className='about-org__invite'>
-              <Box>
-                <Typography
-                  variant='h5'
-                  gutterBottom
-                >
-                  You can add more people to <b>{`${organization && organization.name}`}</b> by sharing the invite link
-                </Typography>
-                {!organization.invitation?.url &&
-                  <>
-                    <Typography
-                      variant='h6'
-                      gutterBottom
-                    >
-                      Ready to share the {`${organization && organization.name}`} magic? Click the button below to generate a link and invite others to join<b>{` ${organization && organization.name} `}</b> workspace!
-                    </Typography>
-                    <Button
-                      sx={style}
-                      variant='outlined'
-                      className='invite__btn'
-                      size='large'
-                      onClick={generateInviteLink}
-                    >
-                      {loadingLink
-                        ? <CircularProgress size={25} />
-                        : 'Generate Invite link'}
-                      {/* <Skeleton
-                        sx={{ width: '100px' }}
-                        animation="wave"
-                      /> */}
-                    </Button>
-                  </>}
-                {(organization.invitation?.url || orgLink) &&
-                  <div className='invite__link' style={{ backgroundColor: 'var(--light-grey)' }}>
-                    <Typography
-                      variant='button'
-                      display='block'
-                      gutterBottom
-                      sx={style}
-                    >
-                      <span ref={inviteRef}>
-                        {organization.invitation?.url || orgLink}
-                      </span>
-                      <Tooltip
-                        title={<Typography sx={{ fontSize: 'var(--font-size-small)' }}>Copy Link</Typography>}
-                        placement='top-end'
-                        arrow
+              </section>
+              <section className='about-org__invite'>
+                <Box>
+                  <Typography
+                    variant='h5'
+                    gutterBottom
+                  >
+                    You can add more people to <b>{`${organization && organization.name}`}</b> by sharing the invite link
+                  </Typography>
+                  {!organization.invitation?.url &&
+                    <>
+                      <Typography
+                        variant='h6'
+                        gutterBottom
                       >
-                        <IconButton
-                          sx={{ borderRadius: 1, color: 'var(--color-primary)' }}
-                          onClick={handleCopyLink}
+                        Ready to share the {`${organization && organization.name}`} magic? Click the button below to generate a link and invite others to join<b>{` ${organization && organization.name} `}</b> workspace!
+                      </Typography>
+                      <Button
+                        sx={style}
+                        variant='outlined'
+                        className='invite__btn'
+                        size='large'
+                        onClick={generateInviteLink}
+                      >
+                        {loadingLink
+                          ? <CircularProgress size={25} />
+                          : 'Generate Invite link'}
+                        {/* <Skeleton
+                          sx={{ width: '100px' }}
+                          animation="wave"
+                        /> */}
+                      </Button>
+                    </>}
+                  {(organization.invitation?.url || orgLink) &&
+                    <div className='invite__link' style={{ backgroundColor: 'var(--light-grey)' }}>
+                      <Typography
+                        variant='button'
+                        display='block'
+                        gutterBottom
+                        sx={style}
+                      >
+                        <span ref={inviteRef}>
+                          {organization.invitation?.url || orgLink}
+                        </span>
+                        <Tooltip
+                          title={<Typography sx={{ fontSize: 'var(--font-size-small)' }}>Copy Link</Typography>}
+                          placement='top-end'
+                          arrow
                         >
-                          {isCopied ? 'Copied!' : <ContentCopyIcon />}
-                        </IconButton>
-                      </Tooltip>
-                    </Typography>
-                  </div>}
-              </Box>
-            </section>
-            <section className='about-org__logout'>
+                          <IconButton
+                            sx={{ borderRadius: 1, color: 'var(--color-primary)' }}
+                            onClick={handleCopyLink}
+                          >
+                            {isCopied ? 'Copied!' : <ContentCopyIcon />}
+                          </IconButton>
+                        </Tooltip>
+                      </Typography>
+                    </div>}
+                </Box>
+              </section>
+              <section className='about-org__logout'>
 
-            </section>
-          </div>
-        </CustomModal>
+              </section>
+            </div>
+          </CustomModal>
+        </section>
       </section>
-
     </Container>
   );
 }
@@ -210,6 +211,28 @@ const Container = styled.aside`
   background-color: var(--color-primary); 
   color: var(--color-white);
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+
+  .body {
+    flex-grow: 1;
+    overflow-y: auto;
+    height: calc(100vh - 91.17px);
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      background-color: var(--color-white);
+  
+      &-track {
+  
+      }
+  
+      &-thumb {
+        background-color: var(--color-primary);
+        border-radius: 3px;
+      }
+    }
+  }
 
   .organization {
     padding: 1rem;
