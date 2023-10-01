@@ -41,7 +41,7 @@ export const createNewUser = async (req, res, next) => {
         res.json({message: "Account Created successfully", token, user, isSuccess: true});
         next()
     } catch (error) {
-        res.json({message: "oops! could not reach server", isSuccess: false})   
+        res.status(400).json({message: "oops! could not reach server", isSuccess: false})   
     }
 }
 
@@ -57,7 +57,6 @@ export const signin = async (req, res) => {
             include: {
                 organisations: true,
                 departments: true,
-                tasks: true,
                 roles: true
             }
         })
