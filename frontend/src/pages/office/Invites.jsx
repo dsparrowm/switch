@@ -12,6 +12,7 @@ import {
   addUserToOrganizationRoute,
   invitationDetailsRoute
 } from '../../utils/APIRoutes';
+import logo from '../../static/images/logos/swiich-secondy-logo.png';
 import axios from 'axios';
 import Axios from '../../utils/Axios';
 
@@ -75,7 +76,12 @@ function Invites () {
     <PageWrapper>
       <header className='header'>
         <div className='brand'>
-          <img src='' alt='Logo' />
+          <img
+            width={200}
+            height={100}
+            src={logo}
+            alt='Swiich Logo'
+          />
         </div>
       </header>
       <div className='main-container'>
@@ -92,16 +98,20 @@ function Invites () {
             </p>
           </article>
           <article className='take-actions'>
-            <Stack direction='column' spacing={2}>
+            <Stack
+              direction='column'
+              spacing={2}
+              // mt={2}
+            >
               <Button
-                className='take-actions__btn'
+                className='take-actions__btn outlined'
                 variant='outlined'
                 onClick={handleJoinNow}
               >
                 Join Now
               </Button>
               <Button
-                className='take-actions__btn grey-btn'
+                className='take-actions__btn button-primary'
                 variant='contained'
                 href='/'
               >
@@ -171,11 +181,20 @@ const PageWrapper = styled.div`
       .take-actions {
         max-width: 400px;
         width: 100%;
-        margin: 2rem auto;
+        margin: 3.5rem auto;
 
         &__btn {
           font-size: var(--font-size-small);
           font-weight: var(--font-weight-bold);
+        }
+
+        .outlined {
+          border-color: var(--color-primary);
+          color: var(--color-primary);
+        }
+
+        .button-primary {
+          background-color: var(--color-primary);
         }
       }
     } 

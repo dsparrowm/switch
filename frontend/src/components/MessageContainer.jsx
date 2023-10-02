@@ -299,6 +299,7 @@ const Container = styled.section`
     &::-webkit-scrollbar {
       width: 5px;
       background-color: var(--color-white);
+      border-radius: 3px;
 
       &-track {
 

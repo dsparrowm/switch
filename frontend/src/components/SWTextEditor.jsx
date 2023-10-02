@@ -176,6 +176,7 @@ const Container = styled.div`
     &::-webkit-scrollbar {
       width: 5px;
       background-color: var(--color-white);
+      border-radius: 3px;
 
       &-track {
 
@@ -197,6 +198,8 @@ const Container = styled.div`
     &::-webkit-scrollbar {
       width: 5px;
       background-color: var(--color-white);
+      border-radius: 3px;
+      border-radius: 3px;
 
       &-track {
 

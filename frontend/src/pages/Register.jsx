@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import logo1 from '../static/images/logos/swiich-logo1.jpg';
+import logo from '../static/images/logos/swiich-secondy-logo.png';
 import { registerRoute } from '../utils/APIRoutes';
 import { login } from '../features/auth/authSlice';
 import Toast from '../components/Alert';
@@ -119,12 +119,12 @@ function Register () {
     <PageWrapper>
       <header className='header'>
         <div className='brand'>
-        <img
-          width={100}
-          height={100}
-          src={logo1}
-          alt='Logo'
-        />
+          <img
+            width={200}
+            height={100}
+            src={logo}
+            alt='Swiich Logo'
+          />
         </div>
       </header>
       <div className='main-container'>
@@ -210,7 +210,7 @@ function Register () {
             </div>
             <div className='form-group'>
               <button
-                className='submit-button button-secondry button'
+                className='submit-button button-primary button'
                 type='submit'
               >
                 Next

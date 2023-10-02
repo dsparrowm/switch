@@ -10,11 +10,15 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: '90vw',
   maxWidth: 500,
+  maxHeight: '90vh',
   bgcolor: 'var(--theme-light-bg)',
   boxShadow: 24,
   outline: 0,
   p: 3,
+  borderRadius: 'var(--border-redius-small)',
   fontSize: 'var(--font-size-medium)',
+  display: 'flex',
+  flexDirection: 'column',
 
   modalHeader: {
     position: 'relative',
@@ -29,6 +33,23 @@ const style = {
     outline: 'none',
     backgroundColor: 'inherit',
     padding: '1rem'
+  },
+
+  modalBody: {
+    flex: '1 1 auto',
+    height: '100%',
+    overflowY: 'auto',
+
+    '&::-webkit-scrollbar': {
+      width: '5px',
+      backgroundColor: 'var(--color-white)',
+      borderRadius: '3px',
+
+      '&-thumb': {
+        backgroundColor: 'var(--color-primary)',
+        borderRadius: '3px'
+      }
+    }
   }
 };
 
@@ -62,9 +83,12 @@ function CustomModal ({ children, size, openModal, title, onCloseModal }) {
               <ClearOutlinedIcon sx={{ fontSize: 'large' }} />
             </button>
           </div>
-          <div className='modal__body'>
+          <Box
+            sx={style.modalBody}
+            className='modal__body'
+          >
             {children}
-          </div>
+          </Box>
         </Box>
       </Modal>
     </div>

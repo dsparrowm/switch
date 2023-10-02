@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { loginRoute, addUserToOrganizationRoute } from '../utils/APIRoutes';
-import logo1 from '../static/images/logos/swiich-logo1.jpg';
-import logo2 from '../static/images/logos/swiich-logo2.jpg';
+import logo from '../static/images/logos/swiich-secondy-logo.png';
+// import logo2 from '../static/images/logos/swiich-logo2.jpg';
 import axios from 'axios';
 import Toast from '../components/Alert';
 import {
@@ -107,9 +107,9 @@ function Login () {
       <header className='header'>
         <div className='brand'>
           <img
-            width={100}
+            width={200}
             height={100}
-            src={logo1}
+            src={logo}
             alt='Logo'
           />
         </div>
@@ -159,7 +159,7 @@ function Login () {
             </div>
             <div className='form-group'>
               <button
-                className='submit-button button-secondry button'
+                className='submit-button button-primary button'
                 type='submit'
               >
                 Sign In

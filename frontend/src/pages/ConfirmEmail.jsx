@@ -7,6 +7,7 @@ import { selectCurrentUser } from '../features/auth/authSlice';
 import axios from 'axios';
 import AlertHandler from '../components/Alert';
 import CreateOranisationModal from '../components/modals/CreateOrganizationModal';
+import logo from '../static/images/logos/swiich-secondy-logo.png';
 import Axios from '../utils/Axios';
 
 function ConfirmEmail () {
@@ -118,7 +119,12 @@ function ConfirmEmail () {
     <PageWrapper>
       <header className='header'>
         <div className='brand'>
-          <img src='' alt='Logo' />
+          <img
+            width={200}
+            height={100}
+            src={logo}
+            alt='Swiich Logo'
+          />
         </div>
       </header>
       <div className='main-container'>
