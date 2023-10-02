@@ -36,7 +36,7 @@ export const createNewUser = async (req, res, next) => {
             }
         });
         req.user = (user);
-    
+        delete user.password
         const token = createJWT(createUser);
         res.json({message: "Account Created successfully", token, user, isSuccess: true});
         next()
