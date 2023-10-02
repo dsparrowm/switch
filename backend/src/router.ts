@@ -14,7 +14,6 @@ router.get('/departments', async (req, res) => {
         const department = await prisma.department.findUnique({
             where: {id: departmentId},
             include: {
-                tasks: {orderBy: {createdAt: 'asc'}},
                 messages: {
                     orderBy: {
                         createdAt: 'asc'
@@ -115,26 +114,59 @@ router.get('/tasks', (req, res) => {
 })
 router.get('/tasks/:id', () => {})
 router.post('/tasks/create', async (req, res) => {
-    const {assignedToUserId, taskTitle, description, deadline, deptId} = req.body;
+    const { title, createdBy } = req.body;
     try {
-       const createTask = await prisma.task.create({
+       const task = await prisma.task.create({
         data: {
-            title: taskTitle,
-            description,
-            departmentId: deptId,
-            userId: assignedToUserId,
+            title,
+            createdBy
         }
-       }) 
+       })
+       res.status(200).json({message: "Task created successfully", isSuccess: true, task})
     } catch (err) {
         res.status(400).json({message: err.message})
     }
 })
-router.put('/tasks/:id', () => {})
+router.put('/task', async (req,res) => {
+    const {id, newTitle, description, dueDate, assignedTo, status} = req.body;
+    try {
+        const task = await prisma.task.update({
+            where: {id},
+            data: {
+                title: newTitle,
+                description,
+                deadline: dueDate,
+                assignedTo,
+                status,
+            }
+        })
+        
+        res.status(200).json({message: "Task updated successfully", isSuccess: true, task})
+    } catch (err) {
+        res.status(400).json({message: err.message})
+    }
+})
 router.delete('/tasks/:id', () => {})
 
 /**
  * ORGANISATIONS
  */
+router.get('/organisations', async (req, res) => {
+    const {orgId} = req.query
+    try {
+       const org = await prisma.organisation.findUnique({
+        where: {
+            id: parseInt(orgId)
+        },
+        include: {
+            departments: true
+        }
+       })
+       res.status(200).json({message: "Organisation found", org, isSuccess: true})
+    } catch (err) {
+        res.status(400).json({message: err.message, isSuccess: false})
+    }
+})
 router.post('/organisations/invitation/create', async (req, res) => {
     const { organisationId, userId }= req.body;
     try {
@@ -156,7 +188,7 @@ router.post('/organisations/invitation/create', async (req, res) => {
         // Generate new unique code for invitation
         const code = Math.random().toString(36).substring(2, 15);
 
-        // Create new invitation
+        // Create new invitation in the database
         const newInvitation = await prisma.invitation.create({
             data: {
                 code,
@@ -200,6 +232,8 @@ router.get('/organisations/users', async (req, res) => {
         res.json({error: err.message, isSuccess: false})
     }
 })
+// Route to create a new organisation
+// it takes userId and name(orgname) in the request body
 router.post('/organisation/new', async (req, res) => {
     const {userId, name} = req.body;
     const user = await prisma.user.findUnique({
@@ -316,6 +350,31 @@ router.post('/organisations/users/add', async (req, res) => {
                     organisationId: orgId
                 }
             })
+            const departments = await prisma.department.findMany({
+                where: {
+                    OR: [
+                        {
+                            AND: [
+                                {organisationId: orgId},
+                                {name: "General"}
+                            ]
+                        },
+                        {
+                            AND: [
+                                {organisationId: orgId, name: "Announcements"},
+                            ]
+                        }
+                    ]
+                }  
+            })
+            for (let department of departments) {
+                await prisma.userDepartment.create({
+                    data: {
+                        userId,
+                        departmentId: department.id
+                    }
+                })
+            }
             res.status(200).json({message: "User added successfully", isSuccess: true})
         } else {
             res.status(400).json({message: "User already exists in the organisation", isSuccess: false})
@@ -467,9 +526,12 @@ router.get('/users/chats', async (req, res) => {
     let lastMessages = await Promise.all(lastMessagesPromises);
     // Sort conversations by the timestamp of the last message
     lastMessages = lastMessages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-
-    res.json(lastMessages);
+    const newMessages = lastMessages.map(message => {
+      delete message.sender.password;
+      delete message.recipient.password;
+      return message
+    })
+    res.json(newMessages);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

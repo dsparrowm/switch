@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum STATUS {
+  TODO
+  INPROGRESS
+  COMPLETED
+}
 model Organisation {
   id           Int                @id @default(autoincrement())
   name         String
@@ -30,22 +35,21 @@ model Department {
   organisationId Int
   organisation   Organisation     @relation(fields: [organisationId], references: [id])
   users          UserDepartment[]
-  tasks          Task[]
   messages       Message[]
 }
 
 model Task {
-  id           Int        @id @default(autoincrement())
-  title        String
-  description  String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  deadline     DateTime?
-  completed    Boolean    @default(false)
-  userId       Int
-  user         User       @relation(fields: [userId], references: [id])
-  departmentId Int
-  department   Department @relation(fields: [departmentId], references: [id])
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deadline      DateTime?
+  status     STATUS   @default(TODO)
+  createdBy     Int
+  createdByUser User      @relation("CreatedBy", fields: [createdBy], references: [id])
+  assignedTo    Int?
+  assignedUser  User?      @relation("AssignedTo", fields: [assignedTo], references: [id])
 }
 
 model OTP {
@@ -73,7 +77,8 @@ model User {
   password         String
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
-  tasks            Task[]
+  createdTasks     Task[]    @relation("CreatedBy")
+  assignedTasks    Task[]    @relation("AssignedTo")
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
 
@@ -145,5 +150,5 @@ model Invitation {
   organisationId Int          @unique
   organisation   Organisation @relation(fields: [organisationId], references: [id])
   userId         Int?
-  user           User?         @relation(fields: [userId], references: [id])
+  user           User?        @relation(fields: [userId], references: [id])
 }

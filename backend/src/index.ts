@@ -11,7 +11,7 @@ const io = new Server(server, {cors: {
 }});
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
+    console.log(`a user connected: ${socket.id}`);
 
     socket.on('join-department', (departmentId) => {
         socket.join(departmentId);
@@ -37,6 +37,24 @@ io.on('connection', (socket) => {
             }
             
         })
+    socket.on("private-message", async (data) => {
+        try {
+            const savedMessage = await prisma.message.create({
+                data: {
+                    content: data.content,
+                    senderId: data.senderId,
+                    recipientId: data.recipientId
+                }
+            })
+            const messages = await prisma.message.findUnique({
+                where: {id: savedMessage.id},
+                include: {sender: true}
+            })
+            io.to(data.recipientId).emit('private-message', messages)
+        } catch (err) {
+            console.log(err);
+        }
+    })
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
