@@ -19,9 +19,9 @@ const conversationSlice = createSlice({
     addNewPrivateConversation (state, action) {
       state.privates.push(action.payload);
     },
-    setActiveConversation (state, action) {
-      state.activeConversations = action.payload;
-    },
+    // setActiveConversation (state, action) {
+    //   state.activeConversations = action.payload;
+    // },
     setDepartmentConversation (state, action) {
       state.departments = action.payload;
     },
@@ -37,13 +37,13 @@ const { actions, reducer } = conversationSlice;
 export const {
   addNewDepartmentConversation,
   addNewPrivateConversation,
-  setActiveConversation,
+  // setActiveConversation,
   setDepartmentConversation,
   setPrivateConversation
 } = actions;
 // Export the reducer, either as a default or named export
 export default reducer;
 
-export const selectActiveConversation = (state) => state.conversations.activeConversations;
+// export const selectActiveConversation = (state) => state.conversations.activeConversations;
 export const selectDepartmentConversation = (state) => state.conversations.departments;
 export const selectPrivateConversation = (state) => state.conversations.privates;

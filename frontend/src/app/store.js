@@ -15,7 +15,7 @@ import uiReducers from '../features/ui/uiSlice';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth']
+  whitelist: ['auth', 'ui']
 };
 
 const rootReducer = combineReducers({

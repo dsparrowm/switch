@@ -12,6 +12,9 @@ import "quill-emoji/dist/quill-emoji.css";
 import { selectCurrentUser } from '../features/auth/authSlice';
 import { addNewMessage } from '../features/conversations/messageSlice';
 import { socket } from '../utils/socket';
+import { selectActiveTab } from '../features/ui/uiSlice';
+import { sendDirectMessagesRoute } from '../utils/APIRoutes';
+import { postRequest } from '../utils/api';
 
 const styles = {
   iconStyles: {
@@ -54,7 +57,7 @@ const formats = ["header", "bold", "italic", "underline", "strike", "list", "ind
 function TextEditor () {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
-  const activeConversation = useSelector((state) => state.conversations.activeConversations);
+  const activeConversation = useSelector(selectActiveTab);
   const [msg, setMsg] = useState('');
   const editorRef = useRef(null);
 
@@ -72,7 +75,19 @@ function TextEditor () {
       }
     }
 
+    function onPrivateMessageSent (data) {
+      console.log(data, 'Private message');
+      if (data) {
+        dispatch(addNewMessage(data));
+        setMsg('');
+      }
+    }
+
     socket.on('groupMessage', onGroupMessageSent);
+    
+    socket.on('private-message', onPrivateMessageSent);
+
+
 
     return () => {
       socket.off('groupMessage', onGroupMessageSent);
@@ -90,16 +105,22 @@ function TextEditor () {
       if (msg) {
         const message = {
           senderId: user.id,
-          departmentId: activeConversation.id,
           content: msg
         };
+        // console.log(message);
 
         if (activeConversation.type === 'group') {
-          // message['departmentId'] = activeConversation.id;
+          message['departmentId'] = activeConversation.id;
           socket.emit('groupMessage', message);
-        } else {
-          // message['receiverId'] = activeConversation.id;
-          socket.emit('privateMessage', message);
+        } else if (activeConversation.type === 'private') {
+          message['recipientId'] = activeConversation?.recipientId;
+
+          // postRequest(sendDirectMessagesRoute, message)
+          // .then(res => {
+          //   console.log(res?.data);
+          // })
+
+          socket.emit('private-message', message);
         }
       }
     } catch (error) {

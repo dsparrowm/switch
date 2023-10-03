@@ -153,8 +153,9 @@ function Conversations ({ category, conversations }) {
 
   const changeActiveMessage = (conversation) => {
     const convoType = category === 'group' ? category : 'private';
+    console.log(conversation);
     dispatch(setActiveTab({ ...conversation, type: convoType }));
-    navigate(`/office/${officeId}/${conversation.id}`);
+    // navigate(`/office/${officeId}/${conversation.id}`);
   };
 
   return (

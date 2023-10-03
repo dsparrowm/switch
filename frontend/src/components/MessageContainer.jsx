@@ -17,7 +17,7 @@ import AddToDepartment from './modals/AddToDepartment';
 import { setMessages, selectMessages } from '../features/conversations/messageSlice';
 import {
   // selectActiveConversation,
-  // addNewPrivateConversation,
+  addNewPrivateConversation,
   // setActiveConversation,
   selectPrivateConversation
 } from '../features/conversations/conversationSlice';
@@ -39,7 +39,7 @@ import {
 import { socket } from '../utils/socket';
 import {
   selectActiveTab,
-  // setActiveTab
+  setActiveTab
 } from '../features/ui/uiSlice';
 
 const theme = createTheme({
@@ -66,12 +66,16 @@ function MessageContainer () {
     let apiRouts = null;
     let param = null;
 
-    if (activeConversation.type === 'group') {
+    if (activeConversation?.type === 'group') {
       apiRouts = getGroupMessagesRoute;
       param = { departmentId: activeConversation.id };
-    } else if (activeConversation.type === 'private') {
+    } else if (activeConversation?.type === 'private') {
       apiRouts = getPrivateMessagesRoute;
-      param = { userId: user.id };
+      console.log(activeConversation);
+      param = {
+        senderId: user.id,
+        receiverId: activeConversation.id
+       };
     }
 
     if (apiRouts) {
@@ -90,13 +94,15 @@ function MessageContainer () {
   };
 
   const changeOption = (newValue) => {
-    console.log(newValue);
-    // dispatch(setActiveTab(newValue));
-    // dispatch(addNewPrivateConversation({ ...newValue, type: 'private' }));
+    const active = newValue?.user;
+    dispatch(setActiveTab(active));
+    dispatch(addNewPrivateConversation({ ...active, type: 'private' }));
   };
 
   useEffect(() => {
     let cleaner = false;
+
+    // console.log(activeConversation);
 
     if (!cleaner) {
       fetchMessages();
@@ -168,7 +174,7 @@ function MessageContainer () {
             </div>
           </div>
         </h3>
-        {activeConversation.type === 'DMs' && (
+        {activeConversation?.type === 'DMs' && (
           <div className='dms__search'>
             <span>To: </span>
             <ThemeProvider theme={theme}>
@@ -192,8 +198,8 @@ function MessageContainer () {
             </ThemeProvider>
           </div>)}
       </section>
-      <section className={`body ${activeConversation.type === 'DMs' ? '' : 'mb-10'}`}>
-        {(groupedMessages && activeConversation.type !== 'DMs') && (
+      <section className={`body ${activeConversation?.type === 'DMs' ? '' : 'mb-10'}`}>
+        {(groupedMessages && activeConversation?.type !== 'DMs') && (
           <>
             {Object.keys(groupedMessages).map((date, i) => {
               return (
@@ -223,7 +229,7 @@ function MessageContainer () {
             })}
           </>)}
 
-        {(DMList && activeConversation.type === 'DMs') && (
+        {(DMList && activeConversation?.type === 'DMs') && (
           <>
             <section className='dms'>
               <div className='dms__contents'>
@@ -275,7 +281,7 @@ function MessageContainer () {
 
       </section>
       <section className='footer'>
-        {activeConversation.type !== 'DMs' && <TextEditor />}
+        {activeConversation?.type !== 'DMs' && <TextEditor />}
       </section>
       <CustomModal
         title='Add Members to this Department'

@@ -5,7 +5,8 @@ import Stack from '@mui/material/Stack';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   selectCurrentAuth,
-  selectCurrentUser
+  selectCurrentUser,
+  selectCurrentUserToken
 } from '../../features/auth/authSlice';
 import { useSelector } from 'react-redux';
 import {
@@ -14,10 +15,12 @@ import {
 } from '../../utils/APIRoutes';
 import logo from '../../static/images/logos/swiich-secondy-logo.png';
 import axios from 'axios';
-import { postRequest } from '../../utils/api';
+import { postRequest, setAuthToken } from '../../utils/api';
+
 
 function Invites () {
   const isAuthentication = useSelector(selectCurrentAuth);
+  const token = useSelector(selectCurrentUserToken);
   const user = useSelector(selectCurrentUser);
   const navigate = useNavigate();
   const { officeId, inviteCode } = useParams();
@@ -33,6 +36,7 @@ function Invites () {
       navigate(redirectPath);
       return;
     }
+    setAuthToken(token);
     // Add user to organization then redirect.
     postRequest(addUserToOrganizationRoute, {
       userId: user.id,

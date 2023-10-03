@@ -36,7 +36,7 @@ function Login () {
     const inviteCode = localStorage.getItem('inviteCode');
     // Add user to organization then redirect.
     postRequest(addUserToOrganizationRoute, {
-      userId: user.id,
+      userId: user?.id,
       orgId: parseInt(JSON.parse(inviteCode))
     })
     .then(res => {
@@ -50,10 +50,10 @@ function Login () {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    setApiResponse('');
-    setLoading(true);
+    
     if (handleValidation()) {
+      setApiResponse('');
+      setLoading(true);
       try {
         const { email, password } = formDate;
         const { data } = await axios.post(loginRoute, { email, password });
@@ -70,7 +70,7 @@ function Login () {
         setLoading(false);
       } catch (error) {
         console.error(error);
-        setApiResponse('');
+        setApiResponse(error.response.data.message);
         setLoading(false);
       }
     }
@@ -131,11 +131,12 @@ function Login () {
             className='login-form'
             noValidate
           >
+            {apiResponse}
             {apiResponse && (
               <Toast
                 type='error'
                 msg={apiResponse}
-                isOpen={apiResponse.length}
+                isOpen={apiResponse.length > 0}
               />
             )}
             <div className='form-group'>
@@ -169,10 +170,9 @@ function Login () {
                 className='submit-button button-primary button'
                 type='submit'
               >
-                Sign In
                 {loading
                 ? <CircularProgress size={25} />
-                : 'Next'}
+                : 'Sign In'}
               </button>
             </div>
             <span className='alternate-action'>

@@ -28,7 +28,7 @@ import {
   createOrganizationInviteCodeRoute,
   updateOrganizationInfoRoute
 } from '../utils/APIRoutes';
-import { getRequest, putRequest } from '../utils/api';
+import { postRequest, putRequest } from '../utils/api';
 
 const style = {
   textTransform: 'none',
@@ -54,7 +54,7 @@ function LeftSide () {
   // Generate new Organization Invite Link
   const generateInviteLink = async () => {
     setLoadingLink(true);
-    getRequest(createOrganizationInviteCodeRoute, {
+    postRequest(createOrganizationInviteCodeRoute, {
       organisationId: organization.id,
       userId: user.id
     })

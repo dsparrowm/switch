@@ -7,13 +7,14 @@ import SearchBar from '../components/SearchBar';
 import styled from 'styled-components';
 
 import { selectOfficeSpace, setActiveTab, setUpOfficeSpace } from '../features/ui/uiSlice';
-import { selectCurrentUser } from '../features/auth/authSlice';
+import { selectCurrentUserToken, selectCurrentUser } from '../features/auth/authSlice';
 import { getDirectMessagesRoute, getOrganizationByIdRoute } from '../utils/APIRoutes';
 import { setOrganization } from '../features/organization/organizationSlice';
-import { getRequest } from '../utils/api';
+import { getRequest, setAuthToken } from '../utils/api';
 import { setDepartmentConversation, setPrivateConversation } from '../features/conversations/conversationSlice';
 
 function Layout () {
+  const token = useSelector(selectCurrentUserToken);
   const { officeId } = useParams();
   const office = useSelector(selectOfficeSpace);
   const navigate = useNavigate();
@@ -23,13 +24,14 @@ function Layout () {
 
   useEffect(() => {
     if (!ignore) {
+      setAuthToken(token);
       // Get Organization Information by ID.
       getRequest(getOrganizationByIdRoute, { orgId: officeId })
         .then(res => {
           if (res?.data?.isSuccess) {
-            const { getOrg } = res?.data;
-            const { departments } = getOrg;
-            dispatch(setOrganization(getOrg));
+            const { org } = res?.data;
+            const { departments } = org;
+            dispatch(setOrganization(org));
             dispatch(setDepartmentConversation(departments));
             dispatch(setActiveTab({ ...departments[0], type: 'group' }));
             dispatch(setUpOfficeSpace({
@@ -50,7 +52,7 @@ function Layout () {
       getRequest(getDirectMessagesRoute, { userId: user.id })
         .then(res => {
           if (res?.data) {
-            // console.log(res.data);
+            console.log(res.data);
             const formatedRes = res.data.map((dm) => {
               const isLoginUser = dm.senderId === user.id;
               const displayUser = dm.senderId === user.id ? dm.recipient : dm.sender;

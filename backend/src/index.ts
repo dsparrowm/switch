@@ -17,28 +17,29 @@ io.on('connection', (socket) => {
         socket.join(departmentId);
     })
 
-        socket.on('groupMessage', async (data) => {
-            try {
-                const savedMessage = await prisma.message.create({
-                    data: {
-                        content: data.content,
-                        senderId: data.senderId,
-                        departmentId: data.departmentId
-                    }
-                })
-                const messages = await prisma.message.findUnique({
-                    where: {id: savedMessage.id},
-                    include: {sender: true}
-                })
-                io.to(data.departmentId).emit('groupMessage', messages)
+    socket.on('groupMessage', async (data) => {
+        try {
+            const savedMessage = await prisma.message.create({
+                data: {
+                    content: data.content,
+                    senderId: data.senderId,
+                    departmentId: data.departmentId
+                }
+            })
+            const messages = await prisma.message.findUnique({
+                where: {id: savedMessage.id},
+                include: {sender: true}
+            })
+            io.to(data.departmentId).emit('groupMessage', messages)
 
-            } catch (err) {
-                console.log(err);
-            }
-            
-        })
+        } catch (err) {
+            console.log(err);
+        }
+        
+    })
     socket.on("private-message", async (data) => {
         try {
+            // console.log(data);
             const savedMessage = await prisma.message.create({
                 data: {
                     content: data.content,
@@ -50,6 +51,7 @@ io.on('connection', (socket) => {
                 where: {id: savedMessage.id},
                 include: {sender: true}
             })
+            console.log(messages);
             io.to(data.recipientId).emit('private-message', messages)
         } catch (err) {
             console.log(err);

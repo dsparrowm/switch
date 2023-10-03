@@ -10,8 +10,8 @@ import {
   postRequest
 } from '../../utils/api';
 import { selectCurrentUser } from '../../features/auth/authSlice';
-import { selectActiveConversation } from '../../features/conversations/conversationSlice';
 import Toast from '../Alert';
+import { selectActiveTab } from '../../features/ui/uiSlice';
 
 const theme = createTheme({
   typography: {
@@ -25,7 +25,7 @@ function AddToDepartment () {
   const [searchInputValue, setSearchInputValue] = useState('');
   const staffList = useSelector(selectOrganizationStaffs);
   const user = useSelector(selectCurrentUser);
-  const activeConversation = useSelector(selectActiveConversation);
+  const activeConversation = useSelector(selectActiveTab);
   const [selectedOptions, setSelectedOptions] = useState(null);
   const [apiResponse, setApiResponse] = useState(null);
 
