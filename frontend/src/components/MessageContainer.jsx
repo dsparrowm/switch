@@ -74,7 +74,7 @@ function MessageContainer () {
       console.log(activeConversation);
       param = {
         senderId: user.id,
-        receiverId: activeConversation.id
+        receiverId: activeConversation?.recipientId
        };
     }
 
@@ -133,7 +133,8 @@ function MessageContainer () {
   useEffect(() => {
     if (user) {
       function onConnect () {
-        console.log('Socket Connection succeeded');
+        console.log('Socket Connection succeeded', user.id, 'userId');
+        socket.emit('userConnected', user.id);
       }
       function onDisconnect () {
         console.log('Socket Disconnection succeeded');

@@ -9,13 +9,16 @@ const server = http.createServer(app);
 const io = new Server(server, {cors: {
     origin: '*',
 }});
-
+let users = {};
 io.on('connection', (socket) => {
     console.log(`a user connected: ${socket.id}`);
-
-    socket.on('join-department', (departmentId) => {
-        socket.join(departmentId);
-    })
+        socket.on('userConnected', (userId) => {
+            users[userId] = socket.id;
+            console.log(users, 'shewhoiphwi');
+        });
+        socket.on('join-department', (departmentId) => {
+            socket.join(departmentId);
+        })
 
     socket.on('groupMessage', async (data) => {
         try {
@@ -51,18 +54,28 @@ io.on('connection', (socket) => {
                 where: {id: savedMessage.id},
                 include: {sender: true}
             })
-            console.log(messages);
-            io.to(data.recipientId).emit('private-message', messages)
+            const recipientSocketId = getSocketIdFromUserId(data.recipientId); 
+            io.to(recipientSocketId).emit('private-message', messages)
         } catch (err) {
             console.log(err);
         }
     })
 
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        for(let userId in users){
+            if(users[userId] === socket.id){
+                delete users[userId];
+                break;
+            }
+        }
+    });
+        
     })
-})
 
+    function getSocketIdFromUserId(userId) {
+        console.log(users, 'getSocketIdFromUserId');
+        return users[userId];
+    }
 
 server.listen(3001, () => {
     console.log('server running on http://localhost:3001');

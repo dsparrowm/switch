@@ -13,8 +13,8 @@ import { selectCurrentUser } from '../features/auth/authSlice';
 import { addNewMessage } from '../features/conversations/messageSlice';
 import { socket } from '../utils/socket';
 import { selectActiveTab } from '../features/ui/uiSlice';
-import { sendDirectMessagesRoute } from '../utils/APIRoutes';
-import { postRequest } from '../utils/api';
+// import { sendDirectMessagesRoute } from '../utils/APIRoutes';
+// import { postRequest } from '../utils/api';
 
 const styles = {
   iconStyles: {
@@ -79,18 +79,23 @@ function TextEditor () {
       console.log(data, 'Private message');
       if (data) {
         dispatch(addNewMessage(data));
-        setMsg('');
+        // setMsg('');
       }
     }
 
     socket.on('groupMessage', onGroupMessageSent);
     
+    // socket.on('private-message', () => {
+    //   console.log('Called callback funtion')
+    // });
+
     socket.on('private-message', onPrivateMessageSent);
 
 
 
     return () => {
       socket.off('groupMessage', onGroupMessageSent);
+      socket.off('private-message', onPrivateMessageSent);
     };
     // eslint-disable-next-line
   }, []);

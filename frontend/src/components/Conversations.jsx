@@ -52,6 +52,9 @@ function Conversations ({ category, conversations }) {
     type: 'Public'
   });
   const [apiResponse, setApiResponse] = useState('');
+  // const [activeChart, setActiveChart] = useState('');
+
+  console.log(activeConversation);
 
   const handleChange = (e) => {
     setSetFromData({ ...formDate, [e.target.name]: e.target.value });
@@ -155,7 +158,7 @@ function Conversations ({ category, conversations }) {
     const convoType = category === 'group' ? category : 'private';
     console.log(conversation);
     dispatch(setActiveTab({ ...conversation, type: convoType }));
-    // navigate(`/office/${officeId}/${conversation.id}`);
+    navigate(`/office/${officeId}/${conversation.id}`);
   };
 
   return (
@@ -207,14 +210,12 @@ function Conversations ({ category, conversations }) {
                           alignItems='center'
                           spacing={1}
                         >
-                          <span>
-                            {category === 'group'
-                              ? (<TagOutlinedIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />)
-                              : (
-                                  conversation?.img
-                                    ? <Avatar sx={{ width: ICON_SMALL, height: ICON_SMALL }} src={conversation.img} />
-                                    : <Avatar {...stringAvatarSmall(conversation.name, ICON_SMALL)} />)}
-                          </span>
+                        {category === 'group'
+                          ? (<TagOutlinedIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />)
+                          : (
+                              conversation?.img
+                                ? <Avatar sx={{ width: ICON_SMALL, height: ICON_SMALL }} src={conversation.img} />
+                                : <Avatar {...stringAvatarSmall(conversation.name, ICON_SMALL)} />)}
                           <span>
                             {conversation.name}
                           </span>
@@ -292,7 +293,8 @@ button {
   background-color: inherit;
   border-radius: var(--border-redius-small-xs);
   color: var(--color-white);
-  display: inline-block;
+  // display: inline-block;
+  justify-content: start;
   text-align: left;
   width: 100%;
   font-weight: var(--font-weight-bold);

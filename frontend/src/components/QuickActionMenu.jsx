@@ -30,16 +30,16 @@ function QuickActionMenu () {
     };
   }, [location.pathname]);
 
-  useEffect(() => {
-    let ignore = false;
-    if (activePage && !ignore) {
-      dispatch(setActiveTab({}));
-    }
+  // useEffect(() => {
+  //   let ignore = false;
+  //   if (activePage && !ignore) {
+  //     dispatch(setActiveTab({}));
+  //   }
 
-    return () => {
-      ignore = true;
-    };
-  }, [activePage]);
+  //   return () => {
+  //     ignore = true;
+  //   };
+  // }, [activePage]);
 
   return (
     <Container>

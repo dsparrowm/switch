@@ -45,6 +45,7 @@ function LeftSide () {
   const [openModal, setOpenModal] = useState(false);
   const departments = useSelector(selectDepartmentConversation);
   const privates = useSelector(selectPrivateConversation);
+  const privatesChatsList = privates.filter(({ recipientId }) => recipientId !== user.id); 
   const organization = useSelector(selectOrganization);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -123,7 +124,7 @@ function LeftSide () {
             conversations={departments}
           />
 
-          <Conversations conversations={privates} />
+          <Conversations conversations={privatesChatsList} />
         </section>
         <section>
           <CustomModal

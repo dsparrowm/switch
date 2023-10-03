@@ -59,7 +59,8 @@ function Layout () {
               const updatedDm = {
                 ...dm,
                 isLoginUser,
-                name: displayUser.name
+                name: displayUser.name,
+                recipientId: displayUser.id
               };
               return updatedDm;
             });
