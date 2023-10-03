@@ -54,8 +54,9 @@ io.on('connection', (socket) => {
                 where: {id: savedMessage.id},
                 include: {sender: true}
             })
-            const recipientSocketId = getSocketIdFromUserId(data.recipientId); 
-            io.to(recipientSocketId).emit('private-message', messages)
+            const recipientSocketId = getSocketIdFromUserId(data.recipientId);
+            socket.emit('private-message', messages) 
+            socket.broadcast.to(recipientSocketId).emit('private-message', messages)
         } catch (err) {
             console.log(err);
         }
