@@ -4,10 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import logo from '../static/images/logos/swiich-secondy-logo.png';
-import { registerRoute } from '../utils/APIRoutes';
 import { login } from '../features/auth/authSlice';
 import Toast from '../components/Alert';
 import HandleFormInputError from '../components/HandleFormInputError';
+import {
+  setAuthToken
+} from '../utils/api';
+import { registerRoute } from '../utils/APIRoutes';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function Register () {
   const dispatch = useDispatch();
@@ -26,11 +30,13 @@ function Register () {
   const [inValidPassword, setInValidPassword] = useState(false);
   const [inValidConfirmPassword, setInValidConfirmPassword] = useState(false);
   const [apiResponse, setApiResponse] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiResponse('');
     if (handleValidation()) {
+      setLoading(true);
       const { email, firstname, lastname, password } = formDate;
       const fullName = `${firstname} ${lastname}`;
       try {
@@ -40,13 +46,15 @@ function Register () {
           name: fullName
         });
         if (data.isSuccess) {
-          localStorage.setItem('access_token', data.token);
+          setAuthToken(data.token);
           dispatch(login(data));
           navigate('/confirmemail');
         } else {
           setApiResponse(data.message);
         }
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.error(error);
       }
     }
@@ -212,8 +220,11 @@ function Register () {
               <button
                 className='submit-button button-primary button'
                 type='submit'
+                disabled={loading}
               >
-                Next
+                {loading
+                ? <CircularProgress size={25} />
+                : 'Next'}
               </button>
             </div>
             <span className='alternate-action'>

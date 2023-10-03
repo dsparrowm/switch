@@ -9,7 +9,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Avatar from '@mui/material/Avatar';
 import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
 import Button from '@mui/material/Button';
-import { Stack } from '@mui/material';
+import Stack from '@mui/material/Stack';
 
 import {
   // setActiveConversation,
@@ -31,9 +31,8 @@ import {
   getOrganizationByIdRoute,
   getUsersByOrganizationIdRoute
 } from '../utils/APIRoutes';
-import getRequests from '../utils/APIRequest/getRequest';
-import Axios from '../utils/Axios';
 import { stringAvatarSmall } from '../utils/helpers';
+import { getRequest, postRequest } from '../utils/api';
 
 const ICON_SMALL = 24;
 
@@ -68,8 +67,8 @@ function Conversations ({ category, conversations }) {
       };
       dispatch(setActiveTab(setDMsObj));
       // Get all users in current organization
-      getRequests(getUsersByOrganizationIdRoute, {
-        id: 3 // organization.id
+      getRequest(getUsersByOrganizationIdRoute, {
+        id: organization.id
       })
         .then(res => {
           const { data } = res;
@@ -87,15 +86,22 @@ function Conversations ({ category, conversations }) {
 
   const getOrganization = async () => {
     try {
-      const { data } = await Axios.get(getOrganizationByIdRoute, {
-        params: { id: organization.id }
-      });
+      // const { data } = await Axios.get(getOrganizationByIdRoute, {
+      //   params: { id: organization.id }
+      // });
 
-      if (data.isSuccess) {
-        const { departments } = data.getOrg;
-        dispatch(setOrganization(data.getOrg));
-        dispatch(setDepartmentConversation(departments));
-      }
+      getRequest(getOrganizationByIdRoute, {
+        id: organization.id
+      })
+        .then(res => {
+          if (res?.data?.isSuccess) {
+            const { departments } = res?.data?.getOrg;
+            dispatch(setOrganization(res?.data?.getOrg));
+            dispatch(setDepartmentConversation(departments));
+          }
+        })
+        .catch(err => console.error(err));
+
     } catch (error) {
       console.error(error);
     }
@@ -110,20 +116,18 @@ function Conversations ({ category, conversations }) {
         .toLocaleLowerCase()
         .replaceAll(' ', '-');
 
-      try {
-        const { data } = await Axios.post(createNewDepartmentRoute, {
-          userId: user.id,
-          departmentName: formatedName,
-          orgId: organization.id
-        });
-        if (data.isSuccess) {
+      postRequest(createNewDepartmentRoute, {
+        userId: user.id,
+        departmentName: formatedName,
+        orgId: organization.id
+      }).then(res => {
+        if (res?.data.isSuccess) {
           getOrganization();
         } else {
-          setApiResponse(data.message);
+          setApiResponse(res?.data?.message);
         }
-      } catch (error) {
-        console.error(error);
-      }
+      })
+      .catch(err => console.error(err));
     }
   };
 

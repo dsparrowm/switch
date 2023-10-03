@@ -6,7 +6,9 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Button, Stack, ThemeProvider, createTheme } from '@mui/material';
 import { selectOrganizationStaffs } from '../../features/organization/staffSlice';
 import { addUsersToDepartmentRoute } from '../../utils/APIRoutes';
-import postRequests from '../../utils/APIRequest/postRequest';
+import {
+  postRequest
+} from '../../utils/api';
 import { selectCurrentUser } from '../../features/auth/authSlice';
 import { selectActiveConversation } from '../../features/conversations/conversationSlice';
 import Toast from '../Alert';
@@ -45,7 +47,7 @@ function AddToDepartment () {
       departmentId: activeConversation.id
     };
 
-    postRequests(addUsersToDepartmentRoute, data)
+    postRequest(addUsersToDepartmentRoute, data)
       .then(res => {
         if (res?.data) {
           const { data } = res;

@@ -28,7 +28,9 @@ import {
   getPrivateMessagesRoute
 } from '../utils/APIRoutes';
 
-import getRequests from '../utils/APIRequest/getRequest';
+import {
+  getRequest,
+} from '../utils/api';
 import {
   groupByDate,
   getLocalTime,
@@ -74,7 +76,7 @@ function MessageContainer () {
 
     if (apiRouts) {
       //  API Request
-      getRequests(apiRouts, param)
+      getRequest(apiRouts, param)
         .then(res => {
           if (res?.data) {
             const { data } = res;

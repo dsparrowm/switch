@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import HandleFormInputError from '../HandleFormInputError';
 import { createNewOrganizationRoute } from '../../utils/APIRoutes';
-import Axios from '../../utils/Axios';
+import { postRequest } from '../../utils/api';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const style = {
   position: 'absolute',
@@ -38,26 +39,30 @@ export default function CreateOranisationModal ({ onOpen, onClose }) {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
 
-  const [companyName, setConpanyName] = React.useState('');
-  const [companyNameError, setCompanyNameError] = React.useState('');
-  const [isInValidCompanyName, setIsInValidCompanyName] = React.useState(false);
+  const [companyName, setConpanyName] = useState('');
+  const [companyNameError, setCompanyNameError] = useState('');
+  const [isInValidCompanyName, setIsInValidCompanyName] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleCreate = async (event) => {
     event.preventDefault();
 
+    setLoading(true);
     if (handleValidation()) {
-      try {
-        const { data } = await Axios.post(createNewOrganizationRoute, {
-          userId: user.id,
-          name: companyName
+      postRequest(createNewOrganizationRoute, {
+        userId: user.id,
+        name: companyName
+      })
+        .then(res => {
+          if (res?.data?.isSuccess) {
+            navigate('/office/' + res?.data?.org.id);
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setLoading(false);
         });
-
-        if (data.isSuccess) {
-          navigate('/office/' + data.org.id);
-        }
-      } catch (error) {
-        console.log(error);
-      }
     }
   };
 
@@ -85,7 +90,6 @@ export default function CreateOranisationModal ({ onOpen, onClose }) {
 
   return (
     <div>
-      {/* <Button onClick={handleOpen}>Open modal</Button> */}
       <Modal
         open={onOpen}
         onClose={onClose}
@@ -134,7 +138,9 @@ export default function CreateOranisationModal ({ onOpen, onClose }) {
                   className='create-button submit-button button-secondry button'
                   type='submit'
                 >
-                  Create
+                  {loading
+                    ? <CircularProgress size={25} />
+                    : 'Create'}
                 </Button>
                 <Button
                   sx={style.buttonStyles}

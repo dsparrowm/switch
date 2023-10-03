@@ -4,11 +4,10 @@ import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyOtpRoute, addUserToOrganizationRoute } from '../utils/APIRoutes';
 import { selectCurrentUser } from '../features/auth/authSlice';
-import axios from 'axios';
 import AlertHandler from '../components/Alert';
 import CreateOranisationModal from '../components/modals/CreateOrganizationModal';
 import logo from '../static/images/logos/swiich-secondy-logo.png';
-import Axios from '../utils/Axios';
+import { postRequest } from '../utils/api';
 
 function ConfirmEmail () {
   const location = useLocation();
@@ -31,51 +30,56 @@ function ConfirmEmail () {
   const handleJoinNow = async () => {
     const inviteCode = localStorage.getItem('inviteCode');
     // Add user to organization then redirect.
-    try {
-      const { data } = await Axios.post(addUserToOrganizationRoute, {
-        userId: user.id,
-        orgId: parseInt(JSON.parse(inviteCode))
-      });
-      if (data.isSuccess) {
+    postRequest(addUserToOrganizationRoute, {
+      userId: user.id,
+      orgId: parseInt(JSON.parse(inviteCode))
+    })
+    .then(res => {
+      if (res?.data?.isSuccess) {
         localStorage.removeItem('inviteCode');
         navigate(redirectPath);
       }
-    } catch (error) {
-      console.error(error);
-    }
+    })
+    .catch(err => console.error(err));
   };
 
   const verifyOtp = async () => {
-    try {
-      const { data } = await axios.post(verifyOtpRoute, {
-        user_id: user.id,
-        otp
-      });
-      if (data.isSuccess) {
-        setApiResponse(data.message);
-        if (redirectPath.includes('office')) {
-          handleJoinNow();
-          navigate(redirectPath, { replace: true });
+    setApiResponse('');
+    postRequest(verifyOtpRoute, {
+      user_id: user.id,
+      otp
+    })
+      .then(res => {
+        if (res?.data?.isSuccess) {
+          setApiResponse(res?.data?.message);
+          if (redirectPath.includes('office')) {
+            handleJoinNow();
+            navigate(redirectPath, { replace: true });
+          } else {
+            setOpenCreateModal(true);
+          }
         } else {
-          setOpenCreateModal(true);
+          setApiResponse(res?.data?.message);
         }
-      } else {
-        setApiResponse(data.message);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+      })
+      .catch(err => console.error(err));
   };
 
+  
   useEffect(() => {
     const fullcode = Object.values(codeObj).join('');
     if (fullcode.length > 5) {
       setOtp(fullcode);
-      verifyOtp();
     }
     // eslint-disable-next-line
-  }, [codeObj]);
-
+  }, [codeObj.six]);
+  
+  useEffect(() => {
+    if (otp.length) {
+      verifyOtp();
+    }
+  }, [otp]);
+  
   const handleChange = (event) => {
     setCodeObj({ ...codeObj, [event.target.name]: event.target.value });
   };
@@ -141,7 +145,8 @@ function ConfirmEmail () {
             className='check-email-form'
             noValidate
           >
-            {apiResponse && <AlertHandler type='error' msg={apiResponse} />}
+            {apiResponse && <AlertHandler type='error' msg={apiResponse} isOpen={apiResponse.length} />}
+            <AlertHandler type='error' msg={apiResponse} />
             <div className='row d-flex'>
               <div className='form-group col'>
                 <input
@@ -205,7 +210,7 @@ function ConfirmEmail () {
         </footer>
       </div>
       <CreateOranisationModal
-        onOpen={openCreateModal}
+        onOpen={true}
         onClose={() => setOpenCreateModal(false)}
       />
     </PageWrapper>

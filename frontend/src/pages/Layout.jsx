@@ -10,7 +10,7 @@ import { selectOfficeSpace, setActiveTab, setUpOfficeSpace } from '../features/u
 import { selectCurrentUser } from '../features/auth/authSlice';
 import { getDirectMessagesRoute, getOrganizationByIdRoute } from '../utils/APIRoutes';
 import { setOrganization } from '../features/organization/organizationSlice';
-import getRequests from '../utils/APIRequest/getRequest';
+import { getRequest } from '../utils/api';
 import { setDepartmentConversation, setPrivateConversation } from '../features/conversations/conversationSlice';
 
 function Layout () {
@@ -24,7 +24,7 @@ function Layout () {
   useEffect(() => {
     if (!ignore) {
       // Get Organization Information by ID.
-      getRequests(getOrganizationByIdRoute, { id: officeId })
+      getRequest(getOrganizationByIdRoute, { orgId: officeId })
         .then(res => {
           if (res?.data?.isSuccess) {
             const { getOrg } = res?.data;
@@ -47,7 +47,7 @@ function Layout () {
         });
 
       // Get Direct Message Summary
-      getRequests(getDirectMessagesRoute, { userId: user.id })
+      getRequest(getDirectMessagesRoute, { userId: user.id })
         .then(res => {
           if (res?.data) {
             // console.log(res.data);

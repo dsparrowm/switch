@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { loginRoute, addUserToOrganizationRoute } from '../utils/APIRoutes';
 import logo from '../static/images/logos/swiich-secondy-logo.png';
-// import logo2 from '../static/images/logos/swiich-logo2.jpg';
 import axios from 'axios';
 import Toast from '../components/Alert';
 import {
@@ -12,13 +11,16 @@ import {
   selectCurrentUser
 } from '../features/auth/authSlice';
 import HandleFormInputError from '../components/HandleFormInputError';
-import Axios from '../utils/Axios';
+import { postRequest, setAuthToken } from '../utils/api';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function Login () {
   const user = useSelector(selectCurrentUser);
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const [formDate, setSetFromData] = useState({
     email: '',
     password: ''
@@ -33,28 +35,30 @@ function Login () {
   const handleJoinNow = async () => {
     const inviteCode = localStorage.getItem('inviteCode');
     // Add user to organization then redirect.
-    try {
-      const { data } = await Axios.post(addUserToOrganizationRoute, {
-        userId: user.id,
-        orgId: parseInt(JSON.parse(inviteCode))
-      });
-      if (data.isSuccess) {
+    postRequest(addUserToOrganizationRoute, {
+      userId: user.id,
+      orgId: parseInt(JSON.parse(inviteCode))
+    })
+    .then(res => {
+      if (res?.data?.isSuccess) {
         localStorage.removeItem('inviteCode');
         navigate(redirectPath);
       }
-    } catch (error) {
-      console.error(error);
-    }
+    })
+    .catch(err => console.error(err));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setApiResponse('');
+    setLoading(true);
     if (handleValidation()) {
       try {
         const { email, password } = formDate;
         const { data } = await axios.post(loginRoute, { email, password });
         if (data.isSuccess) {
-          localStorage.setItem('access_token', data.token);
+          setAuthToken(data.token);
           dispatch(login(data));
           if (redirectPath.includes('office')) {
             handleJoinNow();
@@ -63,8 +67,11 @@ function Login () {
         } else {
           setApiResponse(data.message);
         }
+        setLoading(false);
       } catch (error) {
         console.error(error);
+        setApiResponse('');
+        setLoading(false);
       }
     }
   };
@@ -163,6 +170,9 @@ function Login () {
                 type='submit'
               >
                 Sign In
+                {loading
+                ? <CircularProgress size={25} />
+                : 'Next'}
               </button>
             </div>
             <span className='alternate-action'>

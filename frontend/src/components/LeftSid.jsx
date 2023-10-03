@@ -18,17 +18,17 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-// import Skeleton from '@mui/material/Skeleton';
+
 import CircularProgress from '@mui/material/CircularProgress';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 
-import Axios from '../utils/Axios';
 import {
   createOrganizationInviteCodeRoute,
   updateOrganizationInfoRoute
 } from '../utils/APIRoutes';
+import { getRequest, putRequest } from '../utils/api';
 
 const style = {
   textTransform: 'none',
@@ -53,36 +53,36 @@ function LeftSide () {
 
   // Generate new Organization Invite Link
   const generateInviteLink = async () => {
-    try {
-      setLoadingLink(true);
-      const { data } = await Axios.post(createOrganizationInviteCodeRoute, {
-        organisationId: organization.id,
-        userId: user.id
-      });
-
-      if (data.isSuccess) {
-        const { code } = data;
+    setLoadingLink(true);
+    getRequest(createOrganizationInviteCodeRoute, {
+      organisationId: organization.id,
+      userId: user.id
+    })
+    .then(res => {
+      if (res?.data?.isSuccess) {
+        const { code } = res?.data;
         const orgLink = `http://localhost:3000/office/${organization.id}/invite/${code}`;
         setOrgLink(orgLink);
         setLoadingLink(false);
         updateOrgInfo('invitationUrl', orgLink);
       }
-    } catch (error) {
-      console.error(error);
+    })
+    .catch(err => {
+      console.error(err);
       setLoadingLink(false);
-    }
+    });
   };
 
   // Update Organization Informations
   const updateOrgInfo = async (key, value) => {
-    try {
-      await Axios.put(updateOrganizationInfoRoute, {
-        [key]: value,
-        orgId: organization.id
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    putRequest(updateOrganizationInfoRoute, {
+      [key]: value,
+      orgId: organization.id
+    })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => console.log(err));
   };
 
   const handleCopyLink = () => {
@@ -157,6 +157,7 @@ function LeftSide () {
                         className='invite__btn'
                         size='large'
                         onClick={generateInviteLink}
+                        disabled={loadingLink}
                       >
                         {loadingLink
                           ? <CircularProgress size={25} />

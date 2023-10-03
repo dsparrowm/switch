@@ -14,7 +14,7 @@ import {
 } from '../../utils/APIRoutes';
 import logo from '../../static/images/logos/swiich-secondy-logo.png';
 import axios from 'axios';
-import Axios from '../../utils/Axios';
+import { postRequest } from '../../utils/api';
 
 function Invites () {
   const isAuthentication = useSelector(selectCurrentAuth);
@@ -34,18 +34,16 @@ function Invites () {
       return;
     }
     // Add user to organization then redirect.
-    try {
-      const { data } = await Axios.post(addUserToOrganizationRoute, {
-        userId: user.id,
-        orgId: parseInt(officeId)
-      });
-      if (data.isSuccess) {
-        console.log(data);
+    postRequest(addUserToOrganizationRoute, {
+      userId: user.id,
+      orgId: parseInt(officeId)
+    })
+    .then(res => {
+      if (res?.data?.isSuccess) {
         navigate(redirectPath);
       }
-    } catch (error) {
-      console.error(error);
-    }
+    })
+    .catch(err => console.error(err));
   };
 
   useEffect(() => {

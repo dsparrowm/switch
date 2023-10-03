@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import logo1 from '../static/images/logos/swiich-logo1.jpg';
 import logo from '../static/images/logos/swiich-primary-logo.png';
 import logo2 from '../static/images/logos/swiich-logo2.jpg';
+import switchLogo from '../static/images/logos/swiich-secondy-logo.png'
 import { Link } from 'react-router-dom';
 import Diversity2OutlinedIcon from '@mui/icons-material/Diversity2Outlined';
 import SyncLockOutlinedIcon from '@mui/icons-material/SyncLockOutlined';
@@ -13,6 +14,10 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import NotificationImportantOutlinedIcon from '@mui/icons-material/NotificationImportantOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import EastOutlinedIcon from '@mui/icons-material/EastOutlined';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 
 const ICON_SMALL = 24;
 
@@ -40,7 +45,7 @@ function Home () {
                   width={200}
                   height={70}
                   src={logo}
-                  alt='Logo'
+                  alt='Header Logo'
                 />
               </div>
               <div className='navbar__left navbar__row__column-left'>
@@ -128,7 +133,7 @@ function Home () {
                   </div>
                 </div>
                 <div className='hero__right'>
-                  <img src={logo1} alt='Hero image' />
+                  <img src={logo1} alt='Hero Demostrations' />
                 </div>
               </div>
             </div>
@@ -203,16 +208,8 @@ function Home () {
           <div className='learn-more__palete'>
             <div className='container'>
               <div className='learn-more'>
-                {/* <form>
-                  <input
-                    type='email'
-                    name='email'
-                    placeholder='Email Address'
-                  />
-                  <button type='submit'>Get Started</button>
-                </form> */}
                 <span className='learn-more__text'>
-                  Learn what <span className='color__organe'>Swiich</span> can do your organisation
+                  Explore the potential of <span className='color__organe'>Swiich</span> and all that it can help you achieve.
                 </span>
                 <Link
                   className='learn-more__link learn-more__btn'
@@ -237,7 +234,7 @@ function Home () {
                     </article>
                   </div>
                   <div className='solutions__solution__left secondry img__wrapper clip-path-left'>
-                    <img src={logo2} alt='Hero image' />
+                    <img src={logo2} alt='Solutions Demostrations one' />
                   </div>
                 </div>
               </div>
@@ -245,7 +242,7 @@ function Home () {
               <div className='container'>
                 <div className='solutions__solution'>
                   <div className='solutions__solution__right img__wrapper primary img-first clip-path-right'>
-                    <img src={logo2} alt='Hero image' />
+                    <img src={logo2} alt='Solutions Demostrations two' />
                   </div>
                   <div className='solutions__solution__left'>
                     <article>
@@ -271,7 +268,7 @@ function Home () {
                     </article>
                   </div>
                   <div className='solutions__solution__left tertiary img__wrapper clip-path-left'>
-                    <img src={logo2} alt='Hero image' />
+                    <img src={logo2} alt='Solutions Demostrations three' />
                   </div>
                 </div>
               </div>
@@ -280,10 +277,174 @@ function Home () {
         </section>
       </main>
       <footer id='footer'>
-        <div className='footer__palete'>
+        <div className='footer__palete '>
+          <div className='take-action__palete'>
+            <div className="container">
+              <div className='take__action'>
+                <h3>
+                Unlock <span className='color__organe'>Swiich's</span> limitless potential
+                </h3>
+                <form>
+                  <input
+                    type='email'
+                    name='email'
+                    placeholder='Email Address'
+                  />
+                  <button type='submit'>Get Started</button>
+                </form>
+              </div>
+            </div>
+          </div>
           <div className='container'>
             <div className='footer'>
-
+              <nav className='footer__menu'>
+                <ul className='footer__menu__row'>
+                  <li className='footer__menu__row__columns'>
+                    <h6>WHY SWIICH?</h6>
+                    <ul className='nested-menu'>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Departments</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Programmes</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Scale</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>
+                          Watch the Demo
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li className='footer__menu__row__columns'>
+                    <h6>PRODUCT</h6>
+                    <ul className='nested-menu'>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Features</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Integrations</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Enterprise</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>
+                          Solutions
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li className='footer__menu__row__columns'>
+                    <h6>PRICING</h6>
+                    <ul className='nested-menu'>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Plans</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Paid vs. Free</Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li className='footer__menu__row__columns'>
+                    <h6>RESOURCES</h6>
+                    <ul className='nested-menu'>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Partners</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Developers</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Enterprise</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>
+                          Apps
+                        </Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>
+                        Blog
+                        </Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>
+                          Help Center
+                        </Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>
+                          Events
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li className='footer__menu__row__columns'>
+                    <h6>SUPPORT AND TOOLS</h6>
+                    <ul className='nested-menu'>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>About Us</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Swiich Partners</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>Join a local user group support</Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link'>
+                          Careers
+                        </Link>
+                      </li>
+                      <li className='nested-menu__item'>
+                        <Link to="#" className='nested-menu__item__link nested-menu__item__link__btn'>
+                          Contact Swiich Support
+                        </Link>
+                      </li>
+                      <li className='nested-menu__item social-medias'>
+                        <Link to="#" className='nested-menu__item__link nested-menu__item__link__medias facebook'>
+                          <FacebookIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />
+                        </Link>
+                        <Link to="#" className='nested-menu__item__link nested-menu__item__link__medias twitter'>
+                          <TwitterIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />
+                        </Link>
+                        <Link to="#" className='nested-menu__item__link nested-menu__item__link__medias youtube'>
+                          <YouTubeIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />
+                        </Link>
+                        <Link to="#" className='nested-menu__item__link nested-menu__item__link__medias linkedin'>
+                          <LinkedInIcon sx={{ width: ICON_SMALL, height: ICON_SMALL }} />
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </nav>
+              <hr />
+              <div className="footer__baseline">
+                <div className='footer__baseline__brand'>
+                  <Link
+                    to="/"
+                    className='footer__baseline__logo__brand-link'
+                  >
+                    <img
+                      width={200}
+                      height={65}
+                      src={switchLogo}
+                      alt='Footer Logo'
+                    />
+                  </Link>
+                </div>
+                <div>
+                  <span>Copyright &copy; 2023 Swiich, Inc</span> 
+                </div>
+                <div className='footer__baseline__privacy'>
+                  <Link className='footer__baseline__privacy__links' to='#'>Privacy Policy</Link>
+                  <Link className='footer__baseline__privacy__links' to='#'>Legal Stuff</Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -418,7 +579,7 @@ const PageWrapper = styled.div`
     display: grid;
     // grid-template-columns: repeat(2, 1fr);
     // grid-gap: 2rem;
-    grid-template-columns: 53% 45%;
+    grid-template-columns: 53% 40%;
     grid-column-gap: 5%;
     // justify-items: start;
 
@@ -453,6 +614,7 @@ const PageWrapper = styled.div`
           // display: flex;
           flex-direction: row;
           gap: 1rem;
+          max-width: 500px;
         
 
           button {
@@ -629,8 +791,136 @@ const PageWrapper = styled.div`
   }
 
   .footer__palete {
+    background-color: var(--color-white);
+
+    .take-action__palete {
+      background-color: var(--color-primary);
+      clip-path: ellipse(75% 100% at center top);
+
+      .take__action {
+        padding: 12rem 0;
+        text-align: center;
+
+        h3 {
+          font-size: var(--font-size-xx-large);
+          color: var(--color-white);
+          margin-bottom: 2rem;
+        }
+
+        form {
+          flex-direction: row;
+          gap: 1rem;
+          max-width: 500px;
+          margin: 0 auto;
+        
+
+          button {
+            background-color: var(--color-primary);
+            border: 0.1px solid var(--color-white);
+            border-radius: 3px;
+            color: var(--color-white);
+            display: inline-block;
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-bold);
+            min-width: 35%;
+            outline: none;
+            padding: 0 2rem;
+            text-transform: uppercase;
+          }
+        }
+      }
+    }
+
     .footer {
-      height: 300px;
+      margin-top: 5rem;
+
+      &__menu {
+
+        &__row {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          grid-gap: 2rem;
+          list-style-type: none;
+
+          &__columns {
+            h6 {
+              font-size: var(--font-size-medium);
+            }
+
+            &> * + * {
+              margin-top: 2rem;
+            }
+
+            .nested-menu {
+              list-style-type: none;
+
+              &> * + * {
+                margin-top: 2rem;
+              }
+
+              &__item {
+
+                &__link {
+                  color: inherit;
+
+                  &__btn {
+                    background-color: var(--color-tertiary);
+                    border-radius: 3px;
+                    color: var(--color-white);
+                    display: inline-block;
+                    padding: 0.8rem 2rem;
+                    text-decoration: none;
+                    transition: all .3s;
+                    width: 100%;
+
+                    
+                    &:hover {
+                      background-color: var(--color-white);
+                      border: 0.1px solid var(--color-primary);
+                      color: var(--color-primary);
+                      opacity: 0.9;
+                    }
+                  }
+                }
+              }
+
+              .social-medias {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              }
+            }
+          }
+        }
+
+      }
+
+      hr {
+        margin-top: 5rem;
+        // margin-bottom: 1rem;
+      }
+
+      &__baseline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        &__brand {
+          margin-left: -2rem;
+        }
+
+        &__privacy {
+          display: flex;
+          align-items: center;
+          gap: 3rem;
+
+          &__links {
+            color: inherit;
+          }
+        }
+      }
+
     }
   }
 `;
