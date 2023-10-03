@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
@@ -10,16 +10,15 @@ import Avatar from '@mui/material/Avatar';
 import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import {
-  // setActiveConversation,
   setDepartmentConversation
 } from '../features/conversations/conversationSlice';
 import { setOrganization } from '../features/organization/organizationSlice';
 import { setOrgStaffs } from '../features/organization/staffSlice';
 import {
   setActiveTab,
-  selectActiveTab
 } from '../features/ui/uiSlice';
 
 import CustomModal from './modals/CustomModal';
@@ -37,10 +36,10 @@ import { getRequest, postRequest } from '../utils/api';
 const ICON_SMALL = 24;
 
 function Conversations ({ category, conversations }) {
-  const { officeId } = useParams();
+  const { officeId, conversationId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const activeConversation = useSelector(selectActiveTab);
   const user = useSelector((state) => state.auth.user);
   const organization = useSelector((state) => state.organization);
   const [displayDrawer, setDisplayDrawer] = useState(true);
@@ -52,13 +51,25 @@ function Conversations ({ category, conversations }) {
     type: 'Public'
   });
   const [apiResponse, setApiResponse] = useState('');
-  // const [activeChart, setActiveChart] = useState('');
+  const [addingNewDept, setAddingNewDept] = useState(false);
+  const [activeChartId, setActiveChartId] = useState(null);
 
-  console.log(activeConversation);
+  useEffect(() => {
+    let ignore = false;
+    if (location.pathname && !ignore) {
+      setActiveChartId(parseInt(conversationId));
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [location.pathname]);
 
   const handleChange = (e) => {
     setSetFromData({ ...formDate, [e.target.name]: e.target.value });
   };
+
+  const closeCreateModal = () => setOpenCreateModal(false);
 
   const handleOpenModal = () => {
     if (category === 'group') {
@@ -83,25 +94,19 @@ function Conversations ({ category, conversations }) {
     }
   };
 
-  // const handleCloseModal = () => {
-  //   setOpenCreateModal(!openCreateModal);
-  // };
-
   const getOrganization = async () => {
     try {
-      // const { data } = await Axios.get(getOrganizationByIdRoute, {
-      //   params: { id: organization.id }
-      // });
-
       getRequest(getOrganizationByIdRoute, {
-        id: organization.id
+        orgId: organization.id
       })
         .then(res => {
           if (res?.data?.isSuccess) {
-            const { departments } = res?.data?.getOrg;
-            dispatch(setOrganization(res?.data?.getOrg));
+            const { org } = res?.data;
+            const { departments } = org;
+            dispatch(setOrganization(org));
             dispatch(setDepartmentConversation(departments));
           }
+          closeCreateModal();
         })
         .catch(err => console.error(err));
 
@@ -114,6 +119,7 @@ function Conversations ({ category, conversations }) {
     e.preventDefault();
     setApiResponse('');
     if (handleValidation()) {
+      setAddingNewDept(true)
       const { name } = formDate;
       const formatedName = name
         .toLocaleLowerCase()
@@ -123,14 +129,21 @@ function Conversations ({ category, conversations }) {
         userId: user.id,
         departmentName: formatedName,
         orgId: organization.id
-      }).then(res => {
-        if (res?.data.isSuccess) {
-          getOrganization();
-        } else {
-          setApiResponse(res?.data?.message);
-        }
       })
-      .catch(err => console.error(err));
+        .then(res => {
+          console.log(res);
+          if (res?.data?.isSuccess) {
+            getOrganization();
+          } else {
+            setApiResponse(res?.data?.message);
+          }
+          setAddingNewDept(false)
+        })
+        .catch(err => {
+          setAddingNewDept(false);
+          setApiResponse(err.response.data.message);
+          console.error(err);
+        });
     }
   };
 
@@ -201,9 +214,10 @@ function Conversations ({ category, conversations }) {
                       key={i}
                       className='menu__items'
                     >
+                      {conversation.id}
                       <Button
                         onClick={() => changeActiveMessage(conversation)}
-                        className={`menu__action menu__action${conversation.id === activeConversation.id ? '--active' : ''}`}
+                        className={`menu__action menu__action${conversation.id === activeChartId ? '--active' : ''}`}
                       >
                         <Stack
                           direction='row'
@@ -246,13 +260,13 @@ function Conversations ({ category, conversations }) {
       <section className='add-conversation'>
         <CustomModal
           openModal={openCreateModal}
-          onCloseModal={() => setOpenCreateModal(false)}
-          title='Create A New Department'
+          onCloseModal={closeCreateModal}
+          title='Create New Department'
         >
           {apiResponse && (
             <Toast
               type='error'
-              isOpen={apiResponse.length}
+              isOpen={apiResponse.length > 0}
               msg={apiResponse}
             />)}
           <form onSubmit={handleSubmit}>
@@ -276,7 +290,9 @@ function Conversations ({ category, conversations }) {
                 className='submit-button button-primary button'
                 type='submit'
               >
-                Submit
+                {addingNewDept
+                ? <CircularProgress size={25} />
+                : 'Submit'}
               </button>
             </div>
           </form>

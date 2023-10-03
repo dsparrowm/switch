@@ -22,10 +22,11 @@ import {
   selectPrivateConversation
 } from '../features/conversations/conversationSlice';
 import { selectCurrentUser } from '../features/auth/authSlice';
-import { selectOrganizationStaffs } from '../features/organization/staffSlice';
+import { selectOrganizationStaffs, setOrgStaffs } from '../features/organization/staffSlice';
 import {
   getGroupMessagesRoute,
-  getPrivateMessagesRoute
+  getPrivateMessagesRoute,
+  getUsersByOrganizationIdRoute
 } from '../utils/APIRoutes';
 
 import {
@@ -52,6 +53,7 @@ const theme = createTheme({
 
 function MessageContainer () {
   const dispatch = useDispatch();
+  const organization = useSelector((state) => state.organization);
   const [searchInputValue, setSearchInputValue] = useState('');
   const staffList = useSelector(selectOrganizationStaffs);
   const user = useSelector(selectCurrentUser);
@@ -92,6 +94,21 @@ function MessageContainer () {
         .catch(err => console.error(err));
     }
   };
+
+  const handleShowAddModal = () => {
+    // Get all users in current organization
+    getRequest(getUsersByOrganizationIdRoute, {
+      id: organization.id
+    })
+      .then(res => {
+        const { data } = res;
+        if (data.isSuccess) {
+          dispatch(setOrgStaffs(data.users));
+        }
+      })
+      .catch(err => console.error(err));
+    setShowAdd(true);
+  }
 
   const changeOption = (newValue) => {
     const active = newValue?.user;
@@ -159,19 +176,19 @@ function MessageContainer () {
               {activeConversation && activeConversation.name}
             </div>
             <div className='header__heading__wrap__more'>
-              {/* {activeConversation.type === 'group' &&
+              {activeConversation.type === 'group' &&
                 <Button
                   variant='text'
-                  onClick={() => setShowAdd(true)}
+                  onClick={handleShowAddModal}
                 >
                   <GroupAddOutlinedIcon sx={{ width: 24, height: 24 }} />
-                </Button>} */}
-              <Button
+                </Button>}
+              {/* <Button
                 variant='text'
                 onClick={() => setShowAdd(true)}
               >
                 <GroupAddOutlinedIcon sx={{ width: 24, height: 24 }} />
-              </Button>
+              </Button> */}
             </div>
           </div>
         </h3>

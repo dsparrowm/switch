@@ -52,7 +52,6 @@ function Layout () {
       getRequest(getDirectMessagesRoute, { userId: user.id })
         .then(res => {
           if (res?.data) {
-            console.log(res.data);
             const formatedRes = res.data.map((dm) => {
               const isLoginUser = dm.senderId === user.id;
               const displayUser = dm.senderId === user.id ? dm.recipient : dm.sender;
@@ -64,7 +63,6 @@ function Layout () {
               };
               return updatedDm;
             });
-            // console.log(formatedRes, 'formated');
             dispatch(setPrivateConversation(formatedRes));
           }
         })

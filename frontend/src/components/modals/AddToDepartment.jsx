@@ -12,6 +12,7 @@ import {
 import { selectCurrentUser } from '../../features/auth/authSlice';
 import Toast from '../Alert';
 import { selectActiveTab } from '../../features/ui/uiSlice';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const theme = createTheme({
   typography: {
@@ -22,22 +23,21 @@ const theme = createTheme({
 });
 
 function AddToDepartment () {
-  const [searchInputValue, setSearchInputValue] = useState('');
   const staffList = useSelector(selectOrganizationStaffs);
   const user = useSelector(selectCurrentUser);
   const activeConversation = useSelector(selectActiveTab);
-  const [selectedOptions, setSelectedOptions] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [apiResponse, setApiResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const changeOption = (newValue) => {
-    console.log(newValue);
+  const changeOption = (e, newValue, reason) => {
     setSelectedOptions(newValue);
-    // dispatch(setActiveConversation(newValue));
-    // dispatch(addNewPrivateConversation({ ...newValue, type: 'private' }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+    setApiResponse('')
 
     const userIds = selectedOptions.map(({ user }) => user.id);
 
@@ -49,21 +49,26 @@ function AddToDepartment () {
 
     postRequest(addUsersToDepartmentRoute, data)
       .then(res => {
-        if (res?.data) {
+        if (res?.data?.isSuccess) {
           const { data } = res;
           setApiResponse({ message: data?.message, status: data?.isSuccess });
+          setSelectedOptions([]);
         }
+        setLoading(false);
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        setLoading(false);
+        setApiResponse('')
+        console.error(err);
+      });;
   };
 
   return (
     <Container>
-
       {apiResponse && (
         <Toast
           type={apiResponse?.status ? 'success' : 'error'}
-          isOpen={apiResponse && true}
+          isOpen={apiResponse.message.length > 0}
           msg={apiResponse?.message}
         />)}
 
@@ -77,11 +82,8 @@ function AddToDepartment () {
             <Autocomplete
               multiple
               disabled={!staffList}
-              disablePortal
-              onChange={(event, newValue) => changeOption(newValue)}
-              inputValue={searchInputValue}
-              isOptionEqualToValue={(option, value) => option.value === value.value}
-              onInputChange={(event, newInputValue) => setSearchInputValue(newInputValue)}
+              onChange={changeOption}
+              value={selectedOptions}
               className='search__container'
               getOptionLabel={(option) => option?.user?.name}
               options={staffList}
@@ -101,13 +103,18 @@ function AddToDepartment () {
             justifyContent='flex-end'
           >
             <Button
-              disabled={!selectedOptions || !selectedOptions.length}
+              disabled={!selectedOptions
+                || !selectedOptions?.length
+                || loading
+              }
               className='button-secondry'
               variant='contained'
               size='medium'
               type='submit'
             >
-              Add
+              {loading
+                ? <CircularProgress size={20} />
+                : 'Add'}
             </Button>
           </Stack>
         </div>

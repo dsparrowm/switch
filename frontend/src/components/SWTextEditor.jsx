@@ -79,7 +79,7 @@ function TextEditor () {
       console.log(data, 'Private message');
       if (data) {
         dispatch(addNewMessage(data));
-        // setMsg('');
+        setMsg('');
       }
     }
 

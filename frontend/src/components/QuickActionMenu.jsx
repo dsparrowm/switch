@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-// import Button from '@mui/material/Button';
 import { Stack } from '@mui/material';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import { useLocation, Link, useParams } from 'react-router-dom';
-import { setActiveTab } from '../features/ui/uiSlice';
-import { useDispatch } from 'react-redux';
 
 const ICON_SMALL = 24;
 
 function QuickActionMenu () {
-  const dispatch = useDispatch();
   const { officeId } = useParams();
   const location = useLocation();
   const [activePage, setActivePage] = useState('');
@@ -29,17 +25,6 @@ function QuickActionMenu () {
       ignore = true;
     };
   }, [location.pathname]);
-
-  // useEffect(() => {
-  //   let ignore = false;
-  //   if (activePage && !ignore) {
-  //     dispatch(setActiveTab({}));
-  //   }
-
-  //   return () => {
-  //     ignore = true;
-  //   };
-  // }, [activePage]);
 
   return (
     <Container>

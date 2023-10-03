@@ -55,6 +55,7 @@ function Register () {
         setLoading(false);
       } catch (error) {
         setLoading(false);
+        setApiResponse(error.response.data.message);
         console.error(error);
       }
     }
