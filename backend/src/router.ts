@@ -419,7 +419,7 @@ router.get('/messages/private', async (req, res) => {
         delete message.sender.password;
         return message
     })
-    res.status(200).json({messages: sanitizeMessages})
+    res.status(200).json({messages: sanitizeMessages, isSuccess: true})
     } catch (err) {
         res.status(404).json({message: err.message})
     }
