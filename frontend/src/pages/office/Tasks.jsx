@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import TaskList from '../../components/TaskList';
 
-// const ICON_SMALL = 24;
-
 function Tasks () {
   // const [listTitle, setlistTitle] = useState('');
   // const [showListEditor, setShowListEditor] = useState(false);
@@ -90,14 +88,6 @@ function Tasks () {
           </div>
         </div>
       </section>
-      {/* <CustomModal
-        title='Update task details'
-        openModal={openTaskModal}
-        onCloseModal={handleClose}
-        size={800}
-      >
-        <TaskUpdate />
-      </CustomModal> */}
     </PageWrapper>
   );
 }
