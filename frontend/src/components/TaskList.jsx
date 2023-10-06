@@ -12,23 +12,30 @@ import DoneAllOutlinedIcon from '@mui/icons-material/DoneAllOutlined';
 import CustomModal from '../components/modals/CustomModal';
 import TaskUpdate from '../components/modals/TaskUpdate';
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+import { updateTaskStatus } from '../features/task/tasksSlice';
+import { useDispatch } from 'react-redux';
+// import { createTaskRoute } from '../utils/APIRoutes';
+// import { postRequest } from '../utils/api';
+// import { addTask } from '../features/tasks/tasksSlice';
 
 const ICON_SMALL = 24;
 
 function TaskList ({ title, taskList, filter }) {
+  const dispatch = useDispatch();
   const [openTaskModal, setOpenTaskModal] = useState(false);
   const [cardTitle, setCardTitle] = useState('');
   const [selectedTask, setSelectedTask] = useState(null);
   const [showTaskEditor, setShowTaskEditor] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const handleClose = () => setOpenTaskModal(false);
-
-  // console.log(taskList);
 
   const handleOpen = (task) => {
     setSelectedTask(task);
     setOpenTaskModal(true);
   };
+
+  // console.log(taskList);
 
   const handleAddCard = () => {
     console.log(cardTitle);
@@ -40,8 +47,7 @@ function TaskList ({ title, taskList, filter }) {
   const changeTaskStatus = (e, task, status) => {
     // Prevent the click event from propagating to the parent div
     e.stopPropagation();
-    task.status = status;
-    console.log(task, status);
+    dispatch(updateTaskStatus({ taskId: task.id, newStatus: status }));
   };
 
   return (
@@ -55,8 +61,8 @@ function TaskList ({ title, taskList, filter }) {
         </IconButton>
       </div>
       <div className='card__content'>
-        {taskList.length && taskList.map((task, i) => {
-          return (
+        {taskList.length > 0 && taskList.map((task, i) => {
+          return (filter === task.status &&
             <article key={i} className='card__content__task'>
               <div
                 className='card__content__task__btn'
