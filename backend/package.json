@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -28,5 +30,11 @@
     "prisma": "^5.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
+  },
+  "resolutions": {
+    "engine.io": "6.5.1"
+  },
+  "engines": {
+    "node": ">=16.13.0"
   }
 }

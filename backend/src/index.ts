@@ -78,6 +78,6 @@ io.on('connection', (socket) => {
         return users[userId];
     }
 
-server.listen(3001, () => {
+server.listen(process.env.PORT, () => {
     console.log('server running on http://localhost:3001');
 })
