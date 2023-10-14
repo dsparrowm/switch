@@ -1,4 +1,4 @@
-export const host = 'https://swiich.onrender.com';
+export const host = 'https://swiichbackend.onrender.com';
 export const serverConnectionStatus = `${host}/`;
 
 // AUTH APIs
