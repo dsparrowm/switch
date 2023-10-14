@@ -1,4 +1,4 @@
-export const host = 'http://localhost:3001';
+export const host = 'https://swiich.onrender.com';
 export const serverConnectionStatus = `${host}/`;
 export const registerRoute = `${host}/register`;
 export const loginRoute = `${host}/login`;
