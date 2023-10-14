@@ -18,7 +18,6 @@ const baseQuery = fetchBaseQuery({
 // Leave this here incase we need to refresh tokens later
 const baseQueryWithWrapper =  async (args, api, extraOptions) => {
   const result = await baseQuery(args, api, extraOptions);
-  
   // Refresh token here.
   // if (result?.error?.originalStatus === 403) {
 

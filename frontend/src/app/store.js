@@ -11,7 +11,7 @@ import messagesReducer from '../features/conversations/messageSlice';
 import organizationReducer from '../features/organization/organizationSlice';
 import staffsReducers from '../features/organization/staffSlice';
 import uiReducers from '../features/ui/uiSlice';
-import tasksReducers from '../features/tasks/tasksSlice';
+import tasksReducers from '../features/task/tasksSlice';
 
 const persistConfig = {
   key: 'root',

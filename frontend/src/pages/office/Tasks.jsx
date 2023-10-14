@@ -1,8 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import CircularProgress from '@mui/material/CircularProgress';
 import TaskList from '../../components/TaskList';
+import { getTaskListRoute } from '../../utils/APIRoutes';
+import { getRequest } from '../../utils/api';
+import { setTasksList, selectAllTasks } from '../../features/task/tasksSlice';
+import { useDispatch, useSelector } from 'react-redux';
+
+const tasks = [
+  {
+    id: 1,
+    title: 'Design homepage',
+    description: 'Create a visually appealing homepage design',
+    status: 'to-do'
+  },
+  {
+    id: 2,
+    title: 'Implement user authentication',
+    description: 'Set up user registration and login functionality',
+    status: 'in-progress'
+  },
+  {
+    id: 3,
+    title: 'Write API documentation',
+    description: 'Document the REST API for the backend',
+    status: 'to-do'
+  },
+  {
+    id: 4,
+    title: 'Bug fixing',
+    description: 'Address and resolve reported bugs',
+    status: 'in-progress'
+  },
+  {
+    id: 5,
+    title: 'Deploy to production',
+    description: 'Prepare and deploy the application to production servers',
+    status: 'completed'
+  }
+];
 
 function Tasks () {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+  const taskList = useSelector(selectAllTasks);
   // const [listTitle, setlistTitle] = useState('');
   // const [showListEditor, setShowListEditor] = useState(false);
 
@@ -12,10 +53,34 @@ function Tasks () {
   //     setShowListEditor(false);
   //   }
   // };
+  useEffect(() => {
+    let cleaner = false;
+    // console.log(tasks);
+    if (!cleaner) {
+      // setLoading(true);
+      getRequest(getTaskListRoute)
+        .then(res => {
+          if (res?.data?.isSuccess) {
+            console.log(res);
+            dispatch(setTasksList(res.data));
+          }
+          setLoading(false);
+        })
+        .catch(error => {
+          setLoading(false);
+          console.error(error);
+          dispatch(setTasksList(tasks));
+        });
+    }
 
-  const filteredTasksByStatus = (filter) => {
-    return tasks.filter(({ status }) => status === filter);
-  };
+    return () => {
+      cleaner = true;
+    };
+  }, []);
+
+  // const filteredTasksByStatus = (filter) => {
+  //   return tasks.filter(({ status }) => status === filter);
+  // };
 
   return (
     <PageWrapper>
@@ -28,23 +93,31 @@ function Tasks () {
         <div className='board__content'>
           <div className='board__content__cards'>
 
-            <TaskList
-              title='To-Dos'
-              taskList={filteredTasksByStatus('to-do')}
-              filter='to-do'
-            />
+            {loading
+              ? (
+                <div className='board__content__cards__loader'>
+                  <CircularProgress size={25} />
+                </div>)
+              : (
+                <>
+                  <TaskList
+                    title='To-Dos'
+                    taskList={taskList}
+                    filter='to-do'
+                  />
 
-            <TaskList
-              title='In Progress'
-              taskList={filteredTasksByStatus('in-progress')}
-              filter='in-progress'
-            />
+                  <TaskList
+                    title='In Progress'
+                    taskList={taskList}
+                    filter='in-progress'
+                  />
 
-            <TaskList
-              title='Completed'
-              taskList={filteredTasksByStatus('completed')}
-              filter='completed'
-            />
+                  <TaskList
+                    title='Completed'
+                    taskList={taskList}
+                    filter='completed'
+                  />
+                </>)}
 
             {/* Add new list section */}
 
@@ -92,39 +165,6 @@ function Tasks () {
   );
 }
 
-const tasks = [
-  {
-    id: 1,
-    title: 'Design homepage',
-    description: 'Create a visually appealing homepage design',
-    status: 'to-do'
-  },
-  {
-    id: 2,
-    title: 'Implement user authentication',
-    description: 'Set up user registration and login functionality',
-    status: 'in progress'
-  },
-  {
-    id: 3,
-    title: 'Write API documentation',
-    description: 'Document the REST API for the backend',
-    status: 'to-do'
-  },
-  {
-    id: 4,
-    title: 'Bug fixing',
-    description: 'Address and resolve reported bugs',
-    status: 'in-progress'
-  },
-  {
-    id: 5,
-    title: 'Deploy to production',
-    description: 'Prepare and deploy the application to production servers',
-    status: 'completed'
-  }
-];
-
 const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -165,6 +205,11 @@ const PageWrapper = styled.div`
         display: flex;
         gap: 0.5rem;
         max-height: 100%;
+
+        &__loader {
+          width: 100%;
+          text-align: center;
+        }
       }
 
       &:first-child {
