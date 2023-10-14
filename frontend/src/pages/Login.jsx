@@ -40,18 +40,18 @@ function Login () {
       userId: user?.id,
       orgId: parseInt(JSON.parse(inviteCode))
     })
-    .then(res => {
-      if (res?.data?.isSuccess) {
-        localStorage.removeItem('inviteCode');
-        navigate(redirectPath);
-      }
-    })
-    .catch(err => console.error(err));
+      .then(res => {
+        if (res?.data?.isSuccess) {
+          localStorage.removeItem('inviteCode');
+          navigate(redirectPath);
+        }
+      })
+      .catch(err => console.error(err));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (handleValidation()) {
       setApiResponse('');
       setLoading(true);
@@ -172,8 +172,8 @@ function Login () {
                 type='submit'
               >
                 {loading
-                ? <CircularProgress size={25} />
-                : 'Sign In'}
+                  ? <CircularProgress size={25} />
+                  : 'Sign In'}
               </button>
             </div>
             <span className='alternate-action'>
