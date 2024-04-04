@@ -21,7 +21,9 @@
 ### Prerequisites
 
 [Node.js](https://nodejs.org/) v14 or later
+
 PostgreSQL database
+
 (Optional) Docker and Docker Compose for containerization
 Installation
 
