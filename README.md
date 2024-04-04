@@ -64,10 +64,11 @@ If you prefer to run the application using Docker and Docker Compose, follow the
     docker-compose up
     ```
 
-Contributing
+#### Contributing
+
 Contributions are welcome! Please follow the guidelines outlined in the CONTRIBUTING.md file.
 
-License
+#### License
 This project is licensed under the MIT License.
 
 Acknowledgments
