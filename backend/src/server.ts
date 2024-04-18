@@ -1,13 +1,10 @@
-import express from 'express';
-import router from './router';
+import express, { Router, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import { protect } from './modules/auth';
-import { createNewUser, signin } from './handlers/user';
-import { sendOtp } from './handlers/invitelink';
-import { sendorgInviteLink } from './handlers/invitelink';
-import { verifyotp } from './handlers/verify_otp';
-import prisma from './db';
+import authenticationRoute from './routes/authentication';
+import routes from './routes/index';
+import healthCheck from './Handlers/healthCheck';
 
 
 const app = express();
@@ -17,50 +14,31 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
+//  Routers
+app.use("/api", protect, routes)
+app.use("/auth", authenticationRoute)
 
-app.use('/api', protect, router);
 
-app.post('/register', createNewUser, async (req, res) => {
-    await sendOtp(req.body.email, req.body.id)
-})
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
-app.post('/login', signin)
-app.post('/verifyotp', async (req, res) => {
-    const {user_id, otp} = req.body;
-    try {
-        const validOtp = await verifyotp(user_id, otp)
-        if (!validOtp) {
-            res.json({message: "Invalid Otp", isSuccess: false})
-            return
-        }
-        res.status(200)
-        res.json({message: "Valid Otp", isSuccess: true})
-    } catch (err) {
-        res.json({message: `${err}`, isSuccess: false})
-        return
-    }
-})
-app.post('/invitationcode', async (req, res) => {
-    const {code} = req.body;
-    console.log(`Invitation code: ${code}`)
-    try {
-        const invitation = await prisma.invitation.findUnique({
-            where: {
-                code
-            },
-            include: {
-                organisation: true,
-                user: true
-            }
-        })
-        delete invitation.user.password;
-        res.status(200).json({invitation, isSuccess: true})
-    } catch (err) {
-        res.json({error: err.message})
-        return   
-    }
-})
+
+/**
+ * @openapi
+ * /status:
+ *  get:
+ *      tags:
+ *         - Health check
+ *      summary: This is to test if the server connection is active
+ *      description: This is to test the connection
+ *      responses:
+ *         200:
+ *             description: Server is running
+ * 
+ */
+app.get('/status', healthCheck)
+
+
+
+
+
+
 
 export default app;

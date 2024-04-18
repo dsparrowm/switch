@@ -10,7 +10,7 @@ This document provides instructions for setting up and running the backend for S
 
 1. Clone the repository
 ```sh
-git clone https://github.com/your-username/social-media-app.git
+git clone https://github.com/dsparrowm/switch.git
 ```
 2. Navigate to the project directory
 ```sh
@@ -41,8 +41,13 @@ The Docker Compose configuration for this project is defined in the compose.yml 
      - Watches for changes in package.json and package-lock.json files and rebuilds the container and image if there are any changes.
      - Watches for changes in the ./backend directory and syncs the changes with the container in real-time.
 
+## Database service
+- service name: db
+- ports: 5432:5432
+- Environment Variables: Loaded from the .env file in the ./backend directory
+
 ## Volumes
-The Docker Compose configuration defines a volume named "anime" that can be used to persist data if necessary.
+The Docker Compose configuration defines a volume named "postgres-data" that can be used to persist data if necessary.
 
 ## Troubleshooting
 If you encounter any issues while running the Docker containers, you can check the logs using the following command:
@@ -52,5 +57,5 @@ docker-compose logs -f
 This will display the logs for all the running containers and help you identify and resolve any issues.
 
 ## Additional Resources
-[Docker Documentation](https://docs.docker.com/language/nodejs/)
+[Docker Documentation](https://docs.docker.com/language/nodejs/)  
 [Docker Compose Documentation](https://docs.docker.com/compose/)

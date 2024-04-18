@@ -4,6 +4,7 @@ import app from './server'
 import http from 'http';
 import { Server} from 'socket.io';
 import prisma from './db';
+import swaggerDocs from './config/Swagger/swagger';
 
 const server = http.createServer(app);
 const io = new Server(server, {cors: {
@@ -80,4 +81,5 @@ io.on('connection', (socket) => {
 
 server.listen(process.env.PORT, () => {
     console.log('server running on http://localhost:3001');
+    swaggerDocs(app, 3001);
 })

@@ -1,0 +1,246 @@
+import { z } from "zod";
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     createDepartmentSchema:
+ *       type: object
+ *       properties:
+ *         userId:
+ *           type: number
+ *           minimum: 1
+ *         departmentName:
+ *           type: string
+ *           minLength: 1
+ *         orgId:
+ *           type: number
+ *           minimum: 1
+ *     joinDepartmentSchema:
+ *       type: object
+ *       properties:
+ *         userIds:
+ *           type: array
+ *           items:
+ *             type: number
+ *             minimum: 1
+ *         adminOrDeptHeadId:
+ *           type: number
+ *           minimum: 1
+ *         departmentId:
+ *           type: number
+ *           minimum: 1
+ *     createTaskSchema:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           minLength: 1
+ *         createdBy:
+ *           type: number
+ *           minimum: 1
+ *     updateTaskSchema:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: number
+ *           minimum: 1
+ *         newTitle:
+ *           type: string
+ *           minLength: 1
+ *         description:
+ *           type: string
+ *           nullable: true
+ *         dueDate:
+ *           type: string
+ *           format: date
+ *           nullable: true
+ *         assignedTo:
+ *           type: number
+ *           minimum: 1
+ *           nullable: true
+ *         status:
+ *           type: string
+ *           enum:
+ *             - PENDING
+ *             - COMPLETED
+ *     getOrganisationSchema:
+ *       type: object
+ *       properties:
+ *         orgId:
+ *           type: number
+ *           minimum: 1
+ *     createOrganisationSchema:
+ *       type: object
+ *       properties:
+ *         userId:
+ *           type: number
+ *           minimum: 1
+ *         name:
+ *           type: string
+ *           minLength: 1
+ *     addUserToOrganisationSchema:
+ *       type: object
+ *       properties:
+ *         userId:
+ *           type: number
+ *           minimum: 1
+ *         orgId:
+ *           type: number
+ *           minimum: 1
+ *     createOrgIviteSchema:
+ *       type: object
+ *       properties:
+ *         organisationId:
+ *           type: number
+ *           minimum: 1
+ *         userId:
+ *           type: number
+ *           minimum: 1
+ *     getTasksSchema:
+ *       type: object
+ *       properties:
+ *         userId:
+ *           type: number
+ *           minimum: 1
+ */
+
+
+// Zod Input validation schemas
+export const signupSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(6),
+})
+
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+})
+
+export const verifyOtpSchema = z.object({
+  userId: z.number().positive(),
+  otp: z.string().min(6),
+})
+
+export const createDepartmentSchema = z.object({
+    userId: z.number().positive(),
+    departmentName: z.string().min(1),
+    orgId: z.number().positive(),
+  });
+  
+export const joinDepartmentSchema = z.object({
+  userIds: z.array(z.number().positive()),
+  adminOrDeptHeadId: z.number().positive(),
+  departmentId: z.number().positive(),
+});
+
+export const getDepartmentsSchema = z.object({
+  orgId: z.string().min(1),
+});
+
+export const deleteDepartmentSchema = z.object({
+  departmentId: z.number().positive(),
+});
+
+export const getDepartmentSchema = z.object({
+  departmentId: z.number().positive(),
+});
+
+export const updateDepartmentSchema = z.object({
+  id: z.number().positive(),
+  departmentName: z.string().min(1)
+})
+  
+export const createTaskSchema = z.object({
+  title: z.string().min(1),
+  createdBy: z.number().positive(),
+});
+  
+export const updateTaskSchema = z.object({
+  id: z.number().positive(),
+  newTitle: z.string().min(1),
+  description: z.string().min(1).optional(),
+  dueDate: z.date().optional(),
+  assignedTo: z.number().positive().optional(),
+  status: z.enum(['PENDING', 'COMPLETED']),
+});
+
+export const getOrganisationSchema = z.object({
+  orgId: z.number().positive(),
+});
+
+export const createOrganisationSchema = z.object({
+  userId: z.number().positive(),
+  name: z.string().min(1),
+});
+  
+export const addUserToOrganisationSchema = z.object({
+  userId: z.number().positive(),
+  orgId: z.number().positive(),
+});
+
+export const getOrganisationUsersSchema = z.object({
+  orgId: z.number().positive()
+})
+
+export const updateOrganisationSchema = z.object({
+  orgId: z.number().positive(),
+  name: z.string().min(1).optional(),
+  invitationUrl: z.string().optional(),
+});
+  
+export const createOrgIviteSchema = z.object({
+  organisationId: z.number().positive(),
+  userId: z.number().positive(),
+});
+
+export const deleteOrganisationSchema = z.object({
+  orgId: z.number().positive(),
+})
+
+export const getUserTaskSchema = z.object({
+  userId: z.number().positive(),
+});
+
+export const getTaskSchema = z.object({
+  taskId: z.number().positive(),
+});
+
+export const assignTaskSchema = z.object({
+  taskId: z.number().positive(),
+  assignedTo: z.number().positive(),
+});
+
+export const deleteTaskSchema = z.object({
+  taskId: z.number().positive(),
+});
+
+export const getPrivateMessageSchema = z.object({
+  receiverId: z.number().positive(),
+  senderId: z.number().positive(),
+});
+
+export const getGroupMessageSchema = z.object({
+  departmentId: z.number().positive(),
+});
+
+export const deletePrivateMessageSchema = z.object({
+  messageId: z.number().positive(),
+});
+
+export const createGroupMessageSchema = z.object({
+  senderId: z.number().positive(),
+  content: z.string().min(1),
+  departmentId: z.number().positive()
+});
+
+export const createPrivateMessageSchema = z.object({
+  senderId: z.number().positive(),
+  recipientId: z.number().positive(),
+  content: z.string().min(1),
+});
+
+export const getUserMessageSchema = z.object({
+  userId: z.number().positive()
+})

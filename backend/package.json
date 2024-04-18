@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts",
+    "dev": "nodemon -r ts-node src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "watch-ts": "tsc -w",
+    "test": "jest",
+    "test:unit": "vitest -c ./vitest.config.unit.ts",
+    "test:unit:ui": "vitest -c ./vitest.config.unit.ts --ui"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +19,8 @@
     "@prisma/client": "^5.2.0",
     "@types/cors": "^2.8.14",
     "@types/morgan": "^1.9.5",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -23,13 +29,22 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.5",
     "sib-api-v3-sdk": "^8.5.0",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/node": "^20.5.9",
+    "@jest/globals": "^29.7.0",
+    "@types/node": "^20.12.7",
+    "jest-mock-extended": "^3.0.6",
+    "nodemon": "^3.1.0",
     "prisma": "^5.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.0",
+    "vitest-mock-extended": "^1.3.1"
   },
   "resolutions": {
     "engine.io": "6.5.1"

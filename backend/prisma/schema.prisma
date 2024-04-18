@@ -18,13 +18,12 @@ enum STATUS {
 model Organisation {
   id           Int                @id @default(autoincrement())
   name         String
+  inviteLink   String
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
   departments  Department[]
   users        UserOrganisation[]
   userRoles    UserRole[]
-  invitationId Int?
-  invitation   Invitation?
 }
 
 model Department {
@@ -87,7 +86,6 @@ model User {
   departments   UserDepartment[]
   otps          OTP[]
   roles         UserRole[]
-  invitation    Invitation[]
 }
 
 model Message {
@@ -141,14 +139,3 @@ model UserRole {
   @@unique([userId, roleId, organisationId])
 }
 
-model Invitation {
-  id             Int          @id @default(autoincrement())
-  code           String       @unique
-  url            String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  organisationId Int          @unique
-  organisation   Organisation @relation(fields: [organisationId], references: [id])
-  userId         Int?
-  user           User?        @relation(fields: [userId], references: [id])
-}

@@ -1,36 +1,33 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { Request, Response, NextFunction } from 'express';
 
 export const createJWT = (user) => {
     const token = jwt.sign({id: user.id, role: user.role}, process.env.JWT_SECRET);
     return token;
 }
 
-export const protect = (req, res, next) => {
+export const protect = (req: Request, res: Response, next: NextFunction) => {
     const bearer = req.headers.authorization;
 
     if (!bearer) {
-        res.status(401);
-        res.json({message: "Not Authorized", isSuccess: false});
-        return;
+        return res.status(401).json({message: "Not Authorized", isSuccess: false});
     }
 
     const [, token] = bearer.split(' ');
     if (!token) {
-        res.status(401);
-        res.json({message: "Not a valid token", isSuccess: false});
+        res.status(401).json({message: "Not a valid token", isSuccess: false});
         return;
     }
     try {
         const user = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = user;
+        req[user] = user;
         next();
         return;
 
-    } catch (error) {
-        console.log(error);
-        res.status(401);
-        res.json({message: "Not Authorized", isSuccess: false});
+    } catch (err) {
+        console.log(err);
+        res.status(401).json({message: "Not Authorized", isSuccess: false});
         return;
     }
 }
