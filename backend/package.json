@@ -8,7 +8,6 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "watch-ts": "tsc -w",
-    "test": "jest",
     "test:unit": "vitest -c ./vitest.config.unit.ts",
     "test:unit:ui": "vitest -c ./vitest.config.unit.ts --ui"
   },

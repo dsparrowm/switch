@@ -1,9 +1,9 @@
 import { describe, beforeEach, test, expect, vi } from 'vitest';
 import { Request, Response } from 'express';
-import createOrganisation from '../src/Handlers/organisations/createOrganisation';
-import prisma from '../src/__mocks__/db';
+import createOrganisation from '../../../src/Handlers/organisations/createOrganisation';
+import prisma from '../../../src/__mocks__/db';
 
-vi.mock('../src/db');
+vi.mock('../../../src/db');
 
 const mockRequest = {
   body: {
@@ -21,7 +21,7 @@ describe('createOrganisation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
-
+  
   test('It should create a new Organisation', async () => {
 
     const date = new Date();
@@ -153,6 +153,46 @@ describe('createOrganisation', () => {
         createdAt: date,
         updatedAt: date
       }
+    });
+  });
+
+  test('It should return a 400 error if the request body is invalid', async () => {
+    const invalidRequest = {
+     body: {
+       //missing userId
+       name: "Test Organisation"
+     }
+    } as unknown as Request;
+
+    await createOrganisation(invalidRequest, mockResponse);
+
+    expect(mockResponse.status).toHaveBeenCalledWith(400);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      error: expect.any(Array),
+      isSuccess: false
+    });
+  });
+
+  test('it should return a 500 error if an error occurs', async () => {
+    prisma.user.findUnique.mockRejectedValue(new Error('Test Error'));
+
+    await createOrganisation(mockRequest, mockResponse);
+
+    expect(mockResponse.status).toHaveBeenCalledWith(500);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      error: "Test Error",
+      isSuccess: false
+    });
+  });
+  
+  test('it should return a 404 error when the user does not exist', async () => {
+    prisma.user.findUnique.mockResolvedValue(null);
+
+    await createOrganisation(mockRequest, mockResponse);
+
+    expect(mockResponse.status).toHaveBeenCalledWith(404);
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      message: "User does not exist, please create an account",
     });
   });
 });

@@ -167,7 +167,7 @@ export const updateTaskSchema = z.object({
 });
 
 export const getOrganisationSchema = z.object({
-  orgId: z.number().positive(),
+  orgId: z.coerce.number().int().positive(),
 });
 
 export const createOrganisationSchema = z.object({
@@ -196,15 +196,15 @@ export const createOrgIviteSchema = z.object({
 });
 
 export const deleteOrganisationSchema = z.object({
-  orgId: z.number().positive(),
+  orgId: z.coerce.number().int().positive()
 })
 
 export const getUserTaskSchema = z.object({
-  userId: z.number().positive(),
+  userId: z.coerce.number().int().positive(),
 });
 
 export const getTaskSchema = z.object({
-  taskId: z.number().positive(),
+  taskId: z.coerce.number().int().positive(),
 });
 
 export const assignTaskSchema = z.object({
@@ -217,12 +217,12 @@ export const deleteTaskSchema = z.object({
 });
 
 export const getPrivateMessageSchema = z.object({
-  receiverId: z.number().positive(),
-  senderId: z.number().positive(),
+  receiverId: z.coerce.number().int().positive(),
+  senderId: z.coerce.number().int().positive(),
 });
 
 export const getGroupMessageSchema = z.object({
-  departmentId: z.number().positive(),
+  departmentId: z.coerce.number().int().positive(),
 });
 
 export const deletePrivateMessageSchema = z.object({

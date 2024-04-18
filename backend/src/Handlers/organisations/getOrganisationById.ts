@@ -15,14 +15,14 @@ const getOrganisationById = async (req: Request, res: Response) => {
         }
        })
        if (!org) {
-           return res.status(400).json({message: "Organisation not found", isSuccess: false})
+           return res.status(404).json({message: "Organisation not found", isSuccess: false})
        }
        res.status(200).json({message: "Organisation found", org, isSuccess: true})
     } catch (err) {
         if (err instanceof z.ZodError) {
             return res.status(400).json({message: err.issues, isSuccess: false})
         }
-        res.status(400).json({message: err.message, isSuccess: false})
+        res.status(500).json({message: err.message, isSuccess: false})
     }
   }
 

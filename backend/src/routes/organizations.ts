@@ -2,7 +2,7 @@ import { Router } from 'express';
 import addOrganisationUsers from '../Handlers/organisations/addOrganisationUsers';
 import createOrganisation from '../Handlers/organisations/createOrganisation';
 import deleteOrganisationById from '../Handlers/organisations/deleteOrganisationById';
-import getOrganisationById from '../Handlers/organisations/getOrganisation';
+import getOrganisationById from '../Handlers/organisations/getOrganisationById';
 import getOrganisationUsers from '../Handlers/organisations/getOrganisationUsers';
 import updateOrganisation from '../Handlers/organisations/updateOrganisation';
 
@@ -63,7 +63,7 @@ const router = Router();
  * 
  * 
  */
-router.get('/organisation/:id', getOrganisationById)
+router.get('/organisation', getOrganisationById)
 
   /**
  * @openapi
@@ -291,6 +291,6 @@ router.put('/organisations', updateOrganisation)
  * 
  * 
  */
-router.delete('/organisations/:id', deleteOrganisationById);
+router.delete('/organisation', deleteOrganisationById);
 
 export default router;

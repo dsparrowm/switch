@@ -83,7 +83,7 @@ const createOrganisation = async (req: Request, res: Response) => {
             return
         }
         res.status(500);
-        res.json({error: `${err.message}`, isSuccess: true,})
+        res.json({error: `${err.message}`, isSuccess: false,})
     }
 }
 
