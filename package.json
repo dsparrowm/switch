@@ -9,6 +9,7 @@
     "start": "node dist/index.js",
     "watch-ts": "tsc -w",
     "test:unit": "vitest -c ./vitest.config.unit.ts",
+    "test:e2e": "vitest --config ./vitest.config.e2e.ts",
     "test:unit:ui": "vitest -c ./vitest.config.unit.ts --ui"
   },
   "keywords": [],
@@ -24,6 +25,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.5",
@@ -36,9 +38,11 @@
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/node": "^20.12.7",
+    "@types/supertest": "^6.0.2",
     "jest-mock-extended": "^3.0.6",
     "nodemon": "^3.1.0",
     "prisma": "^5.2.0",
+    "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5",

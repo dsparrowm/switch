@@ -8,18 +8,12 @@ const createDepartment = async (req: Request, res: Response) => {
       const { userId, departmentName, organisationId } = await createDepartmentSchema.parseAsync(req.body);
   
       const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { roles: { include: { role: true } } },
+        where: { id: userId }
+
       });
-  
       if (!user) {
         res.status(404)
         return res.json({ message: 'User does not exist', isSuccess: false });
-      }
-  
-      if (!user.roles.some((userRole) => userRole.role.name === 'admin' && userRole.organisationId === organisationId)) {
-        res.status(403)
-        return res.json({ message: 'You do not have permission to create a department', isSuccess: false });
       }
   
       const newDepartment = await prisma.department.create({

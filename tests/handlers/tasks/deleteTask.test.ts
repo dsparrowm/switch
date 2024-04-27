@@ -2,7 +2,6 @@ import { describe, beforeEach, test, expect, vi } from 'vitest';
 import { Request, Response } from 'express';
 import deleteTask from '../../../src/handlers/tasks/deleteTask';
 import prisma from '../../../src/__mocks__/db';
-import { date } from 'zod';
 
 vi.mock('../../../src/db');
 

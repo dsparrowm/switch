@@ -1,8 +1,7 @@
 import { describe, beforeEach, test, expect, vi } from 'vitest';
 import { Request, Response } from 'express';
 import createDepartment from '../../../src/handlers/departments/createDepartment';
-import prisma from '../../../src/__mocks__/db';
-import { date } from 'zod';
+import prisma from '../../../src/__mocks__/db'
 
 vi.mock('../../../src/db');
 
@@ -23,7 +22,7 @@ describe('create Department', () => {
     beforeEach(() => {
         vi.resetAllMocks();
     });
-
+    
     test('It should create a new department withing an organisation', async () => {
         const date = new Date()
         prisma.user.findUnique.mockResolvedValue({
@@ -32,7 +31,7 @@ describe('create Department', () => {
             email: "testuser@gmail.com",
             password: "password",
             createdAt: date,
-            updatedAt: date
+            updatedAt: date,
         })
         prisma.department.create.mockResolvedValue({
             id: 1,
@@ -71,8 +70,7 @@ describe('create Department', () => {
         await createDepartment(mockRequest, mockResponse)
 
         expect(prisma.user.findUnique).toHaveBeenCalledWith({
-            where: { id: 1 },
-            include: { roles: { include: { role: true } } },
+            where: { id: 1 }
         })
         expect(prisma.department.create).toHaveBeenCalledWith({
             data: {

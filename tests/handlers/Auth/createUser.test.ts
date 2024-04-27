@@ -3,9 +3,11 @@ import { Request, Response } from 'express';
 import createUser from '../../../src/handlers/authentication/createUser';
 import prisma from '../../../src/__mocks__/db';
 import hashPassword from '../../../src/helpers/hashPassword';
+import createJWT from '../../../src/helpers/createJwt';
 
 vi.mock('../../../src/db');
-
+vi.mock('../../../src/helpers/hashPassword', () => vi.fn());
+vi.mock('../../../src/helpers/createJwt', () => vi.fn());
 
 const mockRequest = {
   body: {
@@ -26,17 +28,20 @@ describe('Create User', () => {
       });
     
     test('Create a new user', async () => {
+      const hashedPassword = 'password'
+      const token = 'jwt_token'
       const date = new Date();
       const user = {
           id: 1,
           name: "test user",
           email: "testuser@gmail.com",
-          password: "password",
           createdAt: date,
           updatedAt: date
       }
+
       prisma.user.findUnique.mockResolvedValue(null)
-      prisma.user.create.mockResolvedValue(user)
+      prisma.user.create.mockResolvedValue({...user, password: hashedPassword})
+      hashPassword(hashPassword).mockResolvedValueOnce(hashedPassword)
       
       await createUser(mockRequest, mockResponse)
 
@@ -48,7 +53,7 @@ describe('Create User', () => {
       expect(prisma.user.create).toHaveBeenCalledWith({
         data: {
           email: "test@gmail.com",
-          password: await hashPassword('password'),
+          password: hashedPassword,
           name: "test user"
         }
       })
