@@ -186,7 +186,7 @@ export const addUserToOrganisationSchema = z.object({
 });
 
 export const getOrganisationUsersSchema = z.object({
-  orgId: z.number().positive()
+  orgId: z.coerce.number().int().positive()
 })
 
 export const updateOrganisationSchema = z.object({

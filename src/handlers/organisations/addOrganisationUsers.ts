@@ -2,6 +2,7 @@ import { z } from "zod";
 import prisma from "../../db";
 import { Request, Response } from 'express';
 import { addUserToOrganisationSchema } from "../../utils/validationSchemas";
+import redis from "../../redis";
 
 const addOrganisationUsers = async (req: Request, res: Response) => {
     try {
@@ -47,6 +48,7 @@ const addOrganisationUsers = async (req: Request, res: Response) => {
                     }
                 })
             }
+            await redis.del(`org:${orgId}:users`);
             res.status(200)
             res.json({message: "User added successfully", isSuccess: true})
         } else {

@@ -2,6 +2,7 @@ import { z } from "zod";
 import prisma from "../../db";
 import { Request, Response } from 'express';
 import { updateOrganisationSchema } from "../../utils/validationSchemas";
+import redis from "../../redis";
 
 const updateOrganisation = async (req: Request, res: Response) => {
     try {
@@ -15,11 +16,11 @@ const updateOrganisation = async (req: Request, res: Response) => {
             res.json({message: "Organisation not found", isSuccess: false})
             return
         }
-        await prisma.organisation.update({
+        const updatedOrg = await prisma.organisation.update({
             where: {id: orgId},
             data: {name}
         })
-       
+        await redis.set(`org:${orgId}`, JSON.stringify(updatedOrg));
         res.status(200);
         res.json({message: "successful", isSuccess: true})
     } catch (err) {

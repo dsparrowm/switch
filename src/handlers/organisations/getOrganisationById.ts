@@ -6,13 +6,13 @@ import redis from "../../redis";
 
 const getOrganisationById = async (req: Request, res: Response) => {
     try {
-        const cachedValue = await redis.get(`org:${req.query.orgId}`);
+        const { orgId } = await getOrganisationSchema.parseAsync(req.query);
+        const cachedValue = await redis.get(`org:${orgId}`);
         if (cachedValue) {
             console.log("Organisation retrieved from redis database")
             res.status(200)
             return res.json({message: "Organisation found", org: JSON.parse(cachedValue), isSuccess: true})
         }
-        const { orgId } = await getOrganisationSchema.parseAsync(req.query);
         const org = await prisma.organisation.findUnique({
             where: {
                 id: orgId
@@ -25,7 +25,7 @@ const getOrganisationById = async (req: Request, res: Response) => {
            res.status(404)
            return res.json({message: "Organisation not found", isSuccess: false})
        }
-       await redis.set(`org:${req.query.orgId}`, JSON.stringify(org));
+       await redis.set(`org:${orgId}`, JSON.stringify(org));
        console.log("Organisation retrieved from postgres database")
        res.status(200)
        res.json({message: "Organisation found", org, isSuccess: true})

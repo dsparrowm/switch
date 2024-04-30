@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import prisma from "../../db";
 import generateInviteLink from "../../helpers/generateInviteLink";
 import { createOrganisationSchema } from "../../utils/validationSchemas";
+import redis from "../../redis";
 
 
 const createOrganisation = async (req: Request, res: Response) => {
@@ -74,6 +75,7 @@ const createOrganisation = async (req: Request, res: Response) => {
             }
         })
         const org = createOrg
+        await redis.set(`org:${org.id}`, JSON.stringify(org));
         res.status(200);
         res.json({message: 'Organization created successfully!', isSuccess: true, org})
     } catch (err) {

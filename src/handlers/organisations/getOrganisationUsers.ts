@@ -6,7 +6,7 @@ import redis from "../../redis";
 
 const getOrganisationUsers = async (req: Request, res: Response) => {
     try {
-        const { orgId } = await getOrganisationUsersSchema.parseAsync(req.body);
+        const { orgId } = await getOrganisationUsersSchema.parseAsync(req.query);
         const cachedValue = await redis.get(`org:${orgId}:users`);
         if (cachedValue) {
             console.log("Organisation users retrieved from redis database")
