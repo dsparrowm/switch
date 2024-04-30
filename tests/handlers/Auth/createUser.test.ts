@@ -41,7 +41,7 @@ describe('Create User', () => {
 
       prisma.user.findUnique.mockResolvedValue(null)
       prisma.user.create.mockResolvedValue({...user, password: hashedPassword})
-      hashPassword(hashPassword).mockResolvedValueOnce(hashedPassword)
+  
       
       await createUser(mockRequest, mockResponse)
 

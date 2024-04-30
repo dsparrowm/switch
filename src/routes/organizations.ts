@@ -27,7 +27,7 @@ const router = Router();
 
 /**
  * @openapi
- * /api/organisation/:id:
+ * /api/organisations:
  *   get:
  *     tags:
  *        - Organisations
@@ -63,7 +63,7 @@ const router = Router();
  * 
  * 
  */
-router.get('/organisation', getOrganisationById)
+router.get('/organisations', getOrganisationById)
 
   /**
  * @openapi
@@ -103,7 +103,7 @@ router.get('/organisation', getOrganisationById)
  * 
  * 
  */
-router.get('/organisations/users', getOrganisationUsers)
+router.get('/organisation/users', getOrganisationUsers)
   
   
 /**
