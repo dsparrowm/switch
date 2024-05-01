@@ -1,6 +1,6 @@
-# SWIITCH - An all in one platform for your Organization
+# SWIITCH API
 
- _This is a full-stack collaboration tool built with React, Node.js, Express.js, and PostgreSQL. The application allows users to join organizations, create and manage departments, assign tasks, send private and group messages, and more._
+ _This is an expressjs API for Swiich Saas built with Node.js, Express.js, and PostgreSQL. An application that allows users to join organizations, create and manage departments, assign tasks, send private and group messages, and more._
 
 ## Features
 - User authentication and authorization
