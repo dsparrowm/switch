@@ -21,8 +21,14 @@
 ### Prerequisites
 
 [Node.js](https://nodejs.org/) v14 or later
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6a6f20832cd8269267c47384a2a6d838dc22bbee
 PostgreSQL database
+
 (Optional) Docker and Docker Compose for containerization
+
 Installation
 
 1. Clone the repository:
@@ -30,12 +36,16 @@ Installation
 
 2. Install dependencies:
     ```sh
+<<<<<<< HEAD
     cd backend
+=======
+>>>>>>> 6a6f20832cd8269267c47384a2a6d838dc22bbee
     npm install
     ```
 
 3. Create a .env file at the root of the project
     Update the .env file with your PostgreSQL database connection details and other required variables.
+    Look at the _.env.example_ file for the environment variables needed
 
 4. Run database migrations:
     ```sh
@@ -61,12 +71,15 @@ If you prefer to run the application using Docker and Docker Compose, follow the
     ```sh
     docker-compose up
     ```
+<<<<<<< HEAD
 
 Contributing
 Contributions are welcome! Please follow the guidelines outlined in the CONTRIBUTING.md file.
 
 License
 This project is licensed under the MIT License.
+=======
+>>>>>>> 6a6f20832cd8269267c47384a2a6d838dc22bbee
 
 Acknowledgments
 - [Prisma](www.prisma.io) - For the powerful ORM and database tooling
