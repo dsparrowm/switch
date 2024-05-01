@@ -139,6 +139,10 @@ export const getDepartmentsSchema = z.object({
   organisationId: z.coerce.number().positive(),
 });
 
+export const getDepartmentUsersSchema = z.object({
+  departmentId: z.coerce.number().int().positive(),
+});
+
 export const deleteDepartmentSchema = z.object({
   departmentId: z.number().positive(),
   organisationId: z.number().positive()

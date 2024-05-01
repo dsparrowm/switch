@@ -1,14 +1,16 @@
-import express, { Router, Request, Response } from 'express';
+import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import protect from './helpers/protect';
 import authenticationRoute from './routes/authentication';
 import routes from './routes/index';
 import healthCheck from './handlers/healthCheck';
+import helmet from 'helmet';
 
 
 const app = express();
 
+app.use(helmet())
 app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())

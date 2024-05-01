@@ -2,6 +2,7 @@ import { z } from "zod";
 import prisma from "../../db";
 import { Request, Response } from 'express';
 import { joinDepartmentSchema } from "../../utils/validationSchemas";
+import redis from "../../redis";
 
 const addDepartmentUsers = async (req: Request, res: Response) => {
     try {
@@ -25,7 +26,7 @@ const addDepartmentUsers = async (req: Request, res: Response) => {
           },
         },
       });
-  
+      await redis.del(`department:${departmentId}`);
       res.status(200)
       res.json({ message: 'User(s) added successfully to department', isSuccess: true });
     } catch (err) {

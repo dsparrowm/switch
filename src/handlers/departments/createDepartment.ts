@@ -2,11 +2,11 @@ import { z } from "zod";
 import prisma from "../../db";
 import { createDepartmentSchema } from "../../utils/validationSchemas";
 import { Request, Response } from 'express';
+import redis from "../../redis";
 
 const createDepartment = async (req: Request, res: Response) => {
     try {
       const { userId, departmentName, organisationId } = await createDepartmentSchema.parseAsync(req.body);
-  
       const user = await prisma.user.findUnique({
         where: { id: userId }
 
@@ -36,7 +36,7 @@ const createDepartment = async (req: Request, res: Response) => {
           },
         });
       }
-    
+        await redis.del(`departments:${organisationId}`);
         res.status(200)
         res.json({ message: 'Department created successfully', isSuccess: true });
       } catch (err) {

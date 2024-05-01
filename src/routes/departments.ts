@@ -1,13 +1,11 @@
-import { z } from "zod";
-import prisma from "../db";
-import { Router, Request, Response } from 'express';
-import * as departmentSchema from "../utils/validationSchemas";
+import { Router } from 'express';
 import getDepartments from "../handlers/departments/getDepartments";
 import getDepartmentById from "../handlers/departments/getDepartmentById";
 import addDepartmentUsers from "../handlers/departments/addDepartmentUsers";
 import createDepartment from "../handlers/departments/createDepartment";
 import updateDepartment from "../handlers/departments/updateDepartment";
 import deleteDepartment from "../handlers/departments/deleteDepartment";
+import getDepartmentUsers from "../handlers/departments/getDepartmentUsers";
 
 /**
  * Express router for handling departments-related routes.
@@ -66,6 +64,10 @@ const router = Router();
  * 
  */
 router.get('/departments', getDepartments);
+
+
+
+router.get('/department/users', getDepartmentUsers)
 
 /**
  * @openapi
@@ -221,8 +223,19 @@ router.post('/department/users', addDepartmentUsers);
  * 
  */
 router.post('/department/create', createDepartment);
-  
-router.put('/departments', updateDepartment)
+
+/**
+ * @openapi
+ * /api/department/update:
+ *  put:
+ *     tags:
+ *        - Departments
+ *     summary: Update a department
+ *     description: This endpoint updates a department within an organization
+ *     
+ *
+ */
+router.put('/department/update', updateDepartment)
 
 router.delete('/departments', deleteDepartment)
 

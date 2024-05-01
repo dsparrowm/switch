@@ -2,6 +2,7 @@ import { z } from "zod";
 import prisma from "../../db";
 import { updateDepartmentSchema } from "../../utils/validationSchemas";
 import { Request, Response } from 'express';
+import redis from "../../redis";
 
 const updateDepartment = async (req: Request, res: Response) => {
     try {
@@ -28,7 +29,7 @@ const updateDepartment = async (req: Request, res: Response) => {
           },
         data: { name: departmentName },
       });
-  
+      await redis.del(`department:${departmentId}`);
       res.status(200)
       res.json({ message: 'Department updated successfully', isSuccess: true });
     } catch (err) {
