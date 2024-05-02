@@ -26,11 +26,11 @@ const createNewUser = async (req: Request, res: Response) => {
         /**
          * if user doesn't exist, go ahead to create a new user
          */
-        const hash = await hashPassword(password);
+        const hashedPassword = await hashPassword(password);
         const createdUser = await prisma.user.create({
             data: {
                 email,
-                password: hash,
+                password: hashedPassword,
                 name,
             }
         })

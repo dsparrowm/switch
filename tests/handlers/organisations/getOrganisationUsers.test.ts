@@ -1,9 +1,11 @@
-import { describe, beforeEach, test, expect, vi } from 'vitest';
+import { describe, beforeEach, test, expect, vi, afterEach } from 'vitest';
 import { Request, Response } from 'express';
 import getOrganisationUsers from '../../../src/handlers/organisations/getOrganisationUsers';
 import prisma from '../../../src/__mocks__/db';
+import mockIoRedis from 'ioredis-mock';
 
 vi.mock('../../../src/db');
+vi.mock('ioredis', () => mockIoRedis);
 
 const mockRequest = {
   body: {
@@ -17,11 +19,26 @@ const mockResponse = {
 } as unknown as Response;
 
 describe('Get Organisation users', () => {
+  let redis;
+
   beforeEach(() => {
+    redis = new mockIoRedis({
+      data: {
+        // Initial state of the mocked Redis data
+        'org:1:users': JSON.stringify([
+          { id: 1, name: 'John' },
+          { id: 2, name: 'Jane' },
+        ]),
+      },
+    });
+  });
+
+  afterEach(() => {
     vi.resetAllMocks();
   });
 
   test('It should get all users in an organisation', async () => {
+    redis.get = vi.fn()
     const date = new Date();
     const users = [
       {
@@ -43,7 +60,7 @@ describe('Get Organisation users', () => {
         updatedAt: date
       }
     ];
-    
+
     prisma.organisation.findUnique.mockResolvedValue({
       id: 1,
       name: "Test Organisation",
@@ -51,7 +68,6 @@ describe('Get Organisation users', () => {
       createdAt: date,
       updatedAt: date
     })
-
     prisma.userOrganisation.findMany.mockResolvedValue(users);
 
     await getOrganisationUsers(mockRequest, mockResponse);

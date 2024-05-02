@@ -20,7 +20,7 @@ const updateOrganisation = async (req: Request, res: Response) => {
             where: {id: orgId},
             data: {name}
         })
-        await redis.set(`org:${orgId}`, JSON.stringify(updatedOrg));
+        // await redis.set(`org:${orgId}`, JSON.stringify(updatedOrg));
         res.status(200);
         res.json({message: "successful", isSuccess: true})
     } catch (err) {

@@ -14,9 +14,10 @@ const addDepartmentUsers = async (req: Request, res: Response) => {
       });
       
         // make sure the user is a manager of the department
-      if (!manager || !manager.roles.some((role) => role.roleId === 1)) {
-        return res.status(403).json({ message: 'You do not have permission to add users to this department', isSuccess: false });
-      }
+      // if (!manager || !manager.roles.some((role) => role.roleId === 1)) {
+      //   res.status(403)
+      //   return res.json({ message: 'You do not have permission to add users to this department', isSuccess: false });
+      // }
   
       await prisma.department.update({
         where: { id: departmentId },
