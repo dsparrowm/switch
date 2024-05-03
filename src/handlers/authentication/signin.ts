@@ -19,11 +19,13 @@ const signin = async (req: Request, res: Response) => {
             }
         })
         if (!user) {
-            return res.status(404).json({message: "No user found", isSuccess: false})
+            res.status(404)
+            return res.json({message: "No user found", isSuccess: false})
         }
-        const isValid = await comparePassword(password, user.password);
-        if (!isValid) {
-            return res.status(401).json({message: "Invalid email or password", issuccess: false})
+        const isValidPassword = await comparePassword(password, user.password);
+        if (!isValidPassword) {
+            res.status(401)
+            return res.json({message: "Invalid password", issuccess: false})
         }
         const roles = await prisma.role.findMany({
             where: {
@@ -46,8 +48,10 @@ const signin = async (req: Request, res: Response) => {
         });
     } catch (err) {
         if (err instanceof z.ZodError) {
-            res.status(400).json({message: err.issues, isSuccess: false})
+            res.status(400)
+            return res.json({message: err.issues, isSuccess: false})
         }
+        res.status(500)
         res.json({message: err.message, isSuccess: false})
     }
     
