@@ -8,7 +8,7 @@ vi.mock('../../../src/db');
 vi.mock('ioredis', () => mockIoRedis);
 
 const mockRequest = {
-  body: {
+  query: {
     orgId: 1
   }
 } as unknown as Request;
@@ -38,7 +38,6 @@ describe('Get Organisation users', () => {
   });
 
   test('It should get all users in an organisation', async () => {
-    redis.get = vi.fn()
     const date = new Date();
     const users = [
       {
@@ -92,7 +91,7 @@ describe('Get Organisation users', () => {
 
   test('It should return a 404 error if no organisation is found', async () => {
     const invalidMockRequest = {
-      body: {
+      query: {
         orgId: 200
       }
     } as unknown as Request;
