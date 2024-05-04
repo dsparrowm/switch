@@ -23,7 +23,7 @@ const validateOtp = async (id, otp) => {
     const now = new Date(newDate.getTime() + timezoneOffsetMilliseconds)
         
     if (now > expiresAt) {
-        throw new Error("Code has expired")
+        throw new Error("Expired otp")
     }
     const isValid = await comparePassword(String(otp), otp_user.code);
     return isValid;

@@ -1,5 +1,5 @@
 import prisma from "../db";
-import { hashPassword } from "./auth";
+import hashPassword from "./hashPassword";
 import generateOtp from "./generateOtp";
 import sendorgInviteLink from "./sendOrgInvite";
 
@@ -29,7 +29,7 @@ export const sendOtp = async (email, id) => {
     };
     // Send Email
       sendorgInviteLink('Switch', mailOptions);
-      const hashed = await hashPassword(String(generatedOtp));
+      const hashedOtp = await hashPassword(String(generatedOtp));
       // Clear any old record of otp
       const otpUser = await prisma.user.findUnique({
         where: {
@@ -44,7 +44,7 @@ export const sendOtp = async (email, id) => {
       // const createdAt = ;
       await prisma.oTP.create({
         data: {
-          code: hashed,
+          code: hashedOtp,
           userId: otpUser.id,
           createdAt: new Date(now.getTime() + timezoneOffsetMilliseconds),
           expiresAt: new Date(now.getTime() + timezoneOffsetMilliseconds + 60 * 60 * 1000)
