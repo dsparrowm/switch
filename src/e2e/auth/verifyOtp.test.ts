@@ -4,7 +4,6 @@ import app from '../../../src/server';
 import prisma from '../../../src/db';
 import generateOtp from '../../../src/helpers/generateOtp';
 import hashPassword from '../../helpers/hashPassword';
-import MockPrisma from '../../__mocks__/prisma';
 
 
 describe('POST /auth/otp', () => {
