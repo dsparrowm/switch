@@ -41,19 +41,13 @@ const createOrganisation = async (req: Request, res: Response) => {
                 organisationId: createOrg.id
             }
         })
-        // Create 2 new departments for the organization
-        const generalDepartment = await prisma.department.create({
-            data: {
-                name: "General",
-                organisationId: createOrg.id
-            }
+        // Create the General and Announcements departments for the organization: These are default departments
+        await prisma.department.createMany({
+            data: [
+                { name: 'General', organisationId: createOrg.id },
+                { name: 'Announcements', organisationId: createOrg.id },
+            ],
         });
-        const annoucementDepartment = await prisma.department.create({
-            data: {
-                name: "Announcements",
-                organisationId: createOrg.id,
-            }
-        })
         // Add the Admin to all departments in his organisation
         // First get all the departments in the organisation
         const departments = await prisma.department.findMany({

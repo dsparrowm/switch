@@ -21,7 +21,7 @@ const getDepartments = async (req: Request, res: Response) => {
       }
       // await redis.set(`departments:${organisationId}`, JSON.stringify(departments));
       res.status(200)
-      res.json({ departments, isSuccess: true });
+      res.json({ message: "Found", departments, isSuccess: true });
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400)
