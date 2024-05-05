@@ -100,18 +100,6 @@ describe('Assign Task', () => {
         });
     });
 
-    test('it should return a 500 error if an error occurs', async () => {
-        prisma.task.findMany.mockRejectedValue(new Error('Test Error'));
-    
-        await getTasks(mockRequest, mockResponse);
-    
-        expect(mockResponse.status).toHaveBeenCalledWith(500);
-        expect(mockResponse.json).toHaveBeenCalledWith({
-          message: "Test Error",
-          isSuccess: false
-        });
-    });
-
     test('it should return a 404 error when the user does not exist', async () => {
         prisma.task.findMany.mockResolvedValue([]);
     

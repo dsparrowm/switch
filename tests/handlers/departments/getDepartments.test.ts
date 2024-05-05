@@ -1,4 +1,4 @@
-import { describe, beforeEach, test, expect, vi } from 'vitest';
+import { describe, beforeEach, test, expect, vi, } from 'vitest';
 import { Request, Response } from 'express';
 import getDepartments from '../../../src/handlers/departments/getDepartments';
 import prisma from '../../../src/__mocks__/db';
@@ -16,6 +16,7 @@ const mockResponse = {
     json: vi.fn()
   } as unknown as Response;
 
+
 describe('Get Departments', () => {
     beforeEach(() => {
         vi.resetAllMocks();
@@ -23,6 +24,8 @@ describe('Get Departments', () => {
     
     test('It should Retrieve all departments in an organisation', async () => {
         const date = new Date()
+        
+        const result = await redis.get('departments:10000000')
         prisma.department.findMany.mockResolvedValue([
             {
                 id: 1,
@@ -41,7 +44,7 @@ describe('Get Departments', () => {
         ])
 
         await getDepartments(mockRequest, mockResponse)
-
+  
         expect(prisma.department.findMany).toHaveBeenCalledWith({
             where: {organisationId: 1}
         })
@@ -63,7 +66,8 @@ describe('Get Departments', () => {
                     updatedAt: date
                 }
             ],
-            isSuccess: true
+            isSuccess: true,
+            message: "Found"
         })
     })
 

@@ -7,11 +7,11 @@ import redis from "../../redis";
 const getDepartments = async (req: Request, res: Response) => {
     try {
       const { organisationId } = await getDepartmentsSchema.parseAsync(req.query);
-      // const cachedValue = await redis.get(`departments:${organisationId}`);
-      // if (cachedValue) {
-      //   res.status(200)
-      //   return res.json({ departments: JSON.parse(cachedValue), isSuccess: true });
-      // }
+      const cachedValue = await redis.get(`departments:${organisationId}`);
+      if (cachedValue) {
+        res.status(200)
+        return res.json({ departments: JSON.parse(cachedValue), isSuccess: true });
+      }
       const departments = await prisma.department.findMany({
         where: { organisationId }
       });
@@ -19,7 +19,7 @@ const getDepartments = async (req: Request, res: Response) => {
         res.status(404)
         return res.json({ message: 'No departments found', isSuccess: false });
       }
-      // await redis.set(`departments:${organisationId}`, JSON.stringify(departments));
+      await redis.set(`departments:${organisationId}`, JSON.stringify(departments));
       res.status(200)
       res.json({ message: "Found", departments, isSuccess: true });
     } catch (err) {

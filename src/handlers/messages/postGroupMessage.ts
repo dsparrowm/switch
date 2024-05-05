@@ -2,6 +2,7 @@ import { z } from "zod";
 import prisma from "../../db";
 import { createGroupMessageSchema } from "../../utils/validationSchemas";
 import { Request, Response } from "express";
+import redis from "../../redis";
 
 const postGroupMessage = async (req: Request, res: Response) => {
     try {
@@ -35,6 +36,7 @@ const postGroupMessage = async (req: Request, res: Response) => {
         })
         
         // delete messages.sender.password;
+        await redis.del(`department:${departmentId}:messages`);
         res.status(200)
         res.json({message: "message sent successfully", isSuccess: true, messages})
     } catch (err) {

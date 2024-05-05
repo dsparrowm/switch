@@ -2,6 +2,7 @@ import { z } from "zod";
 import prisma from "../../db";
 import { createTaskSchema } from "../../utils/validationSchemas";
 import { Request, Response } from 'express';
+import redis from "../../redis";
 
 const createTask = async (req: Request, res: Response) => {
     try {
@@ -12,6 +13,7 @@ const createTask = async (req: Request, res: Response) => {
             createdBy,
         }
         })
+        await redis.del(`user:${createdBy}:tasks`);
         res.status(200)
         res.json({message: "Task created successfully", isSuccess: true, task})
     } catch (err) {

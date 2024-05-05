@@ -36,7 +36,7 @@ const createDepartment = async (req: Request, res: Response) => {
           },
         });
       }
-        // await redis.del(`departments:${organisationId}`);
+        await redis.del(`departments:${organisationId}`);
         res.status(200)
         res.json({ message: 'Department created successfully', isSuccess: true });
       } catch (err) {

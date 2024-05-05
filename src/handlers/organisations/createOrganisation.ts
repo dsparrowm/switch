@@ -69,7 +69,9 @@ const createOrganisation = async (req: Request, res: Response) => {
             }
         })
         const org = createOrg
+
         await redis.set(`org:${org.id}`, JSON.stringify(org));
+        
         res.status(200);
         res.json({message: 'Organization created successfully!', isSuccess: true, org})
     } catch (err) {

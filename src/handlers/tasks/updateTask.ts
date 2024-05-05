@@ -3,6 +3,7 @@ import { z } from "zod";
 import prisma from "../../db";
 import { updateTaskSchema } from "../../utils/validationSchemas";
 import { Request, Response } from 'express';
+import redis from "../../redis";
 
 const updateTask = async (req: Request, res: Response) => {
     try {
@@ -24,7 +25,7 @@ const updateTask = async (req: Request, res: Response) => {
               status: $Enums.STATUS[status]
           }
       })
-        
+        await redis.del(`task:${id}`);
         res.status(200)
         res.json({message: "Task updated successfully", isSuccess: true, task})
     }catch (err) {

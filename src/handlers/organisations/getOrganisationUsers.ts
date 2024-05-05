@@ -7,13 +7,13 @@ import redis from "../../redis";
 const getOrganisationUsers = async (req: Request, res: Response) => {
     try {
         const { orgId } = await getOrganisationUsersSchema.parseAsync(req.query);
-        // const cachedValue = await redis.get(`org:${orgId}:users`);
-        // if (cachedValue) {
-        //     console.log("Organisation users retrieved from redis database")
-        //     res.status(200)
-        //     res.json({users: JSON.parse(cachedValue), isSuccess: true})
-        //     return
-        // }
+        const cachedValue = await redis.get(`org:${orgId}:users`);
+        if (cachedValue) {
+            console.log("Organisation users retrieved from redis database")
+            res.status(200)
+            res.json({users: JSON.parse(cachedValue), isSuccess: true})
+            return
+        }
         const orgExists = await prisma.organisation.findUnique({
             where: {
                 id: orgId
@@ -35,7 +35,7 @@ const getOrganisationUsers = async (req: Request, res: Response) => {
                 organisation: true
             }
         });
-        // await redis.set(`org:${orgId}:users`, JSON.stringify(users));
+        await redis.set(`org:${orgId}:users`, JSON.stringify(users));
         res.status(200);
         res.json({users, isSuccess: true, NoOfUsers: users.length}) 
     } catch (err) {
