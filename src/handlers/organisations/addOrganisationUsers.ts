@@ -48,7 +48,9 @@ const addOrganisationUsers = async (req: Request, res: Response) => {
                     }
                 })
             }
+
             await redis.del(`org:${orgId}:users`);
+            
             res.status(200)
             res.json({message: "User added successfully", isSuccess: true})
         } else {

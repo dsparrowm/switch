@@ -2,11 +2,12 @@ import request from 'supertest';
 import app from '../../../src/server';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import prisma from '../../db';
+import redis from '../../redis';
 
-describe('GET /departments', async () => {
+describe('GET /departments', async () => { 
     let organisationId: number;
-    let userId: number
     let token: string
+
     beforeAll(async () => {
         // Setup
         const createdOrg = await prisma.organisation.create({
@@ -45,7 +46,7 @@ describe('GET /departments', async () => {
         const result = await request(app)
             .post('/auth/signup')
             .send({ email: 'testmail@mail.com', password: "password", name: "mark" })
-        const token = result.body.token
+        token = result.body.token
         const response = await request(app)
             .get('/api/departments')
             .set('Authorization', `Bearer ${token}`)
@@ -56,16 +57,13 @@ describe('GET /departments', async () => {
         expect(response.body.message).toBe('Found');
     });
 
-    // it('should return an empty array if no departments exist', async () => {
-    //     // Assuming there are no departments in the database
-    //     const response = await request(app).get('/api/departments').query({orga});
-    //     expect(response.status).toBe(200);
-    //     expect(response.body.departments).toEqual([]);
-    // });
-
-    // it('should return an error if the request is invalid', async () => {
-    //     const response = await request(app).get('/departments').query({ invalidParam: 'value' });
-    //     expect(response.status).toBe(400);
-    //     expect(response.body).toHaveProperty('error');
-    // });
+    it('should return an error if the request is invalid', async () => {
+        const response = await request(app)
+            .get('/api/departments')
+            .set('Authorization', `Bearer ${token}`)
+            .query({ invalidParam: 'value' });
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.isSuccess).toBe(false);
+    });
 });

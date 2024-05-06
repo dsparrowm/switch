@@ -29,7 +29,7 @@ const updateDepartment = async (req: Request, res: Response) => {
           },
         data: { name: departmentName },
       });
-      // await redis.del(`department:${departmentId}`);
+      await redis.del(`department:${departmentId}`);
       res.status(200)
       res.json({ message: 'Department updated successfully', isSuccess: true });
     } catch (err) {

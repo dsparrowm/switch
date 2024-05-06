@@ -10,7 +10,7 @@ const getRedisUrl = () => {
     throw new Error('REDIS_URL environment variable not set');
 }
 
-export const initRedis = () => {
+const initRedis = () => {
     // Move the import statement inside this function
     Redis = require('ioredis').Redis;
     const redisUrl = getRedisUrl();
