@@ -7,5 +7,11 @@ pipeline {
       }
     }
 
+    stage('Unit Test') {
+      steps {
+        sh 'npm install && npm run test:unit'
+      }
+    }
+
   }
 }
