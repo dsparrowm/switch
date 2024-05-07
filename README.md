@@ -12,6 +12,7 @@
 ## Technologies Used
 - Backend: Node.js, Express.js
 - Database: PostgreSQL (with Prisma ORM)
+- Caching: Redis (upstash for managing the Redis instance)
 - Authentication: JSON Web Tokens (JWT)
 - Real-time Communication: Socket.IO
 
