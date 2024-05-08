@@ -1,17 +1,13 @@
-pipeline {
-  agent any
-  stages {
-    stage('Checkout Code') {
-      steps {
-        git(url: 'https://github.com/dsparrowm/switch', branch: 'master')
-      }
+node {
+    stage('Checkout') {
+        checkout scm
     }
 
-    stage('Unit Test') {
-      steps {
-        sh 'npm install && npm run test:unit'
-      }
+    stage('Install Dependencies') {
+        sh 'npm ci'
     }
 
-  }
+    stage('Test') {
+        sh 'npm run test:e2e'
+    }  
 }

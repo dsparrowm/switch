@@ -7,9 +7,9 @@ import swaggerUi from 'swagger-ui-express';
 const swaggerDefinition = {
     openapi: '3.0.0',
     info: {
-      title: 'SWIICH API',
+      title: 'SWIICH API DOCUMENTATION',
       version: '1.0.0',
-      description: "The backend API for the Swiich productivity SaaS application. This API enables organizations to collaborate, create, assign, and track tasks, as well as chat with team members.",
+      description: "Documentation for the Swiich API",
       
     },
     servers: [

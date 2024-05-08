@@ -2,6 +2,7 @@ import { z } from "zod";
 import prisma from "../../db";
 import { createPrivateMessageSchema } from "../../utils/validationSchemas";
 import { Request, Response } from "express";
+import redis from "../../redis";
 
 const postPrivateMessage = async (req: Request, res: Response) => {
     try {
@@ -13,6 +14,7 @@ const postPrivateMessage = async (req: Request, res: Response) => {
                 content,
             }
         })
+        await redis.del(`user:${senderId}:messages:${recipientId}`);
         res.status(200)
         res.json({message, isSuccess: true})
     } catch (err) {
