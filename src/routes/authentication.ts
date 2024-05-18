@@ -7,7 +7,7 @@ import verifyOtp from '../handlers/authentication/verifyOtp';
 const router = Router();
 /**
  * @openapi
- * /signup:
+ * /api/auth/signup:
  *  post:
  *      tags:
  *          - Authentication
@@ -63,7 +63,7 @@ router.post('/signup', createNewUser)
 
 /**
  * @openapi
- * /auth/login:
+ * /api/auth/login:
  *  post:
  *      tags:
  *          - Authentication
@@ -132,7 +132,7 @@ router.post('/login', signin)
 
 /**
  * @openapi
- * /auth/logout:
+ * /api/auth/logout:
  *  post:
  *      tags:
  *          - Authentication
@@ -154,7 +154,7 @@ router.post('/logout', (req: Request, res: Response) => {
 
 /**
  * @openapi
- * /auth/otp:
+ * /api/auth/otp:
  *  post:
  *      tags:
  *          - Authentication
