@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended: true}))
 
 //  Routers
 app.use("/api", protect, routes)
-app.use("/auth", authenticationRoute)
+app.use("/api/auth", authenticationRoute)
 
 
 
