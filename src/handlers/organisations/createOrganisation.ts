@@ -74,16 +74,17 @@ const createOrganisation = async (req: Request, res: Response) => {
 
         await redis.set(`org:${org.id}`, JSON.stringify(org));
 
+        // send invitation link to users when the organization is created
         if (users) {
             const inviteLink = `${org.inviteLink}`
             const mailOptions = {
                 sender: {
-                    name: "Switch",
+                    name: "Swiich",
                     email: 'support@switch.com',
                 },
                 to: users.map((user) => ({email: user})),
                 subject: `Invitation to join ${org.name}`,
-                htmlContent: `<p style="color:black;font-size:22px;"><b>Switch account</b></p><p style="color:blue;letter-spacing:3px;font-size:30px;padding-top: 0px">Invitation to join ${org.name}</p><p>You have been invited to join ${org.name} on Swiich. Click the link below to join</p><a href=${inviteLink}>Join ${org.name}</a><p>If you didn't request this invitation, you can safely ignore this email. Someone else might have typed your email address by mistake.</p><p>Thanks,<br>Swiich account team</p>`,
+                htmlContent: `<p style="color:black;font-size:22px;"><b>Swiich account</b></p><p style="color:blue;letter-spacing:3px;font-size:30px;padding-top: 0px">Invitation to join ${org.name}</p><p>You have been invited to join ${org.name} on Swiich. Click the link below to join</p><a href=${inviteLink}>Join ${org.name}</a><p>If you didn't request this invitation, you can safely ignore this email. Someone else might have typed your email address by mistake.</p><p>Thanks,<br>Swiich account team</p>`,
             }
 
             // send invitation email to all users
