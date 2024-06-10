@@ -1,4 +1,4 @@
-import sibapiv3sdk from 'sib-api-v3-sdk';
+import SibApiV3Sdk from 'sib-api-v3-sdk';
 
 
 /**
@@ -7,22 +7,24 @@ import sibapiv3sdk from 'sib-api-v3-sdk';
  * @param orgName Name of the organisation
  */
 
-const defaultClient = sibapiv3sdk.ApiClient.instance;
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
 const apiKey = defaultClient.authentications['api-key'];
 apiKey.apiKey = process.env.EMAIL_API_KEY;
 
 const sendorgInviteLink = async (orgName, mailOptions) => {
-    const inviteLink = `http://localhost:3000/api/oranisation/${orgName}/join?InviteCode=1234`;
 
-    const apiInstance = new sibapiv3sdk.TransactionalEmailsApi()
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
     try {
+      // destructure the mailOptions object
       const {sender, to, subject, htmlContent} = mailOptions
-      const sendEmail =  await apiInstance.sendTransacEmail({
+      // send the email
+      const sendEmail = await apiInstance.sendTransacEmail({
         sender,
         to,
         subject,
         htmlContent
       })
+      
     } catch (error) {
         console.log(error)
     }

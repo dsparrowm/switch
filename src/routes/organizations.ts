@@ -255,7 +255,7 @@ router.put('/organisations', updateOrganisation)
 
 /**
  * @openapi
- * /api/organisations/:id:
+ * /api/organisation:
  *   delete:
  *     tags:
  *        - Organisations

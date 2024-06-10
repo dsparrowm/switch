@@ -182,6 +182,7 @@ export const getOrganisationSchema = z.object({
 export const createOrganisationSchema = z.object({
   userId: z.number().positive(),
   name: z.string().min(1),
+  users: z.array(z.string().email()).optional(),
 });
   
 export const addUserToOrganisationSchema = z.object({
