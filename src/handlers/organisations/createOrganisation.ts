@@ -4,11 +4,13 @@ import prisma from "../../db";
 import generateInviteLink from "../../helpers/generateInviteLink";
 import { createOrganisationSchema } from "../../utils/validationSchemas";
 import redis from "../../redis";
+import sendEmail from "../../helpers/sendEmail";
+import sendorgInviteLink from "../../helpers/sendOrgInvite";
 
 
 const createOrganisation = async (req: Request, res: Response) => {
     try {
-        const {userId, name} = await createOrganisationSchema.parseAsync(req.body);
+        const {userId, name, users} = await createOrganisationSchema.parseAsync(req.body);
         const user = await prisma.user.findUnique({
             where: {
                 id: userId
@@ -71,6 +73,22 @@ const createOrganisation = async (req: Request, res: Response) => {
         const org = createOrg
 
         await redis.set(`org:${org.id}`, JSON.stringify(org));
+
+        if (users) {
+            const inviteLink = `${org.inviteLink}`
+            const mailOptions = {
+                sender: {
+                    name: "Switch",
+                    email: 'support@switch.com',
+                },
+                to: users.map((user) => ({email: user})),
+                subject: `Invitation to join ${org.name}`,
+                htmlContent: `<p style="color:black;font-size:22px;"><b>Switch account</b></p><p style="color:blue;letter-spacing:3px;font-size:30px;padding-top: 0px">Invitation to join ${org.name}</p><p>You have been invited to join ${org.name} on Swiich. Click the link below to join</p><a href=${inviteLink}>Join ${org.name}</a><p>If you didn't request this invitation, you can safely ignore this email. Someone else might have typed your email address by mistake.</p><p>Thanks,<br>Swiich account team</p>`,
+            }
+
+            // send invitation email to all users
+            sendorgInviteLink('Swiich', mailOptions);
+        }
         
         res.status(200);
         res.json({message: 'Organization created successfully!', isSuccess: true, org})
