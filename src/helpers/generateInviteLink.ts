@@ -1,6 +1,6 @@
 function generateInviteLink() {
     const inviteCode = generateUniqueInviteCode();
-    return `https://localhost:3000/join-organization?inviteId=${inviteCode}`;
+    return `https://localhost:3000/join?inviteId=${inviteCode}`;
   }
   
   function generateUniqueInviteCode() {
