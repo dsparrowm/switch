@@ -72,7 +72,7 @@ const createOrganisation = async (req: Request, res: Response) => {
         })
         const org = createOrg
 
-        await redis.set(`org:${org.id}`, JSON.stringify(org));
+        // await redis.set(`org:${org.id}`, JSON.stringify(org));
 
         // send invitation link to users when the organization is created
         if (users) {

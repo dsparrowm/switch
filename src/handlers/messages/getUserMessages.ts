@@ -7,12 +7,12 @@ import redis from '../../redis'
 const getUserMessages = async (req: Request, res: Response) => {
     try {
       const { userId } = await getUserMessageSchema.parseAsync(req.query);
-      const cachedValue = await redis.get(`user:${userId}:messages`);
-      if (cachedValue) {
-        res.status(200)
-        res.json({messages: JSON.parse(cachedValue), isSuccess: true})
-        return
-      }
+      // const cachedValue = await redis.get(`user:${userId}:messages`);
+      // if (cachedValue) {
+      //   res.status(200)
+      //   res.json({messages: JSON.parse(cachedValue), isSuccess: true})
+      //   return
+      // }
       // Get all chatPartners that the given user has sent messages to or received messages from
       const messages = await prisma.message.findMany({
         where: {
@@ -59,7 +59,7 @@ const getUserMessages = async (req: Request, res: Response) => {
         delete message.recipient.password;
         return message
       })
-      await redis.set(`user:${userId}:messages`, JSON.stringify(newMessages))
+      // await redis.set(`user:${userId}:messages`, JSON.stringify(newMessages))
       res.status(200)
       res.json(newMessages);
     } catch (err) {

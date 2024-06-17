@@ -27,7 +27,7 @@ const addDepartmentUsers = async (req: Request, res: Response) => {
           },
         },
       });
-      await redis.del(`department:${departmentId}`);
+      // await redis.del(`department:${departmentId}`);
       res.status(200)
       res.json({ message: 'User(s) added successfully to department', isSuccess: true });
     } catch (err) {

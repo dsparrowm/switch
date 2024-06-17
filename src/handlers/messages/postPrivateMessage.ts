@@ -14,7 +14,7 @@ const postPrivateMessage = async (req: Request, res: Response) => {
                 content,
             }
         })
-        await redis.del(`user:${senderId}:messages:${recipientId}`);
+        // await redis.del(`user:${senderId}:messages:${recipientId}`);
         res.status(200)
         res.json({message, isSuccess: true})
     } catch (err) {

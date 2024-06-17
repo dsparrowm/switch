@@ -36,7 +36,7 @@ const postGroupMessage = async (req: Request, res: Response) => {
         })
         
         // delete messages.sender.password;
-        await redis.del(`department:${departmentId}:messages`);
+        // await redis.del(`department:${departmentId}:messages`);
         res.status(200)
         res.json({message: "message sent successfully", isSuccess: true, messages})
     } catch (err) {

@@ -14,6 +14,7 @@ import getDepartmentUsers from "../handlers/departments/getDepartmentUsers";
  * This router handles the following routes:
  * - GET /api/departments - Get all departments
  * - GET /api/department/:id - Get a specific department by ID
+ * - GET /api/department/users - Get all users of a specific department
  * - POST /api/department/create - Create a new departmnent
  * - POST /api/department/join - add user(s) to a department
  * - PUT /api/department/:id - update a department
@@ -66,7 +67,14 @@ const router = Router();
 router.get('/departments', getDepartments);
 
 
-
+/**
+ * @openapi
+ * /api/department/users:
+ *  get:
+ *      tags:
+ *          - Departments
+ *      summary: Retrieve all users of a specific department using it's department ID
+ */
 router.get('/department/users', getDepartmentUsers)
 
 /**
@@ -181,7 +189,7 @@ router.post('/department/users', addDepartmentUsers);
  *                $ref: '#/components/schemas/createDepartmentRequest'
  *            example:
  *              userId: 3
- *              departmentId: 2
+ *              departmentName: "Accounting"
  *              orgId: 14
  *      responses:
  *        200:

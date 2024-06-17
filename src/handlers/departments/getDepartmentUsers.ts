@@ -7,17 +7,26 @@ import redis from '../../redis';
 const getDepartmentUsers = async (req: Request, res: Response) => {
     try {
         const { departmentId } = await getDepartmentUsersSchema.parseAsync(req.query);
-        const cachedValue = await redis.get(`departmentUsers:${departmentId}`);
-        if (cachedValue) {
-            res.status(200);
-            return res.json({ departmentUsers: JSON.parse(cachedValue), isSuccess: true });
-        }
-        const departmentUsers = await prisma.user.findMany({
+        // const cachedValue = await redis.get(`departmentUsers:${departmentId}`);
+        // if (cachedValue) {
+        //     res.status(200);
+        //     return res.json({ departmentUsers: JSON.parse(cachedValue), isSuccess: true });
+        // }
+        const responded = await prisma.userDepartment.findMany({
             where: {
-                id: departmentId
+                departmentId,
+            },
+            include: {
+                user: true
             }
+
         });
-        await redis.set(`departmentUsers:${departmentId}`, JSON.stringify(departmentUsers));
+        const departmentUsers = responded.map((data) => {
+            delete data.user.password;
+            return ({...data.user})
+        })
+        
+        // await redis.set(`departmentUsers:${departmentId}`, JSON.stringify(departmentUsers));
         res.status(200);
         res.json({ departmentUsers, isSuccess: true });
     } catch (err) {

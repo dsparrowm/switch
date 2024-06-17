@@ -12,12 +12,12 @@ const getGroupMessage = async (req: Request, res: Response) => {
         res.status(404)
         return res.json({message: "Invalid department Id", isSuccess: false})
       }
-      const cachedMessages = await redis.get(`department:${departmentId}:messages`);
-      if (cachedMessages) {
-        res.status(200)
-        res.json({messages: JSON.parse(cachedMessages), isSuccess: true})
-        return
-      }
+      // const cachedMessages = await redis.get(`department:${departmentId}:messages`);
+      // if (cachedMessages) {
+      //   res.status(200)
+      //   res.json({messages: JSON.parse(cachedMessages), isSuccess: true})
+      //   return
+      // }
       const messages = await prisma.message.findMany({
         where: {
             departmentId,
@@ -29,7 +29,7 @@ const getGroupMessage = async (req: Request, res: Response) => {
           res.status(404)
           return res.json({message: "No messages found", isSuccess: true})
       }
-      await redis.set(`department:${departmentId}:messages`, JSON.stringify(messages));
+      // await redis.set(`department:${departmentId}:messages`, JSON.stringify(messages));
       res.status(200)
       res.json({messages, isSuccess: true})
     } catch (err) {

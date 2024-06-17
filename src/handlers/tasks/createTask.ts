@@ -13,7 +13,7 @@ const createTask = async (req: Request, res: Response) => {
             createdBy,
         }
         })
-        await redis.del(`user:${createdBy}:tasks`);
+        // await redis.del(`user:${createdBy}:tasks`);
         res.status(200)
         res.json({message: "Task created successfully", isSuccess: true, task})
     } catch (err) {

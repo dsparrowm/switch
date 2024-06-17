@@ -15,28 +15,33 @@ const createDepartment = async (req: Request, res: Response) => {
         res.status(404)
         return res.json({ message: 'User does not exist', isSuccess: false });
       }
-  
+      
       const newDepartment = await prisma.department.create({
         data: {
           name: departmentName,
           organisationId,
         },
       });
-  
+      // get all users who are admins in this organization and add them to the department
       const admins = await prisma.userRole.findMany({
-        where: { role: { name: 'admin' } },
+        where: {
+          AND: [
+            {role: { name: 'admin' }},
+            {organisationId}
+          ]
+        },
         include: { role: true },
       });
-  
+
       for (const admin of admins) {
         await prisma.userDepartment.create({
           data: {
-            userId: admin.id,
+            userId: admin.userId,
             departmentId: newDepartment.id,
           },
         });
       }
-        await redis.del(`departments:${organisationId}`);
+        // await redis.del(`departments:${organisationId}`);
         res.status(200)
         res.json({ message: 'Department created successfully', isSuccess: true });
       } catch (err) {
