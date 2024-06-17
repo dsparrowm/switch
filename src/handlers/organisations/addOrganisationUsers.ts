@@ -6,12 +6,12 @@ import redis from "../../redis";
 
 const addOrganisationUsers = async (req: Request, res: Response) => {
     try {
-        const {userId, orgId} = await addUserToOrganisationSchema.parseAsync(req.body);
+        const {userId, organisationId} = await addUserToOrganisationSchema.parseAsync(req.body);
         const existingEntry = await prisma.userOrganisation.findUnique({
             where: {
                 userId_organisationId: {
                     userId,
-                    organisationId: orgId
+                    organisationId
                 }
             }
         });
@@ -20,7 +20,7 @@ const addOrganisationUsers = async (req: Request, res: Response) => {
            await prisma.userOrganisation.create({
                 data: {
                     userId,
-                    organisationId: orgId
+                    organisationId
                 }
             })
             const departments = await prisma.department.findMany({
@@ -28,13 +28,13 @@ const addOrganisationUsers = async (req: Request, res: Response) => {
                     OR: [
                         {
                             AND: [
-                                {organisationId: orgId},
+                                {organisationId},
                                 {name: "General"}
                             ]
                         },
                         {
                             AND: [
-                                {organisationId: orgId, name: "Announcements"},
+                                {organisationId, name: "Announcements"},
                             ]
                         }
                     ]
@@ -49,7 +49,7 @@ const addOrganisationUsers = async (req: Request, res: Response) => {
                 })
             }
 
-            await redis.del(`org:${orgId}:users`);
+            // await redis.del(`org:${orgId}:users`);
             
             res.status(200)
             res.json({message: "User added successfully", isSuccess: true})

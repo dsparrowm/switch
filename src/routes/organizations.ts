@@ -198,7 +198,7 @@ router.post('/organisations/users', addOrganisationUsers)
 
 /**
  * @openapi
- * /api/organisations:
+ * /api/organisation/update:
  *   put:
  *     tags:
  *        - Organisations
@@ -250,7 +250,7 @@ router.post('/organisations/users', addOrganisationUsers)
  *                          isSuccess: false
  * 
  */
-router.put('/organisations', updateOrganisation)
+router.put('/organisation/update', updateOrganisation)
 
 
 /**

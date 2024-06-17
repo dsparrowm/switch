@@ -1,22 +1,21 @@
 import { z } from "zod";
 import prisma from "../../db";
-import { Request, Response } from 'express';
+import { Request, Response, response } from 'express';
 import { getOrganisationUsersSchema } from "../../utils/validationSchemas";
 import redis from "../../redis";
 
 const getOrganisationUsers = async (req: Request, res: Response) => {
     try {
-        const { orgId } = await getOrganisationUsersSchema.parseAsync(req.query);
-        const cachedValue = await redis.get(`org:${orgId}:users`);
-        if (cachedValue) {
-            console.log("Organisation users retrieved from redis database")
-            res.status(200)
-            res.json({users: JSON.parse(cachedValue), isSuccess: true})
-            return
-        }
+        const { organisationId } = await getOrganisationUsersSchema.parseAsync(req.query);
+        // const cachedValue = await redis.get(`org:${orgId}:users`);
+        // if (cachedValue) {
+        //     res.status(200)
+        //     res.json({users: JSON.parse(cachedValue), isSuccess: true})
+        //     return
+        // }
         const orgExists = await prisma.organisation.findUnique({
             where: {
-                id: orgId
+                id: organisationId
             }
         })
 
@@ -26,16 +25,20 @@ const getOrganisationUsers = async (req: Request, res: Response) => {
             return
         }
         
-        const users = await prisma.userOrganisation.findMany({
+        const query = await prisma.userOrganisation.findMany({
             where: {
-                organisationId: orgId
+                organisationId,
             },
             include: {
                 user: true,
-                organisation: true
             }
         });
-        await redis.set(`org:${orgId}:users`, JSON.stringify(users));
+        
+        const users = query.map((data) => {
+            delete data.user.password;
+            return ({...data.user})
+        })
+        // await redis.set(`org:${orgId}:users`, JSON.stringify(users));
         res.status(200);
         res.json({users, isSuccess: true, NoOfUsers: users.length}) 
     } catch (err) {

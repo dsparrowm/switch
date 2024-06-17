@@ -25,7 +25,7 @@ const updateTask = async (req: Request, res: Response) => {
               status: $Enums.STATUS[status]
           }
       })
-        await redis.del(`task:${id}`);
+        // await redis.del(`task:${id}`);
         res.status(200)
         res.json({message: "Task updated successfully", isSuccess: true, task})
     }catch (err) {

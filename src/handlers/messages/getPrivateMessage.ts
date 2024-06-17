@@ -7,11 +7,11 @@ import redis from '../../redis'
 const getPrivateMessage = async (req: Request, res: Response) => {
     try {
       const { receiverId, senderId } = await getPrivateMessageSchema.parseAsync(req.query);
-      const cachedMessage =  await redis.get(`user:${senderId}:messages:${receiverId}`);
-      if (cachedMessage) {
-        res.status(200)
-        return res.json({messages: JSON.parse(cachedMessage), isSuccess: true})
-      }
+    //   const cachedMessage =  await redis.get(`user:${senderId}:messages:${receiverId}`);
+    //   if (cachedMessage) {
+    //     res.status(200)
+    //     return res.json({messages: JSON.parse(cachedMessage), isSuccess: true})
+    //   }
       const messages = await prisma.message.findMany({
         where: {
             OR: [
@@ -42,7 +42,7 @@ const getPrivateMessage = async (req: Request, res: Response) => {
         delete message.sender.password;
         return message
     })
-    await redis.set(`user:${senderId}:messages:${receiverId}`, JSON.stringify(sanitizedMessages));
+    // await redis.set(`user:${senderId}:messages:${receiverId}`, JSON.stringify(sanitizedMessages));
     res.status(200)
     res.json({messages: sanitizedMessages, isSuccess: true})
     } catch (err) {

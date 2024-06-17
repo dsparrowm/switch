@@ -12,7 +12,7 @@ const deleteMessage = async (req: Request, res: Response) => {
                 id: messageId
             }
         });
-        await redis.del(`message:${messageId}`);
+        // await redis.del(`message:${messageId}`);
         res.status(200)
         res.json({message: "message deleted successfully", isSuccess: true})
     } catch (err) {

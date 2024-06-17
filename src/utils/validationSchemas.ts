@@ -187,11 +187,11 @@ export const createOrganisationSchema = z.object({
   
 export const addUserToOrganisationSchema = z.object({
   userId: z.number().positive(),
-  orgId: z.number().positive(),
+  organisationId: z.number().positive(),
 });
 
 export const getOrganisationUsersSchema = z.object({
-  orgId: z.coerce.number().int().positive()
+  organisationId: z.coerce.number().int().positive()
 })
 
 export const updateOrganisationSchema = z.object({

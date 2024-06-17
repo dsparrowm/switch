@@ -20,9 +20,9 @@ const updateOrganisation = async (req: Request, res: Response) => {
             where: {id: orgId},
             data: {name}
         })
-        await redis.set(`org:${orgId}`, JSON.stringify(updatedOrg));
+        // await redis.set(`org:${orgId}`, JSON.stringify(updatedOrg));
         res.status(200);
-        res.json({message: "successful", isSuccess: true})
+        res.json({message: "successful", updatedOrg, isSuccess: true})
     } catch (err) {
         if (err instanceof z.ZodError) {
             res.status(400)
