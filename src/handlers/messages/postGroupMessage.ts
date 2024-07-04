@@ -35,6 +35,7 @@ const postGroupMessage = async (req: Request, res: Response) => {
             include: {sender: true}
         })
         const message = {
+            id: response.id,
             senderId: response.sender.id,
             content: response.content,
             email: response.sender.email,
