@@ -5,6 +5,7 @@ import http from 'http';
 import { Server} from 'socket.io';
 import prisma from './db';
 import swaggerDocs from './config/Swagger/swagger';
+import redis from './redis';
 
 const server = http.createServer(app);
 const io = new Server(server, {cors: {
@@ -30,6 +31,7 @@ io.on('connection', (socket) => {
                     departmentId: data.departmentId
                 }
             })
+            // await redis.del(`department:${data.departmentId}:messages`);
             const messages = await prisma.message.findUnique({
                 where: {id: savedMessage.id},
                 include: {sender: true}
@@ -51,6 +53,7 @@ io.on('connection', (socket) => {
                     recipientId: data.recipientId
                 }
             })
+            // await redis.del(`user:${data.senderId}:messages:${data.recipientId}`);
             const messages = await prisma.message.findUnique({
                 where: {id: savedMessage.id},
                 include: {sender: true}

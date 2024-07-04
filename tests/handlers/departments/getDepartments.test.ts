@@ -25,7 +25,6 @@ describe('Get Departments', () => {
     test('It should Retrieve all departments in an organisation', async () => {
         const date = new Date()
         
-        const result = await redis.get('departments:10000000')
         prisma.department.findMany.mockResolvedValue([
             {
                 id: 1,

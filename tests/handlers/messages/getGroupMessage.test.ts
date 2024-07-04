@@ -110,9 +110,15 @@ describe('Get Group Message', () => {
     });
 
     test('it should return a 404 when no messages are found', async () => {
+        const mockRequestData = {
+            query: {
+              departmentId: 7
+            }
+          } as unknown as Request
+
         prisma.message.findMany.mockResolvedValue([]);
     
-        await getGroupMessage(mockRequest, mockResponse);
+        await getGroupMessage(mockRequestData, mockResponse);
     
         expect(mockResponse.status).toHaveBeenCalledWith(404);
         expect(mockResponse.json).toHaveBeenCalledWith({

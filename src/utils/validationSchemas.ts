@@ -256,5 +256,5 @@ export const createPrivateMessageSchema = z.object({
 });
 
 export const getUserMessageSchema = z.object({
-  userId: z.number().positive()
+  userId: z.coerce.number().positive()
 })

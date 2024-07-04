@@ -7,16 +7,17 @@ import redis from "../../redis";
 const postPrivateMessage = async (req: Request, res: Response) => {
     try {
       const { senderId, recipientId, content } = await createPrivateMessageSchema.parseAsync(req.body);
-      const message = await prisma.message.create({
+      const response = await prisma.message.create({
             data: {
                 senderId,
                 recipientId,
                 content,
             }
         })
+
         // await redis.del(`user:${senderId}:messages:${recipientId}`);
         res.status(200)
-        res.json({message, isSuccess: true})
+        res.json({response, isSuccess: true})
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400)

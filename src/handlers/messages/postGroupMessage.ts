@@ -28,17 +28,27 @@ const postGroupMessage = async (req: Request, res: Response) => {
                 departmentId,
             }
         })
-        const messages = await prisma.message.findUnique({
+        const response = await prisma.message.findUnique({
             where: {
                 id: messageSent.id
             },
             include: {sender: true}
         })
+        const message = {
+            senderId: response.sender.id,
+            content: response.content,
+            email: response.sender.email,
+            name: response.sender.name,
+            departmentId: response.id,
+            createdAt: response.createdAt,
+            updatedAt: response.updatedAt,
+            type: "Group"
+        }
         
         // delete messages.sender.password;
         // await redis.del(`department:${departmentId}:messages`);
         res.status(200)
-        res.json({message: "message sent successfully", isSuccess: true, messages})
+        res.json({status: "message sent successfully", isSuccess: true, message})
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400)
