@@ -79,7 +79,12 @@ describe('create Department', () => {
               },
         })
         expect(prisma.userRole.findMany).toHaveBeenCalledWith({
-            where: { role: { name: 'admin' } },
+            where: { 
+                AND: [
+                    { role: { name: 'admin' } },
+                    {organisationId: 1}
+                ]
+             },
             include: { role: true },
         })
         expect(prisma.userDepartment.create).toHaveBeenCalledWith({

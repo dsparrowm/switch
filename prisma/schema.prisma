@@ -15,15 +15,16 @@ enum STATUS {
   INPROGRESS
   COMPLETED
 }
+
 model Organisation {
-  id           Int                @id @default(autoincrement())
-  name         String
-  inviteLink   String
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  departments  Department[]
-  users        UserOrganisation[]
-  userRoles    UserRole[]
+  id          Int                @id @default(autoincrement())
+  name        String
+  inviteLink  String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  departments Department[]
+  users       UserOrganisation[]
+  userRoles   UserRole[]
 }
 
 model Department {
@@ -44,11 +45,11 @@ model Task {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   deadline      DateTime?
-  status     STATUS   @default(TODO)
+  status        STATUS    @default(TODO)
   createdBy     Int
   createdByUser User      @relation("CreatedBy", fields: [createdBy], references: [id])
   assignedTo    Int?
-  assignedUser  User?      @relation("AssignedTo", fields: [assignedTo], references: [id])
+  assignedUser  User?     @relation("AssignedTo", fields: [assignedTo], references: [id])
 }
 
 model OTP {
@@ -138,4 +139,3 @@ model UserRole {
 
   @@unique([userId, roleId, organisationId])
 }
-

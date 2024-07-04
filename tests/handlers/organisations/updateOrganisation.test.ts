@@ -60,7 +60,13 @@ describe('Update Organisation', () => {
             data: {name: "Updated Organisation"}
         });
         expect(updateResponse.status).toHaveBeenCalledWith(200);
-        expect(updateResponse.json).toHaveBeenCalledWith({message: "successful", isSuccess: true});
+        expect(updateResponse.json).toHaveBeenCalledWith({message: "successful", isSuccess: true, updatedOrg: {
+            id: 1,
+            name: "Updated Organisation",
+            createdAt: date,
+            updatedAt: date,
+            inviteLink: "https://invite.example.com/1",
+        }});
     });
     
     test('It should return an error if the request is invalid', async () => {
