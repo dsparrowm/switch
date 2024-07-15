@@ -35,15 +35,16 @@ const postGroupMessage = async (req: Request, res: Response) => {
             include: {sender: true}
         })
         const message = {
-            id: response.id,
-            senderId: response.sender.id,
-            content: response.content,
-            email: response.sender.email,
-            name: response.sender.name,
-            departmentId: response.id,
-            createdAt: response.createdAt,
-            updatedAt: response.updatedAt,
-            type: "Group"
+          id: response.id,
+          senderId: response.senderId,
+          senderEmail: senderExists.email,
+          senderName: senderExists.name,
+          departmentId,
+          departmentName: departmentExists.name,
+          createdAt: response.createdAt,
+          updatedAt: response.updatedAt,
+          content,
+          type: "Group"
         }
         
         // delete messages.sender.password;

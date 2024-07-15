@@ -5,13 +5,8 @@ import { Request, Response } from 'express';
 
 const assignTask = async (req: Request, res: Response) => {
     try {
-      const { taskId, assignedTo } = await assignTaskSchema.parseAsync(req.body);
-      const task = await prisma.task.update({
-        where: { id: taskId },
-        data: {
-          assignedTo,
-        },
-      });
+      const { taskId, assignedUsers } = await assignTaskSchema.parseAsync(req.body);
+      // const task = await prisma.taskAssignee.createMany
       res.status(200)
       res.json({ message: 'Task assigned successfully', isSuccess: true, });
     } catch (err) {

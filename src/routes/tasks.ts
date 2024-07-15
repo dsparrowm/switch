@@ -274,12 +274,12 @@ router.put('/tasks', updateTask)
 
 /**
  * @openapi
- * /api/task/taskId/assign:
+ * /api/task/assignUsers:
  *  post:
  *      tags:
  *        - Tasks
- *      summary: Assign a task
- *      description: Assign a task to a user with the provided task ID and user ID
+ *      summary: Assign user(s) to a task
+ *      description: Assign user(s) to a task with the provided task ID and user IDs
  *      requestBody:
  *        required: true
  *        content:
@@ -324,7 +324,7 @@ router.put('/tasks', updateTask)
  *                  "isSuccess": false
  *                }
  */
-router.post('/task/taskId/assign', assignTask);
+router.post('/task/assignUsers', assignTask);
 
 
 /**

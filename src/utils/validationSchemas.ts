@@ -219,7 +219,7 @@ export const getTaskSchema = z.object({
 
 export const assignTaskSchema = z.object({
   taskId: z.number().positive(),
-  assignedTo: z.number().positive(),
+  assignedUsers: z.array(z.string().email()).optional()
 });
 
 export const unAssignTaskSchema = z.object({
