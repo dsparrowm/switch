@@ -7,6 +7,20 @@ import redis from '../../redis'
 const getPrivateMessage = async (req: Request, res: Response) => {
     try {
       const { receiverId, senderId } = await getPrivateMessageSchema.parseAsync(req.query);
+      const senderExists = await prisma.user.findUnique ({
+        where: {id: senderId}
+      })
+      if (!senderExists) {
+        res.send(`No user with Id of ${senderId}`)
+        return
+      }
+      const receiverExists = await prisma.user.findUnique ({
+        where:  {id: receiverId}
+      })
+      if (!receiverExists) {
+        res.send(`No user with Id of ${receiverId}`)
+        return
+      }
     //   const cachedMessage =  await redis.get(`user:${senderId}:messages:${receiverId}`);
     //   if (cachedMessage) {
     //     res.status(200)
@@ -39,8 +53,19 @@ const getPrivateMessage = async (req: Request, res: Response) => {
         return res.json({message: "No messages found", isSuccess: false})
     }
     const sanitizedMessages = messages.map(message => {
-        delete message.sender.password;
-        return message
+        const response = {
+            id: message.id,
+            senderId: message.senderId,
+            senderEmail: senderExists.email,
+            senderName: senderExists.name,
+            receiverId,
+            receiverName: receiverExists.name,
+            receiverEmail: receiverExists.email,
+            content: message.content,
+            createdAt: message.createdAt,
+            updatedAt: message.updatedAt,
+        }
+        return response
     })
     // await redis.set(`user:${senderId}:messages:${receiverId}`, JSON.stringify(sanitizedMessages));
     res.status(200)

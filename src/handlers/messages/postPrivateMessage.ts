@@ -7,6 +7,22 @@ import redis from "../../redis";
 const postPrivateMessage = async (req: Request, res: Response) => {
     try {
       const { senderId, recipientId, content } = await createPrivateMessageSchema.parseAsync(req.body);
+      const senderExists = await prisma.user.findUnique({
+        where: {
+          id: senderId
+        }
+      })
+      if (!senderExists) {
+        res.send("No user matching the sender's Id")
+        return
+      }
+      const receiverExists = await prisma.user.findUnique({
+        where: {id: recipientId}
+      })
+      if (!receiverExists) {
+        res.send("No user with the recipient's Id")
+        return
+      }
       const response = await prisma.message.create({
             data: {
                 senderId,
@@ -14,10 +30,22 @@ const postPrivateMessage = async (req: Request, res: Response) => {
                 content,
             }
         })
-
+        const message = {
+          id: response.id,
+          senderId: response.senderId,
+          senderEmail: senderExists.email,
+          senderName: senderExists.name,
+          recipientId,
+          recipientName: receiverExists.name,
+          recipientEmail: receiverExists.email,
+          createdAt: response.createdAt,
+          updatedAt: response.updatedAt,
+          content,
+          type: "Private"
+        }
         // await redis.del(`user:${senderId}:messages:${recipientId}`);
         res.status(200)
-        res.json({response, isSuccess: true})
+        res.json({message, isSuccess: true})
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400)

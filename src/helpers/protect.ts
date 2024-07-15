@@ -1,6 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+
+declare global {
+    namespace Express {
+      interface Request {
+        user?: any;
+      }
+    }
+  }
+
 const protect = (req: Request, res: Response, next: NextFunction) => {
     const bearer = req.headers.authorization;
 
@@ -15,7 +24,7 @@ const protect = (req: Request, res: Response, next: NextFunction) => {
     }
     try {
         const user = jwt.verify(token, process.env.JWT_SECRET);
-        req[user] = user;
+        req.user = user;
         next();
         return;
 

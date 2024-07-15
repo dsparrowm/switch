@@ -1,8 +1,4 @@
-import { z } from "zod";
-import prisma from "../db";
-import { Router, Request, Response } from 'express';
-import * as taskSchema from "../utils/validationSchemas";
-import { STATUS } from "@prisma/client";
+import { Router } from 'express';
 import getTasks from "../handlers/tasks/getTasks";
 import getTaskById from "../handlers/tasks/getTaskById";
 import createTask from "../handlers/tasks/createTask";
@@ -274,12 +270,12 @@ router.put('/tasks', updateTask)
 
 /**
  * @openapi
- * /api/task/taskId/assign:
+ * /api/task/assignUsers:
  *  post:
  *      tags:
  *        - Tasks
- *      summary: Assign a task
- *      description: Assign a task to a user with the provided task ID and user ID
+ *      summary: Assign user(s) to a task
+ *      description: Assign user(s) to a task with the provided task ID and user IDs
  *      requestBody:
  *        required: true
  *        content:
@@ -324,7 +320,7 @@ router.put('/tasks', updateTask)
  *                  "isSuccess": false
  *                }
  */
-router.post('/task/taskId/assign', assignTask);
+router.post('/task/assignUsers', assignTask);
 
 
 /**

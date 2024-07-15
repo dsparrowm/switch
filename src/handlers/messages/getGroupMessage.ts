@@ -29,9 +29,22 @@ const getGroupMessage = async (req: Request, res: Response) => {
           res.status(404)
           return res.json({message: "No messages found", isSuccess: true})
       }
+      const response = messages.map(message => {
+        const response = {
+          id: message.id,
+          senderId: message.senderId,
+          senderEmail: message.sender.email,
+          senderName: message.sender.name,
+          departmentId: message.departmentId,
+          content: message.content,
+          createdAt: message.createdAt,
+          updatedAt: message.updatedAt,
+      }
+      return response
+      })
       // await redis.set(`department:${departmentId}:messages`, JSON.stringify(messages));
       res.status(200)
-      res.json({messages, isSuccess: true})
+      res.json({response, isSuccess: true})
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400)
