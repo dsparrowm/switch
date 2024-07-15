@@ -258,3 +258,10 @@ export const createPrivateMessageSchema = z.object({
 export const getUserMessageSchema = z.object({
   userId: z.coerce.number().positive()
 })
+
+export const createProjectSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  organisationId: z.number().positive(),
+  memberEmails: z.array(z.string().email()).optional(),
+});

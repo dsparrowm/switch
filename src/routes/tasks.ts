@@ -1,8 +1,4 @@
-import { z } from "zod";
-import prisma from "../db";
-import { Router, Request, Response } from 'express';
-import * as taskSchema from "../utils/validationSchemas";
-import { STATUS } from "@prisma/client";
+import { Router } from 'express';
 import getTasks from "../handlers/tasks/getTasks";
 import getTaskById from "../handlers/tasks/getTaskById";
 import createTask from "../handlers/tasks/createTask";
