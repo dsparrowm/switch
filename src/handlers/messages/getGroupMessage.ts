@@ -39,6 +39,7 @@ const getGroupMessage = async (req: Request, res: Response) => {
           content: message.content,
           createdAt: message.createdAt,
           updatedAt: message.updatedAt,
+          type: "Group"
       }
       return response
       })

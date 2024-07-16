@@ -24,43 +24,82 @@ io.on('connection', (socket) => {
 
     socket.on('groupMessage', async (data) => {
         try {
-            const savedMessage = await prisma.message.create({
-                data: {
-                    content: data.content,
-                    senderId: data.senderId,
-                    departmentId: data.departmentId
-                }
-            })
-            // await redis.del(`department:${data.departmentId}:messages`);
-            const messages = await prisma.message.findUnique({
+
+            const result = await prisma.$transaction(async (prisma) => {
+                const savedMessage = await prisma.message.create({
+                    data: {
+                        content: data.content,
+                        senderId: data.senderId,
+                        departmentId: data.departmentId
+                    }
+                })
+
+                // await redis.del(`department:${data.departmentId}:messages`);
+                const response = await prisma.message.findUnique({
                 where: {id: savedMessage.id},
                 include: {sender: true}
+                })
+
+                const message = {
+                    id: response.id,
+                    senderId: response.senderId,
+                    senderEmail: response.sender.email,
+                    senderName: response.sender.name,
+                    departmentId: data.departmentId,
+                    createdAt: response.createdAt,
+                    updatedAt: response.updatedAt,
+                    content: response.content,
+                    type: "Group"
+                }
+    
+                io.to(data.departmentId).emit('groupMessage', message)
             })
-            io.to(data.departmentId).emit('groupMessage', messages)
 
         } catch (err) {
             console.log(err);
         }
         
     })
+
     socket.on("private-message", async (data) => {
         try {
-            // console.log(data);
-            const savedMessage = await prisma.message.create({
-                data: {
-                    content: data.content,
-                    senderId: data.senderId,
-                    recipientId: data.recipientId
+            const result = await prisma.$transaction( async (prisma) => {
+                const savedMessage = await prisma.message.create({
+                    data: {
+                        content: data.content,
+                        senderId: data.senderId,
+                        recipientId: data.recipientId
+                    }
+                })
+                // await redis.del(`user:${data.senderId}:messages:${data.recipientId}`);
+                const response = await prisma.message.findUnique({
+                    where: {id: savedMessage.id},
+                    include: {sender: true}
+                })
+    
+                const recipient = await prisma.user.findUnique({
+                    where: {id: response.recipientId}
+                })
+    
+                const message = {
+                    id: response.id,
+                    senderId: response.senderId,
+                    senderEmail: response.sender.email,
+                    senderName: response.sender.name,
+                    recipientId: response.recipientId,
+                    recipientName: recipient.name,
+                    recipientEmail: recipient.email,
+                    createdAt: response.createdAt,
+                    updatedAt: response.updatedAt,
+                    content: response.content,
+                    type: "Private"
                 }
+    
+                const recipientSocketId = getSocketIdFromUserId(data.recipientId);
+                socket.emit('private-message', message) 
+                socket.broadcast.to(recipientSocketId).emit('private-message', message)
             })
-            // await redis.del(`user:${data.senderId}:messages:${data.recipientId}`);
-            const messages = await prisma.message.findUnique({
-                where: {id: savedMessage.id},
-                include: {sender: true}
-            })
-            const recipientSocketId = getSocketIdFromUserId(data.recipientId);
-            socket.emit('private-message', messages) 
-            socket.broadcast.to(recipientSocketId).emit('private-message', messages)
+            
         } catch (err) {
             console.log(err);
         }
