@@ -64,6 +64,7 @@ const getPrivateMessage = async (req: Request, res: Response) => {
             content: message.content,
             createdAt: message.createdAt,
             updatedAt: message.updatedAt,
+            type: "Private"
         }
         return response
     })

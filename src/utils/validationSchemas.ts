@@ -161,8 +161,14 @@ export const updateDepartmentSchema = z.object({
   
 export const createTaskSchema = z.object({
   title: z.string().min(1),
-  createdBy: z.number().positive(),
-  
+  description: z.string().min(1),
+  assignedUsers: z.array(z.string().email()).optional(),
+  projectId: z.number().positive().optional(),
+  deadline: z.date().optional(),
+  checklists: z.array(z.object({
+    title: z.string(),
+    assignedTo: z.string().email().optional(),
+  })).optional(),
 });
   
 export const updateTaskSchema = z.object({

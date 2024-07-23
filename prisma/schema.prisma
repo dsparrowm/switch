@@ -65,8 +65,8 @@ model Checklist {
   updatedAt DateTime @updatedAt
   taskId    Int
   task      Task     @relation(fields: [taskId], references: [id])
-  assignedTo Int?
-  assignee   User?    @relation(fields: [assignedTo], references: [id])
+  assignedTo String?
+  assignee   User?    @relation(fields: [assignedTo], references: [email])
 }
 
 model OTP {
