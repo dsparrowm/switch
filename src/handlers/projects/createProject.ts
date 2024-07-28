@@ -25,6 +25,9 @@ const createProject = async (req: Request, res: Response) => {
                     }
                 })
 
+                if (users.length !== memberEmails.length) {
+                    throw new Error("One or more users with the selected email(s) do not exist");
+                }
                 const membershipData = users.map(user => ({
                     projectId: project.id,
                     userId: user.id,
@@ -48,7 +51,6 @@ const createProject = async (req: Request, res: Response) => {
             res.status(400)
             return res.json({ message: err.issues, isSuccess: false });
         }
-        console.error('Error creating project:', err);
         res.status(500)
         res.json({ message: err.message, isSuccess: false });
     }

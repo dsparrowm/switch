@@ -2,6 +2,7 @@ import { Router } from 'express';
 import prisma from '../db';
 import { create } from 'domain';
 import createProject from '../handlers/projects/createProject';
+import getProjectById from '../handlers/projects/getProject';
 
 /**
  * Express router for handling project-related routes.
@@ -19,10 +20,7 @@ import createProject from '../handlers/projects/createProject';
 
 const router = Router();
 
-router.get('/projects', (req, res) => {
-
-})
-router.get('/project/:id', (req, res) => {})
+router.get('/projects', getProjectById)
 router.post('/projects', createProject)
 router.post('/projects/users', (req, res) => {})
 router.put('/project/:id', (req, res) => {})
