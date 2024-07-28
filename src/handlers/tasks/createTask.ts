@@ -30,6 +30,9 @@ const createTask = async (req: Request, res: Response) => {
               },
             });
 
+            if (users.length !== assignedUsers.length) {
+              throw new Error("One or more users with the selected email(s) do not exist");
+            }
             await prisma.taskAssignee.createMany({
               data: users.map(user => ({
                 taskId: task.id,

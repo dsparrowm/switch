@@ -271,3 +271,12 @@ export const createProjectSchema = z.object({
   organisationId: z.number().positive(),
   memberEmails: z.array(z.string().email()).optional(),
 });
+
+export const getProjectSchema = z.object({
+  projectId: z.coerce.number().int().positive(),
+})
+
+export const addProjectMembersSchema = z.object({
+  projectId: z.number().positive(),
+  memberEmails: z.array(z.string().email())
+});
