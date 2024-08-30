@@ -2,34 +2,51 @@ import prisma from "../../db";
 import { Request, Response } from 'express';
 import { getProjectSchema } from "../../utils/validationSchemas";
 import { z } from "zod";
+import { title } from "process";
 
-const getProjectById = async (req: Request, res:Response ) => {
+const getProject = async (req: Request, res: Response) => {
     try {
-        const { projectId } = await getProjectSchema.parseAsync(req.query);
-        const project = await prisma.project.findUnique({
-            where: { 
-                id: projectId
-            },
-            include: {
-                tasks: true,
-                members: true
+        const { organisationId } = await getProjectSchema.parseAsync(req.query)
+        const userId = req.user.id;
+        const projects = await prisma.$transaction(async (prisma) => {
+            const user = await prisma.user.findUnique({
+                where: {id: userId}
+            })
+            const result = await prisma.projectMember.findMany({
+                where: {
+                    AND: [
+                        {userId}, {organisationId}
+                    ]
+                },
+                include: {project: true}
+            })
+            if (!result || result.length < 1) {
+                throw Error ('There are no projects for this user')
             }
-        });
-        if (!project) {
-            res.status(404)
-            return res.json({ message: 'Project not found', isSuccess: false });
-        }
+            const updatedResult = result.map((data) => {
+                return {
+                    CreatedBy: user.name,
+                    ProjectId: data.project.id,
+                    Title: data.project.title,
+                    Description: data.project.description,
+                    CreatedAt: data.project.createdAt,
+                    UpdatedAt: data.project.updatedAt,
+                    OrganisationId: data.project.organisationId
+                }
+            })
+            return updatedResult
+        })
+        
         res.status(200)
-        return res.json({ message: 'Found', project, isSuccess: true });
+        res.json({message: "Project(s) found", projects})
     } catch (err) {
         if (err instanceof z.ZodError) {
             res.status(400)
             return res.json({ message: err.issues, isSuccess: false });
         }
-        
         res.status(500)
-        return res.json({ message: 'Internal Server Error', isSuccess: false });
+        res.json({ message: err.message, isSuccess: false });
     }
 }
 
-export default getProjectById;
+export default getProject;
