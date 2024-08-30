@@ -16,6 +16,13 @@ const createProject = async (req: Request, res: Response) => {
                     createdBy,
                 }
             })
+            await prisma.projectMember.create({
+                data: {
+                    projectId: project.id,
+                    userId: createdBy,
+                    organisationId
+                }
+            })
             if (memberEmails && memberEmails.length > 0) {
                 const users = await prisma.user.findMany({
                     where: {
@@ -31,6 +38,7 @@ const createProject = async (req: Request, res: Response) => {
                 const membershipData = users.map(user => ({
                     projectId: project.id,
                     userId: user.id,
+                    organisationId
                   }));
 
                 await prisma.projectMember.createMany({

@@ -5,4 +5,4 @@ import { vi } from 'vitest';
 // Mock the Redis client
 vi.mock('ioredis', () => mockIoRedis);
 
-// Additional setup code if needed
+// I'm not able to mock this ioredis client. For some reason, mockRedis doesn't work and I couldn't get this test-setup to work

@@ -56,7 +56,6 @@ const createTask = async (req: Request, res: Response) => {
           return prisma.task.findUnique({
             where: { id: task.id },
             include: {
-              assignedUser: true,
               project: true,
               checklists: {
                 include: {
